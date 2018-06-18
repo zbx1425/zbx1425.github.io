@@ -1,0 +1,2175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<!-- Mirrored from www.trainsimframework.org/develop/route_csv.html by HTTrack Website Copier/3.x [XR&CO'2010], Sat, 05 May 2012 22:30:47 GMT -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="SHORTCUT ICON" href="../Images/favicon.png" />
+<meta name="keywords" content="openBVE,homepage" />
+<title>The .csv route format</title>
+</head>
+<body style="font-family:sans-serif;font-size:small">
+<font size="+2" color="#0080FF"><b>CSV</b>线路格式</font><br />
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+➟ <a href="route_csv_quick.html">快速参考……</a><br />
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<table align="center" style="border:2px; border-style:groove;;margin-left:20pt;margin-right:20pt;">
+<tr><td bgcolor="#C04040" style="border:2px; border-style:ridge;"><font color="#FFFFFF">
+⚠ 施工现场
+</font></td></tr><tr><td bgcolor="#FFFFFF">
+没有写好帮助的指令还有<b>2个</b>
+</td></tr></table>
+<table><tr style="height: 4px;"><td /></tr></table>
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<font size="+1" color="#0080FF">■ 内容目录</font><hr />
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+↷ <a href="#overview">1. 综述</a><br />
+↷ <a href="#syntax">2. 语法</a><br />
+↷ <a href="#preprocessing">3. 预处理指令</a><br />
+↷ <a href="#options">4. Option（选项）命名空间</a><br />
+↷ <a href="#route">5. Route（线路）命名空间</a><br />
+↷ <a href="#train">6. Train（列车）命名空间</a><br />
+↷ <a href="#structure">7. Structure（结构）命名空间</a><br />
+↷ <a href="#texture">8. Texture（材质）命名空间</a><br />
+↷ <a href="#cycle">9. Cycle（循环）命名空间</a><br />
+↷ <a href="#signal">10. Signal（信号）命名空间</a><br />
+↷ <a href="#track">11. Track（轨道）命名空间</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#track_rails">11.1. 轨道</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#track_geometry">11.2. 几何变换</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#track_objects">11.3. 物体</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#track_stations">11.4. 车站</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#track_signalling">11.5. 信号和限速</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#track_safety">11.6. 列车车载信号系统</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#track_misc">11.7. 杂项</a><br />
+<br /><a name="overview" />
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<font size="+1" color="#0080FF">■ 1. 综述</font><hr />
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+CSV格式线路是以纯文本形式编辑的线路。<br /><br />线路文件是纯文本，且可以使用任意<a href="information_encodings.html">字符编码</a>，但是，我们推荐线路作者们使用UTF8-BOM编码格式。游戏在解析数字数据时，使用的<a href="information_numberformats.html">解析方法</a>是非常<b>宽松</b>的（特别指出的地方除外），但是，我们推荐线路作者们<em>严格规范</em>地编写线路文件。 这个文件一般来说可以被放在<em>LegacyContent</em>文件夹下的任何地方。文件名可以随意，但扩展名必须是<b>.csv</b>。线路文件被从头到尾逐行解析，每行被分割并被从左到右解析。<br /><br />线路文件包括一系列指令，用来导入线路中用到的模型（Structure（结构）命名空间*)，线路的属性信息（说明线路使用的默认列车和背景等信息），文件的其余部分是Track（轨道）命名空间* 在这一部分中，主轨道位置（一般以米为单位）被用来描述轨道在哪里转弯，车站的位置在哪里，隔音墙应当在哪里开始、哪里结束，以此类推。说得明白一点儿，Track（轨道）命名空间的指令是要放在最后的。<br /><br />这个格式假设了一条游戏默认的主轨道(0号轨道），你不可以指定它开始的位置，也不能结束它。和游戏中其他轨道不同的是，它从线路的开始一直延续到线路的终点，代表着玩家驾驶的列车行驶的轨道。除此之外，游戏中的其他轨道都是只供装饰，不能行驶的。<br /><br />你可以几何意义上地弯曲和抬升默认的主轨道，而其他轨道都是相对于主轨道定义的，并随主轨道弯曲起伏。除非特别修改定义，线路中每25米划分为一个区间块，特定的命令只有在区间块的边界位置（整25米位置）才能发挥作用。物体的放置（尤其是在弯道上）总是基于一个坐标系，它的轴并不随轨道弯曲，而是直直地指向邻近的下一个区间块。<br/>*有点不严谨地说，在CSV线路中和“章节”“部分”差不多。<br /><br />➟ <a href="route_csv_quick.html">你还可以查阅这份CSV格式的快速参考手册。</a><br />
+<br /><a name="syntax" />
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<font size="+1" color="#0080FF">■ 2. 语法</font><hr />
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+对于线路文件中的每一行，在开头的<a href="information_whitespaces.html">空格</a>会被统统忽略。然后，每一行指令都会按逗号(U+002C，英文半角的那个)分割。于是，每一行都会被看作这样一个格式：<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><em>表达式内容<sub>1</sub></em>, <em>表达式内容<sub>2</sub></em>, <em>表达式内容<sub>3</sub></em>, ..., <em>表达式内容<sub>n</sub></em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+
+</font></td></tr></table>
+表达式内容主要有以下类别：<br /><br /><table><tr style="height: 4px;"><td /></tr></table>
+<font color="#0080FF">● 注释</font>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+<table><tr style="height: 2px;"><td /></tr></table>
+注释就是给人看的，游戏完全不管的。以分号(U+003B，英文半角的那个)开头的表达式都会被视为注释。<br /><br /><table><tr style="height: 4px;"><td /></tr></table>
+<font color="#0080FF">● 主轨道位置</font>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+<table><tr style="height: 2px;"><td /></tr></table>
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><em>一个干干净净清清爽爽的位置数字</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+
+</font></td></tr></table>
+一个非负的，<a href="information_numberformats.html">格式要正常的</a>浮点数*，代表一个主轨道位置。随后的指令都将按这个位置作为参考点。<br /><br />*整数和小数<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><em>部分<sub>1</sub></em>:<em>部分<sub>2</sub></em>:...:<em>部分<sub>n</sub></em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+
+</font></td></tr></table>
+这是一个配合Options.UnitOfLength的更加复杂的距离指定格式。每一个<em>部分<sub>i</sub></em>都是一个<a href="information_numberformats.html">格式要正常的</a>浮点数。<em>部分<sub>1</sub></em>会被乘上<em>系数<sub>1</sub></em>, <em>部分<sub>2</sub></em>乘上<em>系数<sub>2</sub></em>，以此类推，真正的主轨道位置是所有积的和。这个结果必须是非负的。各部分被冒号(U+003A，英文半角的那个)。如果想了解更多请参见Options.UnitOfLength一节。<br /><br />在任何参数中使用距离的命令中，这个冒号表示法就可以被使用，到时我们会用<font color="green">原谅色</font>标出这种情况。<br /><br />当<em>n个</em>单位系数被使用Options.UnitOfLength定义，但是使用冒号表示法时输入的部分却少了，那么这些系数将会被向右匹配，在左边的会被忽略。因此，这几种表示方法是等效的：<em>0:0:2</em>，<em>0:2</em>，和<em>2</em>.<br /><br /><table><tr style="height: 4px;"><td /></tr></table>
+<font color="#0080FF">● 指令</font>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+<table><tr style="height: 2px;"><td /></tr></table>
+没有参数的指令：<br /><table border="0"><tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><em>指令的大名</em></font></td></tr></table>
+<br />含有几个参数的指令：<br /><table border="0"><tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><em>指令的大名</em> <em>参数<sub>1</sub></em>;<em>参数<sub>2</sub></em>;<em>参数<sub>3</sub></em>;...;<em>参数<sub>n</sub></em><br />
+<em>指令的大名</em>(<em>参数<sub>1</sub></em>;<em>参数<sub>2</sub></em>;<em>参数<sub>3</sub></em>;...;<em>参数<sub>n</sub></em>)</font><br/>括号可加可不加，这是个人习惯问题。</td></tr></table>
+<br />不仅有参数还有编号（编号）的指令：<br /><table border="0"><tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><em>指令的大名</em>(<em>编号<sub>1</sub></em>;<em>编号<sub>2</sub></em>;...;<em>编号<sub>m</sub></em>) <em>参数<sub>1</sub></em>;<em>参数<sub>2</sub></em>;<em>参数<sub>3</sub></em>;...;<em>参数<sub>n</sub></em><br />
+<em>指令的大名</em>(<em>编号<sub>1</sub></em>;<em>编号<sub>2</sub></em>;...;<em>编号<sub>m</sub></em>).<em>后缀</em> <em>参数<sub>1</sub></em>;<em>参数<sub>2</sub></em>;<em>参数<sub>3</sub></em>;...;<em>参数<sub>n</sub></em><br />
+<em>指令的大名</em>(<em>编号<sub>1</sub></em>;<em>编号<sub>2</sub></em>;...;<em>编号<sub>m</sub></em>).<em>后缀</em>(<em>参数<sub>1</sub></em>;<em>参数<sub>2</sub></em>;<em>参数<sub>3</sub></em>;...;<em>参数<sub>n</sub></em>)</font><br/>括号可加可不加，这是个人习惯问题。</td></tr></table>
+<br />规则:<br /><br /><em>指令的大名</em>是大小写都可以的。编号和参数被分号(U+003B，英文半角的那个)隔开。在<em>指令的大名</em>、编号和参数周围的空格都是被忽略的，括号周围的空格也是被忽略的。<br /><br />如果要使用编号，它必须被成对括号(U+0028，英文半角在你键盘9上面的那个)和(U+0029，英文半角在你键盘0上面的那个)括起来。在使用编号是至少要提供一个参数和一个<em>后缀</em>。<br /><br />有两个使用参数的方法变种，除了$开头的预处理指令($Chr, $Rnd, $Sub, ...)之外，随你喜欢二选一。第一种方法：第一个参数被至少一个空格(U+0020，你平常用的那个)和编号、指令的大名以及<em>后缀</em>分开。第二种方法：参数被成对括号(U+0028，英文半角在你键盘9上面的那个)和(U+0029，英文半角在你键盘0上面的那个)括起来。在第二种方法中，当使用编号时就必须使用<em>后缀</em>。在参数周围的空格都会被忽略。<br /><br />请注意在有些指令中，不管是用哪种表示方法，<em>后缀</em>都是必须的。在接下来的文档中，必须的<em>后缀</em>将被<b>加粗</b>，对于第一种方法加不加都行的后缀将被使用<font color="gray">灰色</font>表示。<br /><br /><table><tr style="height: 4px;"><td /></tr></table>
+<font color="#0080FF">● <b>With</b>指令</font>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+<table><tr style="height: 2px;"><td /></tr></table>
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000">With <em>前缀</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+
+</font></td></tr></table>
+在它之后以点(U+002E，英文半角的那个)开头的指令都会被默认为和这个命名空间有关。例如：<br /><table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em></em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>With Route<br />
+.Gauge 1435<br />
+.Timetable 1157_M</tt></td>
+</tr>
+</table>
+和这个是等效的：<br /><table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em></em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>Route.Gauge 1435<br />
+Route.Timetable 1157_M</tt></td>
+</tr>
+</table>
+<br /><a name="preprocessing" />
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<font size="+1" color="#0080FF">■ 3. 预处理指令</font><hr />
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+在游戏开始解析线路文件之前，预处理指令将会被预先处理替换。预处理器会按照正常顺序分析这些以$开头的预处理命令。$Chr、$Rnd和$Sub指令可以随便嵌套，$If、$Else和$EndIf不能出现在另一个指令的括号里。<br /><br /><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">预处理指令的语法不可以随意使用，必须以下面给出的形式出现。</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr />
+<br /><table border="0"><tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000">$Include(<em>文件</em>)<br />
+$Include(<em>文件</em>:<em>主轨道位置偏移量</em>)<br />
+$Include(<em>文件<sub>1</sub></em>; <em>权值<sub>1</sub></em>; <em>文件<sub>2</sub></em>; <em>权值<sub>2</sub></em>; ...)</font></td></tr></table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>文件<sub>i</sub></em></b>: 要被导入本线路的另一个文件。<br />
+<b><em>权值<sub>i</sub></em></b>: 一个正浮点数，表示对应的这个文件被使用的可能性大小。数越大，这个文件就越可能被随机选中。
+</font></td></tr></table>
+这条指令按照权值随机选出一个线路文件，再将其内容导入本线路中。因为该文件内容会被不加修改直接在这条指令的位置插入，你可能需要照顾一下With指令等，不要让它们出现冲突。如果参数中最后一个文件没有给出权值，它会被按1处理。<br /><br />$Include指令在几个线路有大量重复内容时很有用，你可以把重复内容单独存进另一个文件，然后在主文件中导入它，以方便编码。这个指令还可以被用来随机选取线路代码。请注意你导入的文件中也可以包含$Include指令来引用更多的文件，但是<b>你应该避免循环引用</b>，例如A导入B而B又导入A。你要导入的那个文件不应该使用.csv作为格式扩展名（也许用.include是个方便区分的好主意），不然你的玩家可能会一不小心从主菜单选择了这个“不完全的线路文件”然后发现没法加载（除非你那个文件本身就是一个单独的线路，然后你就想让玩家加载它）。<br /><br />如果任何一个<em>文件<sub>i</sub></em>被一个:<em>主轨道位置偏移量</em>后缀，那个文件中所有的主轨道位置表达式都会被按照这个量<b>以米作单位</b>偏移。例如，$Include(stations.include:2000)会将stations.include文件中的所有内容在插入前都向前偏移2000米。你需要注意这些主轨道位置表达式是在所有的预处理命令都被执行完才会被做偏移处理。这意味着像"1$Rnd(2;8)00"这样的主轨道位置表达式尽管在预处理前还不是一个主轨道距离表达式，但是它的随机结果照样会被进行偏移处理。<br /><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">只有OpenBVE1.2.11版以上支持“主轨道位置偏移量”。</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000">$Chr(<em>Ascii码</em>)</font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>Ascii码</em></b>: 一个在10~13或20~127范围内的数，代表一个拥有对应<a href="https://baike.baidu.com/item/ASCII">ASCII码</a>的字符。
+</font></td></tr></table>
+这个指令会在原位插入一个对应<em>Ascii码</em>的字符。如果你想在某个地方放置一个字符却又不想破坏指令语法结构（比如站名里开头带空格、带括号逗号分号等，如果不这样加入就会被游戏误读）有关的字符有：<br /><br />
+<table style="border-collapse: collapse;">
+<tr><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">Ascii码</th><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">代表</th><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">对应字符</th></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">10</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">换行(CR)</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><em></em></td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">13</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">换行(LF)</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><em></em></td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">20</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">空格</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><em></em></td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">40</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">括号</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">(</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">41</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">回括号</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">)</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">44</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">逗号</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">,</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">59</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">分号</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">;</td></tr>
+</table><br />
+"$Chr(13)$Chr(10)"(CRLF)代表一次换行。插入$Chr(59)可能基于它的位置被解释为注释开始或指令参数分隔符。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000">$Rnd(<em>最小值</em>; <em>最大值</em>)</font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>最小值</em></b>：一个整数，代表随机数可以取的最小值。<br />
+<b><em>最大值</em></b>：一个整数，代表随机数可以取的最大值。
+</font></td></tr></table>
+这个指令会在原位插入一个位于<em>最小值</em>和<em>最大值</em>之间的随机整数。你可以用这个来给你的线路添加一些随机性。<br /><table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em>一个使用实例：</em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>10$Rnd(3;5)0, Track.FreeObj 0; 1</tt></td>
+</tr>
+</table>
+<table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em>以下几行中的<b>一种</b>会是随机的结果：</em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>1030, Track.FreeObj 0; 1<br />
+1040, Track.FreeObj 0; 1<br />
+1050, Track.FreeObj 0; 1</tt></td>
+</tr>
+</table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000">$Sub(<em>编号</em>) = <em>表达式</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>编号</em></b>：一个非负整数，代表你要存储的变量编号。<br />
+<b><em>表达式</em></b>：你要存进这个变量的数字的值。
+</font></td></tr></table>
+这个指令只应该单独出现，它将会把<em>表达式</em>的值赋给编号为<em>编号</em>的这个变量。它不在原位插入任何内容。你可以把一个随机数存起来然后以后多次使用（比如说放置几棵到轨道的位置随机但是却都相同的排成一排的树）。下面有几个使用实例。<br /><br /><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0"><b>使用时注意：</b>虽然变量中也可以存储非数字的内容，你还是不能把逗号通过$Chr(44)存进去然后希望它在使用时会起分隔符的作用。但是，你可以把分号通过$Chr(59)存进去然后把它调用时放在开头使那一行成为注释。不过你是可以使用$Include和$If来进行条件判断的，所以你并没有必要这么干。</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000">$Sub(<em>编号</em>)</font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>编号</em></b>：一个非负整数，代表你要读出的变量编号。
+</font></td></tr></table>
+这个指令会在原位插入编号为<em>编号</em>的变量的内容。在读取前这个变量必须先被赋值。<br /><table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em>一个配合使用$Sub(<em>编号</em>)=<em>值</em>和$Sub(<em>编号</em>)指令的例子：</em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>$Sub(0) = $Rnd(3; 5)<br />
+1000, Track.FreeObj $Sub(0); 47<br />
+1020, Track.FreeObj $Sub(0); 47<br />
+1040, Track.FreeObj $Sub(0); 47</tt></td>
+</tr>
+</table>
+在这个例子中，三个Track.FreeObj指令都使用同样的随机数值，所以这三个物体会被放在同一条随机的轨道边。如果你使用三个$Rnd(3;5)而不是$Sub，这三个物体可能被单独放在不同的轨道边。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000">$If(<em>条件</em>)</font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>条件</em></b>：一个数值。如果它等于0，则它代表<b>不成立</b>的情况。如果它不等于0，则代表<b>成立</b>的情况。
+</font></td></tr></table>
+$If(如果……那么)指令让游戏只在这个条件是成立的时才解析下面的线路指令。$If的后面必须有一个$EndIf。在$If和$EndIf之间也可以加一个$Else来表示条件是不成立的时要解析的指令。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000">$Else()</font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+
+</font></td></tr></table>
+$Else(否则)指令只在前面的$If的条件是不成立的时才解析下面的线路指令。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000">$EndIf()</font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+
+</font></td></tr></table>
+$EndIf指令标识前面的$If指令的影响范围到此结束。<br /><br /><table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em>$If、$Else和$EndIf的使用实例</em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>$Sub(1) = 0<br />
+With Track<br />
+$If($Sub(1))<br />
+&nbsp;&nbsp;&nbsp;&nbsp;1020, .FreeObj 0; 1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;1040, .FreeObj 0; 2<br />
+$Else()<br />
+&nbsp;&nbsp;&nbsp;&nbsp;1030, .FreeObj 0; 3<br />
+$EndIf()</tt></td>
+</tr>
+</table>
+<br /><table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em>另一个使用实例</em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>With Track<br />
+1050<br />
+$If($Rnd(0;1)), .FreeObj 0; 4, $Else(), .FreeObj 0; 5, $EndIf()</tt></td>
+</tr>
+</table>
+<br />你可以嵌套$If指令。如果你把$If/$Else/$EndIf放在不同的几行上，你可以更清晰地表示块结构并使它更易读（例如第一个例子）。<br /><br /><hr />
+<b>最后</b>，当预处理结束，线路中的所有指令都会被按照轨道位置重新排序。<br /><table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em>一个示例线路文件的一部分：</em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>1000, Track.FreeObj 0; 23<br />
+1050, Track.RailType 0; 1<br />
+10$Rnd(3;7)0, Track.Rail 1; 4<br />
+Track.FreeObj 1; 42</tt></td>
+</tr>
+</table>
+<table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em>预处理（假设随机结果是3）：</em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>1000, Track.FreeObj 0; 23<br />
+1050, Track.RailType 0; 1<br />
+1030, Track.Rail 1; 4<br />
+Track.FreeObj 1; 42</tt></td>
+</tr>
+</table>
+<table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em>排序：</em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>1000, Track.FreeObj 0; 23<br />
+1030, Track.Rail 1; 4<br />
+Track.FreeObj 1; 42<br />
+1050, Track.RailType 0; 1</tt></td>
+</tr>
+</table>
+<br /><a name="options" />
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<font size="+1" color="#0080FF">■ 4. Option（选项）命名空间</font><hr />
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+这个命名空间里的指令设置一些基本设置，并影响其他指令的实际处理效果。所以你应该在写其他指令之前先用这些指令把设置都调好。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Options.UnitOfLength</b> <em>与米的换算系数<sub>1</sub></em>; <em>与米的换算系数<sub>2</sub></em>; <em>与米的换算系数<sub>3</sub></em>; ...; <em>与米的换算系数<sub>n</sub></em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>与米的换算系数<sub>i</sub></em></b>：一个浮点数，表示一个单位等于多少米。<em>与米的换算系数<sub>1</sub></em>的默认值是1，其他的默认值都是0。
+</font></td></tr></table>
+这个指令可以被用来改变其他指令使用的长度单位。这会影响主轨道位置表达式。<br /><br />换算系数的几个示例：<br /><br />
+<table style="border-collapse: collapse;">
+<tr><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">单位</th><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">换算系数</th></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">英里</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">1609.344</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">冈特测链</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">20.1168</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">米</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">1</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">码</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">0.9144</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">呎</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">0.3048</td></tr>
+</table><br />
+在下面的示例中，会被Options.UnitOfLength影响的指令参数将被用<font color="green">原谅色</font>表示。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Options.UnitOfSpeed</b> <em>与千米每时的换算系数</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>与千米每时的换算系数</em></b>：一个浮点数，表示一个单位等于多少千米每时。默认值是1。
+</font></td></tr></table>
+这个指令可以被用来改变其他指令使用的速度单位。换算系数的几个示例：<br /><br />
+<table style="border-collapse: collapse;">
+<tr><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">单位</th><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">换算系数</th></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">米每秒</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">3.6</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">英里每时</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">1.609344</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">千米每时</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">1</td></tr>
+</table><br />
+在下面的示例中，会被Options.UnitOfSpeed影响的指令参数将被用<font color="blue">漂亮的蓝色</font>表示。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Options.BlockLength</b> <font color="green"><em>长度</em></font></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>长度</em></b>：一个正浮点数，表示区间块的长度，<b>默认</b>的单位是<b>米</b>。默认值是25米。
+</font></td></tr></table>
+这个指令可以设置区间块的长度。这是个全局设置，一旦设置就不能来回更改。如果Options.UnitOfLength在该指令前被调用过，<em>长度</em>会使用Options.UnitOfLength作为单位。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Options.ObjectVisibility</b> <em>模式</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>模式</em></b>：游戏判断一个物体是否可视采用的算法。默认值是0（原版）。</font><br/>需要注意的是，<b>OpenBVE不支持环线线路</b>（你驾驶到终点时，虽然起点站就在你前方，但是OpenBVE是按主轨道位置计算物体距离的，它只会认为起点站在你后头很远而不显示它）。你必须做两个起点/终点站。
+</td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ <em>模式</em>的可选项：</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>0</b>: 原版：当该物体所在的区间块已经被玩家通过，游戏就认为这个物体不再可见，也不再显示这个物体。在朝前看时没有任何问题，但当你转过头向后看时可能出现一点小问题。自相交的轨道（例如环线）不会被正确显示。<br />
+<b>1</b>: 基于轨道：当一个物体的末端已经被玩家通过时，游戏就认为这个物体不再可见。这是按照轨道位置计算的。自相交的轨道（例如环线）不会被正确显示。
+</font></td></tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Options.SectionBehavior</b> <em>模式</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>模式</em></b>：Track.Section指令应当被如何理解。默认值是0（默认）。
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ <em>模式</em>的可选项：</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>0</b>: 默认：在Track.Section <em>状态<sub>0</sub></em>; <em>状态<sub>1</sub></em>; ...; <em>状态<sub>n</sub></em>中，任何一个<em>状态<sub>i</sub></em>都代表当一个闭塞区间的前方有<em>i</em>个闭塞区间清空时要传达给信号机的信号状态。<br />
+<b>1</b>: 简化：在Track.Section <em>状态<sub>0</sub></em>; <em>状态<sub>1</sub></em>; ...; <em>状态<sub>n</sub></em>中，每个闭塞区间的信号状态都是比它前面一个闭塞区间的状态值要高的最小值。
+</font></td></tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Options.CantBehavior</b> <em>模式</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>模式</em></b>：Track.Curve指令应当被如何理解。默认值是0（忽略符号）
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ <em>模式</em>的可选项：</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>0</b>: 忽略符号：Track.Curve中的<em>CantInMillimeters</em>参数是无符号的，符号会被忽略，轨道总是会向弯道中心倾斜来提供弯道向心力。轨道不会在直道段倾斜。<br />
+<b>1</b>: 保留符号：Track.Curve中的<em>CantInMillimeters</em>参数是有符号的，正值会使轨道向弯道中心倾斜，负值会使轨道向弯道外侧倾斜。轨道会在直道段倾斜，正值使轨道右倾，负值使轨道左倾。
+</font></td></tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Options.FogBehavior</b> <em>模式</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>模式</em></b>：Track.Fog命令应当被如何理解。默认值是0（基于区间块）
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ <em>模式</em>的可选项：</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>0</b>: 基于区间块：雾的颜色和范围从原先Track.Fog设置时的区间块的到新Track.Fog设置时的区间块以线性插值平滑过渡。<br />
+<b>1</b>: 线性：雾的颜色和范围从两次Track.Fog调用的位置之间线性插值平滑过渡。这和Track.Brightness的效果类似。
+</font></td></tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Options.CompatibleTransparencyMode</b> <em>模式</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>模式</em></b>：当一个物体的材质使用的颜色通道不是真彩色时该如何判断透明区域。这可以在游戏设置中调整，但这条指令可以超控游戏设置中的选项。
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ <em>模式</em>的可选项：</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>0</b>: 特定匹配：如果该图像使用的颜色通道色板内不包括设定的透明色，那么这个图象就会按不透明来处理。<br />
+<b>1</b>: 模糊匹配：如果该图像使用的颜色通道色板内不包括设定的透明色，那么就转而匹配色板内与此最接近的颜色。
+</font></td></tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Options.EnableBveTsHacks</b> <em>模式</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>模式</em></b>：是否应用几项对于部分奇葩的BVETs2/4线路的兼容性设置。这可以在游戏设置中调整，但这条指令可以超控游戏设置中的选项。
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ <em>模式</em>的可选项：</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>0</b>: 不启用兼容模式。<br />
+<b>1</b>: 启用兼容模式。
+</font></td></tr></table>
+<br /><a name="route" />
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<font size="+1" color="#0080FF">■ 5. Route（线路）命名空间</font><hr />
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+这个命名空间里的指令设置一些线路的基本信息。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Route.Comment</b> <em>文字</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>文字</em></b>：选择线路时显示的描述文字。
+</font></td></tr></table>
+<table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">如果你需要插入换行、逗号之类的字符，请使用$Chr。</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Route.Image</b> <em>文件</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>文件</em></b>：选择线路时显示的描述图片，路径按相对于存储这一线路文件的文件夹书写。
+</font></td></tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Route.Timetable</b> <em>文字</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>文字</em></b>：作为线路默认时刻表表头的文字。
+</font></td></tr></table>
+<table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">如果你需要插入换行、逗号之类的字符，请使用$Chr。</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Route.Change</b> <em>模式</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>模式</em></b>：当游戏启动时，列车的车载信号系统默认处于什么状态。
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ <em>模式</em>的可选项：</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>-1</b>：车载信号系统<b>已被启动</b>，制动手柄处于<em>最大常用制动</em>位置。<br />
+<b>0</b>：车载信号系统<b>已被启动</b>，制动手柄处于<b>紧急制动</b>位置。<br />
+<b>1</b>：车载信号系统<em>未被设置好</em>，制动手柄处于<b>紧急制动</b>位置。
+</font></td></tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Route.Gauge</b> <em>毫米数值</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>毫米数值</em></b>：一个浮点数，代表轨道的轨距。单位是<b>毫米</b>（0.001m,0.1cm）。默认值是1435（标准轨）。
+</font></td></tr></table>
+<table bgcolor="#E0E0E0" style="border:0px none;margin-left:20pt;margin-right:10pt;">
+<tr><td><font color="#C00000">☀</font></td><td><em>备注：&nbsp;</em></td></tr>
+<tr><td /><td><font color="#0060C0">Route.Gauge和Train.Gauge作用相同。</font></td></tr>
+</table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Route.Signal</b>(<em>状态编号</em>)<font color="gray">.Set</font> <font color="blue"><em>允许速度</em></font></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>状态编号</em></b>：一个非负整数，代表信号状态。0代表前方没有区间空闲（红灯），1代表1个区间空闲，以此类推。<br />
+<font color="blue"><b><em>速度</em></b></font>：一个非负整数，代表这个信号状态下允许的最大通过速度。<b>默认的</b>单位是<b>千米每时</b>。
+</font></td></tr></table>
+用这个指令来设定信号状态所允许的最大通过速度。状态0代表前方没有区间空闲（红灯），1代表1个区间空闲，以此类推。默认值（根据默认的日式信号系统设置）是：<br /><br />
+<table style="border-collapse: collapse;">
+<tr><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;"><em>状态编号</em></th><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">显示</th><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">允许速度</th></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">0</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><font color="#C00000">●</font></td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">0 km/h</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">1</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><font color="#FFC000">●●</font></td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">25 km/h</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">2</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><font color="#FFC000">●</font></td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">55 km/h</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">3</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><font color="#00C000">●</font><font color="#FFC000">●</font></td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">75 km/h</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">4</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><font color="#00C000">●</font></td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><em>没有限制</em></td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">5</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><font color="#00C000">●●</font></td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><em>没有限制</em></td></tr>
+</table><br />
+<hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Route.RunInterval</b> <em>间隔<sub>0</sub></em>; <em>间隔<sub>1</sub></em>; ...; <em>间隔<sub>n-1</sub></em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>间隔<sub>i</sub></em></b>：一个浮点数，指定一辆AI列车从第一站的发车时间和玩家操作的列车的时间差。单位是<b>秒</b>。正数使AI列车在玩家之前发车，负数使AI列车在玩家之后发车。
+</font></td></tr></table>
+这条指令创建几辆和玩家在同一轨道上的AI车。这些列车可见，正常工作，且使用和玩家一样的列车模型。其他列车使用和玩家相同的时刻表，但是发车时间和玩家列车有着<em>间隔<sub>i</sub></em>的时间差。通过Track.Sta指令，你可以为玩家和AI车指定不同的停车站。在玩家列车之后的车辆只会在区间里没有列车时出现，但玩家列车不论是否已经有列车阻挡位置都会被放置。所以，你应当正确设置在玩家之前发车的AI车的发车时间，使玩家进入游戏时该列车已经离开玩家要出现的轨道区域。<br /><table bgcolor="#E0E0E0" style="border:0px none;margin-left:20pt;margin-right:10pt;">
+<tr><td><font color="#C00000">☀</font></td><td><em>备注:&nbsp;</em></td></tr>
+<tr><td /><td><font color="#0060C0">Route.RunInterval和Train.Interval作用相同。</font></td></tr>
+</table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Route.AccelerationDueToGravity</b> <em>数值</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>数值</em></b>：一个正浮点数，表示以<b>米每秒平方</b>(m/s²)为单位的重力加速度。默认值是9.80665。
+</font></td></tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Route.Elevation</b> <font color="green"><em>高度数值</em></font></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<font color="green"><b><em>高度数值</em></b></font>：一个浮点数，表示主轨道起始点的海拔高度。<b>默认</b>的单位是<b>米</b>。默认值是0。
+</font></td></tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Route.Temperature</b> <em>摄氏度数值</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>摄氏度数值</em></b>：一个浮点数，代表以<b>摄氏度</b>为单位的初始外温。默认值是20。
+</font></td></tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Route.Pressure</b> <em>千帕数值</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>千帕数值</em></b>：一个正浮点数，表示以<b>千帕斯卡</b>为单位的环境大气压力。默认值是101.325（标准大气压）。
+</font></td></tr></table>
+<hr />
+
+
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Route.DisplaySpeed</b> <em>单位名称,换算系数</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>单位名称</em></b>：当显示关于速度的信息时，使用的单位名称。<br />
+<b><em>换算系数</em></b>：一个千米每时相当于几个单位。例如对于英里每时，换算系数是0.621371。<br />
+</font></td></tr></table>
+这条指令让你可以改变关于速度的信息（例如超速提示）中使用的单位。
+
+<br /><br /><hr />
+<table border="0">
+	<tr style="height:16"><td></td></tr>
+
+<table border="0">
+<tr style="height:16"><td></td></tr></table>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Route.LoadingScreen</b> <em>文件</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>文件</em></b>：一个路径，指向一个图像文件。<br />
+</font></td></tr></table>
+这条指令让你可以自定义加载界面的背景图。
+
+<br /><br /><hr />
+<table border="0">
+	<tr style="height:16"><td></td></tr></table>
+
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Route.StartTime</b> <em>时间</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>时间</em></b>：线路载入，模拟开始的时间。<br />
+</font></td></tr></table>
+这条指令让你可以定义你进入游戏时的时间。<br>
+<em>注意：</em>如果开始时间没有被设定或设定的值不正确，游戏将采用第一站的到达时间。
+
+<br /><br /><hr />
+<table border="0">
+	<tr style="height:16"><td></td></tr></table>
+
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Route.DynamicLight</b> <em>动态光XML配置文件</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>动态光XML配置文件</em></b>：一个路径，指向配置动态光照的XML文件。<br />
+</font></td></tr></table>
+这条指令可以被用来替代<i>Route.AmbientLight</i>，<i>Route.DirectionalLight</i>和<i>Route.LightDirection</i>。<br>
+它允许你根据时间改变光照，具体细节在这一页上说明：<br>
+<p style="margin-left: 10px"><a href="route_dynamiclight.html" target="main">动态光照系统</a>
+
+<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Route.AmbientLight</b> <em>红色分量</em>; <em>绿色分量</em>; <em>蓝色分量</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>红色分量</em></b>：一个0~255之间的整数，表示漫射环境光颜色的红色值。默认值是160。<br />
+<b><em>绿色分量</em></b>：一个0~255之间的整数，表示漫射环境光颜色的绿色值。默认值是160。：一个0~255之间的整数，表示漫射环境光颜色的红色值。默认值是160。<br />
+<b><em>蓝色分量</em></b>：一个0~255之间的整数，表示漫射环境光颜色的蓝色值。默认值是160。
+</font></td></tr></table>
+这条指令指定漫射环境光的颜色。这个光照亮场景中所有物体的所有面。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Route.DirectionalLight</b> <em>红色分量</em>; <em>绿色分量</em>; <em>蓝色分量</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>红色分量</em></b>：一个0~255之间的整数，表示定向照射光颜色的红色值。默认值是160。<br />
+<b><em>绿色分量</em></b>：一个0~255之间的整数，表示定向照射光颜色的绿色值。默认值是160。<br />
+<b><em>蓝色分量</em></b>：一个0~255之间的整数，表示定向照射光颜色的蓝色值。默认值是160。
+</font></td></tr></table>
+这条指令指定定向照射光的颜色。只有物体的迎光面会被照亮，背光面不受影响。应配合<em>Route.LightDirection</em>使用，设定光照方向。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Route.LightDirection</b> <em>θ 倾斜角</em>; <em>φ 方位角</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>θ 倾斜角</em></b>：一个以<b>角度</b>为单位的浮点数，控制定向光的仰角。默认值是60。<br />
+<b><em>φ 方位角</em></b>：一个以<b>角度</b>为单位的浮点数，控制定向光的方位。默认值是-26.57。
+</font></td></tr></table>
+该指令定义相对于主轨道位置0的定向光照射方向。这是光照亮区域的计算方向，和光源（太阳）的方向正好相反。首先，<em>θ 倾斜角</em>定义光照仰角。90代表垂直向下，-90代表竖直向上。  θ值为0时代表从地平线后方水平向前照射。<em>φ 方位角</em>表示一个旋转方向。0为从前方，90为从正右，-90为正左。分别设置<em>θ</em>和<em>φ</em>为(180,0)或(0,180)都代表从后方照射（想一想，为什么）。通过调节这两个数值，可以精确地控制光照的方向。<br /><img src="../Images/illustration_light_direction.png" alt="" /><br /><table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em>将球面坐标(θ,φ)换算为直角坐标(x,y,z)的公式：</em></font>
+</td></tr><tr>
+<td width="16" valign="top">ƒ</td><td bgcolor="#FFD8C0" style="border:1px dotted;">
+<tt>x = cos(θ) * sin(φ)<br />
+y = -sin(θ)<br />
+z = cos(θ) * cos(φ)</tt></td>
+</tr>
+</table>
+<table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em>将直角坐标(x,y,z)换算为球面坐标(θ,φ)的公式（y²≠1）：</em></font>
+</td></tr><tr>
+<td width="16" valign="top">ƒ</td><td bgcolor="#FFD8C0" style="border:1px dotted;">
+<tt>θ = -arctan(y/sqrt(x<sup>2</sup>+z<sup>2</sup>))<br />
+φ = arctan(z,x)</tt></td>
+</tr>
+</table>
+<table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em>将直角坐标(x,y,z)换算为球面坐标(θ,φ)的公式（y²=1）：</em></font>
+</td></tr><tr>
+<td width="16" valign="top">ƒ</td><td bgcolor="#FFD8C0" style="border:1px dotted;">
+<tt>θ = -y * pi/2<br />
+φ = 0</tt></td>
+</tr>
+</table>
+ 如果你更喜欢使用直角坐标的话，可以使用这些公式来进行转换。
+ 这几条公式也作为定向光功能的数学证明（三角函数使用弧度制）。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Route.InitialViewpoint</b> <em>模式</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>模式</em></b>：一个整数，代表游戏开始时摄像机的位置。可选项有：<br />
+<em>0</em>：车内视点。（默认）<br>
+<em>1</em>：轨道视点。<br>
+<em>2</em>：定点观察。<br>
+<em>3</em>：定点观察（放大）。
+</font></td></tr></table>
+这条指令允许你自定义游戏开始时的视角。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#606060"><b>Route.DeveloperID</b></font></td></tr></table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+该命令只被BVETs2/4使用，且已经过时。OpenBVE自动忽略这条指令。
+</font></td></tr></table>
+
+<br /><a name="train" />
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<font size="+1" color="#0080FF">■ 6. Train（列车）命名空间</font><hr />
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+这个命名空间里的指令指定线路使用的列车。<br /><br /><hr />
+<table border="0"><tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000">Train.Folder <em>文件夹名</em><br />
+Train.File <em>文件夹名</em></font></td></tr></table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>文件夹名</em></b>：这条线路要使用的列车的文件夹名。
+</font></td></tr></table>
+<hr />
+<br /><table border="0"><tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Train.Run</b>(<em>轨道类型编号</em>)<font color="gray">.Set</font> <em>走行音编号</em><br />
+<b>Train.Rail</b>(<em>轨道类型编号</em>)<font color="gray">.Set</font> <em>走行音编号</em></font></td></tr></table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>轨道类型编号</em></b>：一个非负整数，代表一个轨道类型。这通过Structure.Rail设定，通过Track.RailType使用。<br />
+<b><em>走行音编号</em></b>：一个非负整数，代表这个轨道类型使用的列车走行音。
+</font></td></tr></table>
+列车开发者会为他的列车设定一些在特定轨道种类上的运行时的声音。使用这条指令来为你的轨道类型分配列车走行音。由于走行音编号是由列车开发者随意指定的，你需要和列车开发者合作协调，来确保你为正确的轨道类型使用相应的走行音。这里有一个<a href="information_standards.html">编号标准</a>，但使用得并不很广泛。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Train.Flange</b>(<em>轨道类型编号</em>)<font color="gray">.Set</font> <em>轮缘摩擦声编号</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>轨道类型编号</em></b>：一个非负整数，代表一个轨道类型。这通过Structure.Rail设定，通过Track.RailType使用。<br />
+<b><em>轮缘摩擦声编号</em></b>：一个非负整数，代表这个轨道类型使用的轮缘摩擦声。
+</font></td></tr></table>
+列车开发者会为他的列车设定一些在特定轨道种类上的轮缘摩擦声。使用这条指令来为你的轨道类型分配轮缘摩擦声。由于轮缘摩擦声编号是由列车开发者随意指定的，你需要和列车开发者合作协调，来确保你为正确的轨道类型使用相应的轮缘摩擦声。这里有一个<a href="information_standards.html">编号标准</a>，但使用得并不很广泛。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Train.Timetable</b>(<em>时刻表编号</em>)<b>.Day</b><font color="gray">.Load</font> 文件名</font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>时刻表编号</em></b>：一个非负整数，代表这个时刻表图片的编号。<br />
+<b><em>文件名</em></b>：时刻表图片被照亮的一版的文件名，路径应相对于列车文件夹（首先考虑），或相对于Objects文件夹（随后考虑）。
+</font></td></tr></table>
+用这条指令来加载被照亮的时刻表图片。使用Track.Sta命令可以指定在哪站使用哪张时刻表图片。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Train.Timetable</b>(<em>时刻表编号</em>)<b>.Night</b><font color="gray">.Load</font> 文件名</font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>时刻表编号</em></b>：一个非负整数，代表这个时刻表图片的编号。<br />
+<b><em>文件名</em></b>：时刻表图片暗光照下的一版的文件名，路径应相对于列车文件夹（首先考虑），或相对于Objects文件夹（随后考虑）。
+</font></td></tr></table>
+用这条指令来加载暗光照下的时刻表图片。使用Track.Sta命令可以指定在哪站使用哪张时刻表图片。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Train.Gauge</b> <em>毫米数值</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>毫米数值</em></b>：一个浮点数，代表轨道的轨距。单位是<b>毫米</b>（0.001m,0.1cm）。默认值是1435（标准轨）。
+</font></td></tr></table>
+<table bgcolor="#E0E0E0" style="border:0px none;margin-left:20pt;margin-right:10pt;">
+<tr><td><font color="#C00000">☀</font></td><td><em>Note:&nbsp;</em></td></tr>
+<tr><td /><td><font color="#0060C0">Train.Gauge和Route.Gauge作用相同。</font></td></tr>
+</table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Train.Interval</b> <em>间隔<sub>0</sub></em>; <em>间隔<sub>1</sub></em>; ...; <em>间隔<sub>n-1</sub></em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>间隔<sub>i</sub></em></b>：一个浮点数，指定一辆AI列车从第一站的发车时间和玩家操作的列车的时间差。单位是<b>秒</b>。正数使AI列车在玩家之前发车，负数使AI列车在玩家之后发车。
+</font></td></tr></table>
+请参见Route.RunInterval，作用相同。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Train.Velocity</b> <font color="blue"><em>速度</em></font></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><font color="blue"><em>速度</em></font></b>：该指令可以进一步给AI车设置限速。设定为0表示不给AI车设定额外限速。默认值是0。
+</font></td></tr></table>
+该指令设定的是额外限速，具体限速仍然受Track.Limit限制。玩家驾驶的列车不受影响，仍然可以一直加速到Track.Limit。<br /><br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#606060"><b>Train.Acceleration</b></font></td></tr></table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+该指令已过时。OpenBVE自动忽略这条指令。
+</font></td></tr></table>
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#606060"><b>Train.Station</b></font></td></tr></table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+该指令已过时。OpenBVE自动忽略这条指令。
+</font></td></tr></table>
+<br /><br /><a name="structure" />
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<font size="+1" color="#0080FF">■ 7. Structure (结构) 命名空间</font><hr />
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+这个命名空间里的指令用来载入在后面的其他指令中要用到的物体模型。总体来说，像Track.Rail、Track.FreeObj之类的命令通过<em>结构编号</em>来指定要使用的物体。这个<em>结构编号</em>对于这个指令是特定的，所以你可以先载入要使用的模型。你要使用哪个指令，要使用哪个模型，就把它们载入，不需要的就不用载入。<br /><br />这个命名空间中的指令基本上都是以下这个结构：<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Structure.<em>类型</em>(<em>结构编号</em>)</b><font color="gray">.Load</font> <em>文件名</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+
+</font></td></tr></table>
+<em>结构编号</em>是一个非负整数。<em>文件名</em>是一个相对于<b>Object</b>文件夹的路径，指向要加载的模型文件。<em>类型</em>是以下几种之一：<br /><br />
+<table style="border-collapse: collapse;">
+<tr><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;"><em>类型</em>:</th><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">简介</th></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">Ground</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">用于Cycle.Ground和Track.Ground的地面模型。</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">Rail</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">用于Track.Rail、Track.RailStart和Track.RailType的轨道模型。</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">WallL</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">用于Track.Wall指令的左侧墙壁模型。</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">WallR</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">用于Track.Wall指令的右侧墙壁模型。</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">DikeL</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">用于Track.Dike指令的左侧路堤模型。</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">DikeR</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">用于Track.Dike指令的右侧路堤模型。</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">FormL</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">用于Track.Form指令的站台左边缘地面模型。</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">FormR</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">用于Track.Form指令的站台右边缘地面模型。</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">FormCL</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">用于Track.Form指令的可以被变换拉伸的站台左边缘地面模型。<font color="red">不支持ANIMATED格式带动画物体。</font></td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">FormCR</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">用于Track.Form指令的可以被变换拉伸的站台右边缘地面模型。<font color="red">不支持ANIMATED格式带动画物体。</font></td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">RoofL</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">用于Track.Form指令的站台左边缘顶棚模型。</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">RoofR</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">用于Track.Form指令的站台右边缘顶棚模型。</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">RoofCL</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">用于Track.Form指令的可以被变换拉伸的站台左边缘地面模型。 <font color="red">不支持ANIMATED格式带动画物体。</font></td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">RoofCR</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">用于Track.Form指令的可以被变换拉伸的站台右边缘地面模型。 <font color="red">不支持ANIMATED格式带动画物体。</font></td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">CrackL</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">用于Track.Crack指令的填充轨道间间隙的可以被变换拉伸的左侧地面模型。<font color="red">不支持ANIMATED格式带动画物体。</font></td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">CrackR</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">用于Track.Crack指令的填充轨道间间隙的可以被变换拉伸的右侧地面模型。 <font color="red">不支持ANIMATED格式带动画物体。</font></td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">FreeObj</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">用于Track.FreeObj指令在轨道旁放置的外景物体模型。</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">Beacon</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">用于Track.Beacon指令的轨旁无线电应答器模型。</td></tr>
+</table><br />
+这些指令可以加载B3D、CSV、X、L3DOBJ、S、OBJ和ANIMATED格式的模型。但是由于包含变换拉伸，FormCL、FormCR、RoofCL、RoofCR、CrackL和CrackR指令都不支持ANIMATED格式的模型。<br />➟ <a href="route_formroofcrack.html">点击此处查看关于这些指令的更详尽说明。</a><br />
+<br />还有一个特殊的Structure.Pole指令，用法稍有不同：<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Structure.Pole(<em>额外轨道跨度值</em>; <em>架线柱模型编号</em>)</b><font color="gray">.Load</font> <em>文件名</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+	<b><em>额外轨道跨度值</em></b>：一个非负整数，代表这个架线柱模型跨过的<b>额外</b>轨道数量。0代表跨度为1组轨道的架线柱，1代表2组轨道，以此类推。<br />
+<b><em>架线柱模型编号</em></b>：一个非负整数，代表要加载到的模型编号。<br />
+<b><em>文件名</em></b>：一个相对于<b>Object</b>文件夹的路径，指向要加载的模型文件。
+</font></td></tr></table>
+<br />特别提示：除FreeObj之外的物体都是在区间块的开始位置被放置的，因此这些模型在建模时尺寸应当保证整个物体头尾的Z坐标伸展区域（放置时朝轨道前方的方向即Z轴正方向）在0~区间块长度（默认值为25m）之间（这样保证正好盖住整个区间块，否则出现空隙或相互重叠）。在Track命名空间中对应命令处有更详细的解释。<br /><br />
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<font size="+1" color="#0080FF">■ 8. Texture（材质）命名空间</font><hr />
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+这个命名空间中的指令指定要使用的天空背景图像和它对齐的方式。<br /><br /><img src="../Images/illustration_background.png" alt="" />
+<br />背景图片被贴在一个环绕着游戏主视角摄像机的圆柱形墙上，从相对于初始前视角方向左偏60°（即十点钟方向）开始，将指定的这张图片重复平铺到Texture.Background(<em>背景材质编号</em>).X指令指定的次数（默认为一圈重复六次）。<br /><br />图片的上方四分之三显示在地平面之上，下方四分之一显示在地平面之下。 通过Texture.Background(<em>背景材质编号</em>).Aspect指令，你可以选择圆柱体的高度是固定的还是根据图片宽高比自动适应的。如果选择固定高度，圆柱体的高度将是其半径的二分之一，即图片上边缘位于20°视角，下边缘位于-7°视角。如果选择保持图片宽高比，这就不但计算图片宽度和高度，还将参考重复次数计算圆柱高度。<br /><br />不论你要重复几次，你都要保证你传入的这张图片在重复时左右边缘可以完美贴合。圆柱的顶面和底面材质是按照图片最上方和最下方的十分之一来计算决定的。由于这个天空盒圆柱大小有限，你在制作高山或其他极高地形时需要注意不要让它们扎穿出这个天空盒。<br /><br />除非主轨道位置开头的Track.Back指令应用了一张不同的背景图，Texture.Background(0)的图像会在线路的开头被默认使用。<br /><br />
+你也可以使用<b><em>动态或基于模型的</em></b>背景。这个页面详细描述了如何使用这一功能：<br>
+<a href="route_dynamicbackground.html" target="main">动态和基于模型的背景</a></p><hr />
+
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Texture.Background(<em>背景材质编号</em>)</b><font color="gray">.Load</font> <em>文件名</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>文件名</em></b>：一个相对于<b>Object</b>文件夹的路径，指向要加载的模型文件或动态XML配置文件。
+</font></td></tr></table>
+这条指令加载用于Track.Back指令的背景图像。<br />
+<br><b>注意：</b>如果要使用动态或基于模型的背景，请把它指向你需要的XML配置文件。<br><br />
+<hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Texture.Background(<em>背景材质编号</em>).X</b> <em>重复次数</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>重复次数</em></b>：这张图像一圈中重复的次数。默认值是6。
+</font></td></tr></table>
+<br><b>注意：</b>如果使用动态或基于模型的背景，这项设置将没有用也不会起任何作用。<br>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Texture.Background(<em>背景材质编号</em>).Aspect</b> <em>模式</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>模式</em></b>：宽高比的处理模式。默认值是0。
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ <em>模式</em>的可选项：</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>0</b>：使用固定高度。<br />
+<b>1</b>：保留宽高比。
+</font></td></tr></table>
+<br><b>注意：</b>如果使用动态或基于模型的背景，这项设置将没有用也不会起任何作用。<br>
+<br /><a name="cycle" />
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<font size="+1" color="#0080FF">■ 9. Cycle（循环）命名空间</font><hr />
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Cycle.Ground(<em>地面模型编号</em>)<font color="gray">.Params</font> <em>地面模型编号<sub>0</sub></em>; <em>地面模型编号<sub>1</sub></em>; <em>地面模型编号<sub>2</sub></em>; ...; <em>地面模型编号<sub>n-1</sub></em></b></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>地面模型编号</em></b>：一个非负整数，指定哪一个地面模型编号要被定义为循环的。<br />
+<b><em>地面模型编号<sub>i</sub></em></b>：一个非负整数，表示一个先前已经被加载的地面模型是循环的一部分。
+</font></td></tr></table>
+当平常使用Track.Ground(<em>地面模型编号</em>)指令时，选定的模型每个区间块都被重复一次。但是通过Cycle.Ground指令，你可以把它改成几个不同模型循环出现。这个循环无限重复，<em>地面模型编号<sub>0</sub></em>从主轨道位置0开始。从技术角度来说，对于一个特定的主轨道位置<em>p</em>计算出的<em>地面模型编号<sub>i</sub></em>中的<em>i</em>是<tt>Mod[<em>p</em>/区间块长度, <em>n</em>]</tt>（P ÷ 区间块长度 Mod n）。<br /><br /><table>
+
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Cycle.Rail(<em>轨道模型编号</em>)<font color="gray">.Params</font> <em>轨道模型编号<sub>0</sub></em>; <em>轨道模型编号<sub>1</sub></em>; <em>轨道模型编号<sub>2</sub></em>; ...; <em>轨道模型编号<sub>n-1</sub></em></b></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>轨道模型编号</em></b>：一个非负整数，指定哪一个轨道模型编号要被定义为循环的。<br />
+<b><em>轨道模型编号<sub>i</sub></em></b>：一个非负整数，表示一个先前已经被加载的轨道模型是循环的一部分。
+</font></td></tr></table>
+当平常使用Track.RailType(<em>轨道模型编号</em>)指令时，选定的模型每个区间块都被重复一次。但是通过Cycle.Rail，你可以把它改成几个不同模型循环出现。这个循环无限重复，<em>轨道模型编号<sub>0</sub></em>从主轨道位置0开始。从技术角度来说，对于一个特定的主轨道位置<em>p</em>计算出的<em>轨道模型编号<sub>i</sub></em>中的<em>i</em>是<tt>Mod[<em>p</em>/区间块长度, <em>n</em>]</tt>（P ÷ 区间块长度 Mod n）。<br /><br /><table>
+
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em></em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>With Structure<br />
+.Ground(0) grass.csv<br />
+.Ground(1) river.csv<br />
+.Ground(2) asphalt.csv</tt></td>
+</tr>
+</table>
+<br />在这一结构定义下，以下两段示例代码作用相同：<br /><table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em></em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>With Track<br />
+0, .Ground 0<br />
+25, .Ground 1<br />
+50, .Ground 2<br />
+75, .Ground 0<br />
+100, .Ground 1<br />
+125, .Ground 2<br />
+; 以此类推……</tt></td>
+</tr>
+</table>
+<table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em></em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>With Cycle<br />
+.Ground(0) 0; 1; 2<br />
+With Track<br />
+0, .Ground 0</tt></td>
+</tr>
+</table>
+<br /><a name="signal" />
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<font size="+1" color="#0080FF">■ 10. Signal（信号）命名空间</font><hr />
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+这个命名空间内的指令用来加载自定义信号机。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Signal(</b><em>信号机编号</em><b>)</b><font color="gray">.Load</font> <em>ANIMATED动画模型文件</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>信号机编号</em></b>：一个非负整数，代表这类信号机的编号。<br />
+<b><em>ANIMATED动画模型文件</em></b>：一个相对于<b>Object</b>文件夹的路径，指向要加载的ANIMATED动画模型文件。
+</font></td></tr></table>
+用这条指令来直接加在一个动画模型文件作为信号机。<em>信号机编号</em>可以在使用Track.SigF命令放置这类信号机时使用。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Signal(</b><em>信号机编号</em><b>)</b><font color="gray">.Load</font> <em>不带扩展名的基座模型文件</em>; <em>不带扩展名的发光模型文件</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>信号机编号</em></b>：一个非负整数，代表这类信号机的编号。<br />
+<b><em>不带扩展名的基座模型文件</em></b>：一个相对于<b>Object</b>文件夹的路径，指向要加载的基座B3D/CSV/……模型文件（不带扩展名）。<b>必须指定。</b><br />
+<b><em>不带扩展名的发光模型文件</em></b>：一个相对于<b>Object</b>文件夹的路径，指向要加载的发光B3D/CSV/……模型文件（不带扩展名）。如果不需要发光效果，可以不指定。
+</font></td></tr></table>
+这条指令加载的信号机切换是通过给同一个模型糊上不同的材质实现的。openBVE按顺序搜索X、CSV、B3D……模型。材质的名字需要是“[模型名字不带扩展名]+[状态编号]+.[扩展名]”这样一个格式。<em>信号机编号</em>可以在使用Track.SigF命令放置这类信号机时使用。<br /><br />举个例子来说，对于<em>不带扩展名的基座模型文件</em>，应该有大概这样的一些文件：<br /><br /><em>基座模型文件</em><b>.csv</b><br /><em>基座模型文件</em><b><font color="red">0</font>.bmp</b><br /><em>基座模型文件</em><b><font color="red">1</font>.bmp</b><br /><em>基座模型文件</em><b><font color="red">2</font>.bmp</b><br /><em>基座模型文件</em><b><font color="red"><em>n</em></font>.bmp</b><br /><br />从0到<em>n</em>的这一串状态表示中，数值越大表示前方空闲区间越多，允许速度越快。0代表红灯。举个例子来说，内置的信号机是这样规定的：0 (<font color="#C00000">●</font>), 1 (<font color="#FFC000">●●</font>), 2 (<font color="#FFC000">●</font>), 3 (<font color="#00C000">●</font><font color="#FFC000">●</font>), 4 (<font color="#00C000">●</font>) 还有 5 (<font color="#00C000">●●</font>)。你可以按照你那条线路信号系统的实际情况增减设置。<br /><br />文件里的材质指定指令会被忽略，所有面都会被糊上这个同样的状态材质。这表示你不能在这个模型里使用一个以上的材质文件（你甚至都不能指定），你只要正确地设置材质顶点坐标即可。对于发光模型也是一样的规则。发光模型一般来说是放在信号机前面的一个大方块（虽说你也可以用其他的形状，但是由于一般大家都使用透明材质，所以这并没有什么用）。<br /><br />发光模型材质的处理方法真的值得特别注意。发光模型材质是按照以下的步骤预处理的：<br /><br />
+<table style="border-collapse: collapse;">
+<tr><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">A</th><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">B</th><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">C</th><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">D</th><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">E</th><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">F</th></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><img src="../Images/illustration_glow_1.png" alt="" /></td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><img src="../Images/illustration_glow_2.png" alt="" /></td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><img src="../Images/illustration_glow_3.png" alt="" /></td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><img src="../Images/illustration_glow_4.png" alt="" /></td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><img src="../Images/illustration_glow_5.png" alt="" /></td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><img src="../Images/illustration_glow_6.png" alt="" /></td></tr>
+</table><br />
+你用作发光材质的图像一般来说应该是椭圆的并且应该有一个锐利的边缘。图形的中心应该完全饱和，并在其外缘加入纯白色。图形的外边既可以是纯黑 (A) 也可以是纯白 (B)。<br /><br />当openBVE加载这个发光材质时，它会把所有纯黑颜色都换成纯白颜色，变成 (B) 的样子。之后，图像会被反色 (C)，然后进行180°的色调偏移 (D) 。比起 (B) 来说，这使整幅图像的亮度反转，即满饱和的颜色不会被改变（例如中心），亮颜色（例如图形外框）将会变暗，反之亦然。然后，将会进行亮度校正使暗部更暗 (E)，最后再稍稍加上一点模糊效果 (F)。<br /><br />结果所得到的材质是被相加混合的。这意味着不是直接在屏幕上绘制材质，而是将材质的像素加上屏幕像素。加上黑色不会改变原有颜色，而加上完全饱和的颜色就会覆盖原有颜色。例如，加上白色就会得到白色。在设计材质时，请牢记这个处理过程，并遵循它的逆规则。一定要设计出 (A) 或 (B) 这样的图像。<br /><br /><a name="track" />
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<font size="+1" color="#0080FF">■ 11. Track（轨道）命名空间</font><hr />
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+这个命名空间中的指令定义了轨道的布局。这个命名空间内的指令应该出现在所有其他指令之后，一般位于线路文件的最后部分。<br /><table><tr style="height: 4px;"><td /></tr></table>
+<table style="border:1px dashed;margin-left:20pt;margin-right:20pt;">
+<tr><td bgcolor="#FFE080" style="border:2px; border-style:ridge;"><font color="#404040">
+<b>ⓘ</b> 使用主轨道位置
+</font></td></tr><tr><td bgcolor="#FFFFFF">
+Track命名空间内的所有指令都需要和一个主轨道位置联系起来，这表示该指令执行的位置。一旦出现一个主轨道位置表达式，它后面的Track指令都会在这个位置执行，直到一个新的主轨道位置表达式指定一个新的位置。在主轨道位置表达式出现前写出的Track指令默认会在0位置执行。由于指令会被自动地排序和执行，所以你并不一定需要把主轨道位置按照固定顺序写（虽然按照顺序写可以使结构更加清晰）。虽然主轨道位置可以是任意非负浮点数，有一些指令是<b>只可以在区间块开始位置（默认为25m的整倍数位置）</b>被使用的。默认情况下这意味着它们必须被放在0、25、50、75、100、125、以此类推的位置上。下面有这个特别限制的指令都会被标注出来。
+</td></tr></table>
+<table><tr style="height: 4px;"><td /></tr></table>
+<br /><a name="track_rails" />
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<font color="#0080FF">● 11.1. 轨道</font>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+<table><tr style="height: 2px;"><td /></tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.RailStart</b> <em>轨道编号</em>; <font color="green"><em>X</em></font>; <font color="green"><em>Y</em></font>; <em>轨道类型</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>轨道编号</em></b>：一个非负整数(<b>≥1</b>)表示这个编号的轨道从这里开始。<br />
+<b><font color="green"><em>X</em></font></b>：一个浮点数，表示这条轨道和主轨道之间的水平距离。<b>默认的</b>单位是<b>米</b>。正值代表向右偏移，负值代表向左偏移。<br />
+<b><font color="green"><em>Y</em></font></b>：一个浮点数，表示这条轨道和主轨道之间的垂直距离。<b>默认的</b>单位是<b>米</b>。正值代表向上偏移，负值代表向下偏移。<br />
+<b><em>轨道类型</em></b>：一个非负整数，表示一个由Structure.Rail或Structure.Cycle指令先前已经载入的模型编号。
+</font></td></tr></table>
+这条指令开始一条由<em>轨道编号</em>代表的新轨道。当使用这条指令时，<em>轨道编号</em>必须是没有被占用的（没有使用过或已经被Track.RailEnd指令声明结束）。<em>X</em>和<em>Y</em>的默认值是0，除非这个编号已被占用（你不应该这样做）的情况下维持这条轨道上次的原值。这条指令只用于<b>开始</b>轨道。如果你要更新它的位置，你需要使用Track.Rail指令。如果你需要结束它，使用Track.RailEnd指令。 在同一位置先终止一条轨道再开始同样编号的新轨道是允许的。每个区间块中都会根据<em>轨道类型</em>自动放置一个对应的轨道模型。<br /><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">该指令只能在区间块开始位置使用。</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Rail</b> <em>轨道编号</em>; <font color="green"><em>X</em></font>; <font color="green"><em>Y</em></font>; <em>轨道类型</em></font></td></t><strong>r</strong>></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>轨道编号</em></b>：一个非负整数(<b>≥1</b>)表示这个编号的轨道要被修改。<br />
+<b><font color="green"><em>X</em></font></b>：一个浮点数，表示这条轨道和主轨道之间的水平距离。<b>默认的</b>单位是<b>米</b>。正值代表向右偏移，负值代表向左偏移。<br />
+<b><font color="green"><em>Y</em></font></b>：一个浮点数，表示这条轨道和主轨道之间的垂直距离。<b>默认的</b>单位是<b>米</b>。正值代表向上偏移，负值代表向下偏移。<br />
+<b><em>轨道类型</em></b>：一个非负整数，表示一个由Structure.Rail或Structure.Cycle指令先前已经载入的模型编号。
+</font></td></tr></table>
+这条指令开始一条轨道或更新一条轨道的位置或类型。<em>轨道编号</em>代表要执行操作的轨道。<em>X</em>和<em>Y</em>的默认值是0，在该轨道已存在的情况下维持这条轨道上次的原值。如果你需要结束它，使用Track.RailEnd指令。在同一位置先终止一条轨道再开始同样编号的新轨道是允许的。在每一个区间块中，如果没有Track.Rail指令执行更新，<em>X</em>和<em>Y</em>值都会保持上一个区间块的同样值。所以，更新<em>X</em>或<em>Y</em>值只会影响前面的轨道位置。改变<em>轨道类型</em>将会改变从指令生效位置开始的轨道类型。如果你试图在同一位置反复对同一条轨道进行多次修改，只有第一条指令会起作用，之后的将会被全部忽略。<br /><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">该指令只能在区间块开始位置使用。</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<table style="border:1px dashed;margin-left:20pt;margin-right:20pt;">
+<tr><td bgcolor="#FFE080" style="border:2px; border-style:ridge;"><font color="#404040">
+<b>ⓘ</b> 对比Track.RailStart和Track.Rail
+</font></td></tr><tr><td bgcolor="#FFFFFF">
+这两个都可以用来开始一条轨道。但是当使用Track.RailStart时，openBVE将会检查这个编号是否已被占用。所以，使用Track.RailStart来开始轨道是更为明确的，且可以避免由于失误造成的bug。
+</td></tr></table>
+<table><tr style="height: 4px;"><td /></tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.RailType</b> <em>轨道编号</em>; <em>RailType</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>轨道编号</em></b>：要进行改变的轨道编号。主轨道编号为<b>0</b>。默认值是0.<br />
+<b><em>轨道类型</em></b>：一个非负整数，表示一个由Structure.Rail或Structure.Cycle指令先前已经载入的模型编号。默认值是0。
+</font></td></tr></table>
+这条指令改变由<em>轨道编号</em>代表的一条已存在轨道的类型。该轨道必须已经被Track.RailStart或Track.Rail指令创建且还没有被Track.RailEnd指令结束。<em>轨道类型</em>的更改将从这条指令生效时的轨道位置开始。<br /><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">该指令只能在区间块开始位置使用。</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.RailEnd</b> <em>轨道编号</em>; <font color="green"><em>X</em></font>; <font color="green"><em>Y</em></font></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>轨道编号</em></b>：一个非负整数(<b>≥1</b>)表示这个编号的轨道要被结束。<br />
+<b><font color="green"><em>X</em></font></b>：一个浮点数，表示这条轨道和主轨道之间的水平距离。<b>默认的</b>单位是<b>米</b>。正值代表向右偏移，负值代表向左偏移。<br />
+<b><font color="green"><em>Y</em></font></b>：一个浮点数，表示这条轨道和主轨道之间的垂直距离。<b>默认的</b>单位是<b>米</b>。正值代表向上偏移，负值代表向下偏移。<br />
+</font></td></tr></table>
+这条指令结束由<em>轨道编号</em>代表的一条已存在轨道。<em>X</em>和<em>Y</em>的默认值是这条轨道上次的原值。一旦该指令执行，这条轨道就会在这一点结束，并在之后视为不再存在。轨道模型不会再继续被放置。<br /><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">该指令只能在区间块开始位置使用。</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<br /><table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em>Track.RailStart、Track.Rail、Track.RailType和Track.RailEnd的使用实例</em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>With Track<br />
+1000, .RailStart 1; 3.8; 0.0; 0<br />
+1025, .RailType 1; 1<br />
+1050, .Rail 1; 1.9; 0.0; 0<br />
+1075, .RailEnd 1</tt></td>
+</tr>
+</table>
+在这个例子中：1号轨道在1000米位置位于主轨道右侧3.8米处开始，使用类型0（这个线路中加载为直线轨道）；在1025米处轨道模型被换为1（加载的一个向左的S型曲线，让它在25米内左偏1.9米，以和下面轨道位置的改变正好对接）；在1050米处轨道被内移至主轨道右侧1.9米处，正好和先前的S型曲线对上，并重新换回直道类型；轨道在1075米处终止，并且在终止时仍旧在主轨道右侧1.9米处。<br /><br />
+<hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Accuracy</b> <em>精度系数</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>精度系数</em></b>：一个非负浮点数，表示轨道的精度（质量、平稳度）。默认值是2.
+</font></td></tr></table>
+这条指令设定之后轨道的精度。精度系数需要在0~4之间，超出这个范围的数会被截取到0或4两个值。0代表理想的轨道（没有任何不平），1代表很好的轨道（高速铁路标准），2代表较好的轨道，3代表一般的轨道，4代表较差的轨道。<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Adhesion</b> <em>附着系数</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>附着系数</em></b>：一个非负整数，代表轨道的附着系数（数值越大，能产生越大的静摩擦力，车轮越不易打滑），单位是%。默认值是100。
+</font></td></tr></table>
+这条指令设定之后轨道的附着系数。作为参考，干燥轨面大约是135，湿滑轨面大约是70，降雪轨面大约是50。如果附着系数是0，意味着轨面完全理想光滑，列车车轮将一直打滑，根本不可能移动。<br /><br /><a name="track_geometry" />
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<font color="#0080FF">● 11.2. 几何变换</font>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+<table><tr style="height: 2px;"><td /></tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Pitch</b> <em>坡度</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>坡度</em></b>：一个浮点数，单位是‰，代表轨道的坡度。默认值是0。
+</font></td></tr></table>
+这条命令改变之后<b>所有</b>轨道的坡度。正值代表上坡，负值代表下坡。0代表平路。<em>坡度</em>可以根据在<em>水平距离</em>米内上升（下降为负）<em>垂直高度</em>米来计算：<br /><table>
+<tr>
+<td width="16" valign="top">ƒ</td><td bgcolor="#FFD8C0" style="border:1px dotted;">
+<tt><em>坡度</em> = 1000 * <em>垂直高度</em> / <em>水平距离</em></tt></td>
+</tr>
+</table>
+<table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">该指令只能在区间块开始位置使用。</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Curve</b> <font color="green"><em>半径</em></font>; <em>超高</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><font color="green"><em>半径</em></font></b>：一个浮点数，表示转弯的半径。<b>默认的</b>单位是<b>米</b>。默认值是0。<br />
+<b><em>超高</em></b>：一个浮点数，代表弯道的超高（外侧轨道比内侧轨道高出的高度，用来平衡离心力），单位<b>只有</b><b>毫米</b>（千分之一米）。默认值是0。另参见Options.CantBehavior。
+</font></td></tr></table>
+这条指令使所有轨道从这一位置开始转弯，并指定转弯的半径。正半径代表向右转弯，负半径代表向左转弯。0代表直道。<em>超高</em>以毫米指定弯道的超高。对于该数值正负值的含义，请参见Options.CantBehavior。<br /><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">该指令只能在区间块开始位置使用。</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Turn</b> <em>斜率</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>斜率</em></b>：一个浮点数，表示弯折的斜率。
+</font></td></tr></table>
+这条指令使轨道在指令插入位置做一个弯折。<em>斜率</em>可以根据在<em>纵向距离</em>米内右折（左折为负）<em>横向距离</em>米来计算：<br /><table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em></em></font>
+</td></tr><tr>
+<td width="16" valign="top">ƒ</td><td bgcolor="#FFD8C0" style="border:1px dotted;">
+<tt><em>斜率</em> = <em>纵向距离</em> / <em>横向距离</em></tt></td>
+</tr>
+</table>
+正值代表右折，负值代表左折，0代表直道。<br /><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">该指令只能在区间块开始位置使用。</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">在创建弯道方面，该指令不仅难用，而且早已过时。请使用Track.Curve。</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Height</b> <font color="green"><em>Y</em></font></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><font color="green"><em>离地高度</em></font></b>：一个浮点数，表示主轨道在距离地面的高度。<b>默认的</b>单位是<em>米</em>。
+</font></td></tr></table>
+这条指令告诉游戏在特定位置地面应当距离主轨道下方的距离。它影响通过Structure.Ground和Track.Ground载入和选定的地面模型的放置位置。在相邻的Track.Height之间，高度值被平滑细分以使地面过渡平滑。 例如，以下两端代码是等效的：<br /><table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em>Track.Height以25m为区间块长度平滑细分的例子：</em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>1000, Track.Height 1<br />
+1075, Track.Height 4</tt></td>
+</tr>
+</table>
+<table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em>每25m设定一次Track.Height效果相同：</em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>1000, Track.Height 1<br />
+1025, Track.Height 2<br />
+1050, Track.Height 3<br />
+1075, Track.Height 4</tt></td>
+</tr>
+</table>
+<table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">该指令只能在区间块开始位置使用。</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<br /><a name="track_objects" />
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<font color="#0080FF">● 11.3. Objects</font>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+<table><tr style="height: 2px;"><td /></tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.FreeObj</b> <em>轨道编号</em>; <em>FreeObjStructure编号</em>; <font color="green"><em>X</em></font>; <font color="green"><em>Y</em></font>; <em>Yaw</em>; <em>Pitch</em>; <em>Roll</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>轨道编号</em></b>: A non-negative integer representing the rail on which to place the object. The default value is 0.<br />
+<b><em>FreeObjStructure编号</em></b>: A non-negative integer representing the object to place as defined via Structure.FreeObj. The default value is 0.<br />
+<b><font color="green"><em>X</em></font></b>: The x-offset from the (straight) rail, <b>by default</b> measured in <b>meters</b>. Negative values represent the left, positive ones the right. The default value is 0.<br />
+<b><font color="green"><em>Y</em></font></b>: The y-offset from the (straight) rail, <b>by default</b> measured in <b>meters</b>. Negative values represent below the top of the rails, positive ones above. The default value is 0.<br />
+<b><em>Yaw</em></b>: The angle in degrees by which the object is rotated in the XZ-plane in clock-wise order when viewed from above. The default value is 0.<br />
+<b><em>Pitch</em></b>: The angle in degrees by which the object is rotated in the YZ-plane in clock-wise order when viewed from the left. The default value is 0.<br />
+<b><em>Roll</em></b>: The angle in degrees by which the object is rotated in the XY-plane in clock-wise order when viewed from behind. The default value is 0.
+</font></td></tr></table>
+This places a "free" object a single time on a specified rail. The object must have been loaded via Structure.FreeObj(<em>FreeObjStructure编号</em>) prior to using this command.<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Wall</b> <em>轨道编号</em>; <em>Direction</em>; <em>WallStructure编号</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>轨道编号</em></b>: A non-negative integer representing the rail on which to start or update the wall. The default value is 0.<br />
+<b><em>Direction</em></b>: An integer indicating which wall to use as described below.<br />
+<b><em>WallStructure编号</em></b>: A non-negative integer representing the object to place as defined via Structure.WallL and Structure.WallR. The default value is 0.
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Options for <em>Direction</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>-1</b>: The WallL object (left wall) is used.<br />
+<b>0</b>: Both the WallL and WallR objects are used.<br />
+<b>1</b>: The WallR object (right wall) is used.
+</font></td></tr></table>
+This starts or updates a wall on a specified rail. The object must have been loaded via Structure.WallL(<em>WallObject编号</em>) or Structure.WallR(<em>WallObject编号</em>) prior to using this command. The walls are placed at the beginning of every block until a corresponding Track.WallEnd ends the wall for this rail. Please note that walls are resurrected if a rail is ended via Track.RailEnd and then started again via Track.RailStart or Track.Rail unless the wall was also ended via Track.WallEnd.<br /><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">This command can only be used at the beginning of a block.</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.WallEnd</b> <em>轨道编号</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>轨道编号</em></b>: A non-negative integer representing the rail on which to end an existing wall.
+</font></td></tr></table>
+This ends an existing wall that was previously started via Track.Wall on a specified rail. The wall is not placed for the block in which this command is used.<br /><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">This command can only be used at the beginning of a block.</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Dike</b> <em>轨道编号</em>; <em>Direction</em>; <em>DikeStructure编号</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>轨道编号</em></b>: A non-negative integer representing the rail on which to start or update the dike. The default value is 0.<br />
+<b><em>Direction</em></b>: An integer indicating which dike to use as described below.<br />
+<b><em>DikeStructure编号</em></b>: A non-negative integer representing the object to place as defined via Structure.DikeL and Structure.DikeR. The default value is 0.
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Options for <em>Direction</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>-1</b>: The DikeL object (left dike) is used.<br />
+<b>0</b>: Both the DikeL and DikeR objects are used.<br />
+<b>1</b>: The DikeR object (right dike) is used.
+</font></td></tr></table>
+This starts or updates a dike on a specified rail. The object must have been loaded via Structure.DikeL(<em>DikeObject编号</em>) or Structure.DikeR(<em>DikeObject编号</em>) prior to using this command. The dikes are placed at the beginning of every block until a corresponding Track.DikeEnd ends the dike for this rail. Please note that dikes are resurrected if a rail is ended via Track.RailEnd and then started again via Track.RailStart or Track.Rail unless the dike was also ended via Track.DikeEnd.<br /><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">This command can only be used at the beginning of a block.</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.DikeEnd</b> <em>轨道编号</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>轨道编号</em></b>: A non-negative integer representing the rail on which to end an existing dike.
+</font></td></tr></table>
+This ends an existing dike that was previously started via Track.Dike on a specified rail. The dike is not placed for the block in which this command is used.<br /><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">This command can only be used at the beginning of a block.</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Pole</b> <em>轨道编号</em>; <em>NumberOfAdditionalRails</em>; <em>Location</em>; <font color="green"><em>Interval</em></font>; <em>PoleStructure编号</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>轨道编号</em></b>: A non-negative integer representing the rail on which to start or update the pole. The default value is 0.<br />
+<b><em>NumberOfAdditionalRails</em></b>: A non-negative integer representing the amount of additional rails covered by this pole (i.e. this rail, plus <em>NumberOfAdditionalRails</em> rails). The default value is 0.<br />
+<b><em>Location</em></b>: If <em>NumberOfAdditionalRails</em> is 0, the side on which the pole is placed (see below), or the x-offset in multiples of 3.8 meters if <em>NumberOfAdditionalRails</em> is at least 1. The default value is 0.<br />
+<b><em>Interval</em></b>: An integer multiple of the block length specifying the interval in which poles are placed.<br />
+<b><em>PoleStructure编号</em></b>: A non-negative integer representing the object to place as defined via Structure.Pole. The default value is 0.
+</font></td></tr></table>
+This starts or updates a pole on a specified rail. The object must have been loaded via Structure.Pole(<em>NumberOfAdditionalRails</em>; <em>PoleStructure编号</em>) prior to using this command. The poles are placed at the beginning of every block whose track positions are an integer multiple of the <em>Interval</em> (that is not necessarily at the same location this command is placed). If <em>NumberOfAdditionalRails</em> is 0, <em>Location</em> indicates the side of the rail on which the pole is placed. If <em>Location</em> is less than or equal to 0, the pole is placed as-is (corresponding to the left side). If <em>Location</em> is greater than 0, the object is mirrored on the x-axis and then placed (corresponding to the right side). If <em>NumberOfAdditionalRails</em> is greater than or equal to 1, <em>Location</em> specifies the x-offset in multiples of 3.8 meters. Please note that poles are resurrected if a rail is ended via Track.RailEnd and then started again via Track.RailStart or Track.Rail unless the pole was also ended via Track.PoleEnd.<br /><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">This command can only be used at the beginning of a block.</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.PoleEnd</b> <em>轨道编号</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>轨道编号</em></b>: A non-negative integer representing the rail on which to end an existing pole.
+</font></td></tr></table>
+This ends an existing pole that was previously started via Track.Pole on a specified rail. The pole is not placed for the block in which this command is used.<br /><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">This command can only be used at the beginning of a block.</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#606060"><b>Track.Crack</b> <em>轨道编号<sub>1</sub></em>; <em>轨道编号<sub>2</sub></em>; <em>CrackStructure编号</em></font></td></tr></table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<img src="../Images/construction_16.png" alt="" /> Description not available yet.
+</font></td></tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Ground</b> <em>Cycle编号</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>Cycle编号</em></b>: A non-negative integer representing the cycle of ground objects to place as defined via Structure.Ground or Cycle.Ground.
+</font></td></tr></table>
+This defines which ground objects to place from this point on. Ground objects are always placed at the beginning of a block at a certain height below the player's rail (as defined via Track.Height). If no cycle was defined for <em>Cycle编号</em>, then the object loaded into Structure.Ground(<em>Cycle编号</em>) is placed. Otherwise, the cycle of ground objects as defined via Cycle.Ground(<em>Cycle编号</em>) is used.<br /><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">This command can only be used at the beginning of a block.</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<br /><a name="track_stations" />
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<font color="#0080FF">● 11.4. Stations</font>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+<table><tr style="height: 2px;"><td /></tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Sta</b> <em>Name</em>; <em>ArrivalTime</em>; <em>DepartureTime</em>; <em>PassAlarm</em>; <em>Doors</em>; <em>ForcedRedSignal</em>; <em>System</em>; <em>ArrivalSound</em>; <em>StopDuration</em>; <em>PassengerRatio</em>; <em>DepartureSound</em>; <em>Timetable编号</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>Name</em></b>: The name of the station. This is displayed in the timetable and in messages, so should not be omitted.<br />
+<b><em>ArrivalTime</em></b>: The <a href="information_numberformats.html#times">time</a> the player's train is expected to arrive at this station. Special values may also appear - see below.<br />
+<b><em>DepartureTime</em></b>: The <a href="information_numberformats.html#times">time</a> the player's train is expected to depart from this station. Special values may also appear - see below.<br />
+<b><em>PassAlarm</em></b>: Indicates whether the pass alarm device should remind the driver of stopping at this station. The default value is 0.<br />
+<b><em>Doors</em></b>: Indicates which doors should open at this station. The default value is 0.<br />
+<b><em>ForcedRedSignal</em></b>: Indicates whether the signal behind the last station stop should be red on a train approach. The default value is 0.<br />
+<b><em>System</em></b>: Indicates which built-in safety system should apply until the next station. The default value is 0.<br />
+<b><em>ArrivalSound</em></b>: The sound file to be played on arrival, relative to the <b>Sound</b> folder.<br />
+<b><em>StopDuration</em></b>: A positive floating-point number indicating the minimum stop duration in seconds, including door opening/closing times. The default value is 15.<br />
+<b><em>PassengerRatio</em></b>: A non-negative floating-point number indicating the relative amount of passengers in the train from this station on. As a reference, 100 represents a train with normal amount of passengers, while 250 represents an over-crowded train. Values in-between 0 and 250 should be used. The default value is 100.<br />
+<b><em>DepartureSound</em></b>: The sound file to be played before departure (departure time minus sound duration minus door closing time), relative to the <b>Sound</b> folder.<br />
+<b><em>Timetable编号</em></b>: A non-negative integer representing the timetable to be shown from this station on as defined via Train.Timetable(<em>Timetable编号</em>).
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Available options for <em>ArrivalTime</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<em>time</em>: The train is expected to arrive at this particular time.<br />
+<em>omitted</em>: The train may arrive at any time.<br />
+<b>P</b> or <b>L</b>: All trains are expected to pass this station.<br />
+<b>B</b>: The player's train is expected to pass this station, while all other trains are expected to stop.<br />
+<b>S</b>: The player's train is expected to stop at this station, while all other trains are expected to pass.<br />
+<b>S:</b><em>time</em>: The player's train is expected to arrive at this particular time, while all other trains are expected to pass.
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Available options for <em>DepartureTime</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<em>time</em>: The train is expected to depart at this particular time.<br />
+<em>omitted</em>: The train may depart at any time.<br />
+<b>T</b> or <b>=</b>: This is the terminal station. If <em>ForcedRedSignal</em> is set to 1, the departure signal will be held at red indefinately.<br />
+<b>T:</b><em>time</em>: This is the terminal station. If <em>ForcedRedSignal</em> is set to 1, the departure signal will still switch to green before the specified time as if this was a regular station.<br />
+<b>C</b>: This is a station at which to "change ends". See the description below.<br />
+<b>C:</b><em>time</em>: This is a station at which to "change ends". Changing ends will take place at the specified time unless <em>StopDuration</em> interferes. See the description below.
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Available options for <em>PassAlarm</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>0</b>: The pass alarm device does not remind the driver of stopping at this station.<br />
+<b>1</b>: The pass alarm device reminds the driver of stopping at this station.
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Available options for <em>Doors</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>L</b> or <b>-1</b>: The left doors are expected to open at this station.<br />
+<b>N</b> or <b>0</b>: No doors are expected to open at this station, i.e. the train should simply come to a hold.<br />
+<b>R</b> or <b>1</b>: The right doors are expected to open at this station.<br />
+<b>B</b>: Both the left and right doors are expected to open at this station.
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Available options for <em>ForcedRedSignal</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>0</b>: Signals are unaffected by this station.<br />
+<b>1</b>: The signal immediately following the last station stop is hold at red until the train reaches the stopping area and the departure time.
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Available options for <em>System</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>ATS</b> or <b>0</b>: ATS should be used from this station on. The following track is not be equipped with ATC.<br />
+<b>ATC</b> or <b>1</b>: ATC should be used from this station on. The following track is equipped with ATC.
+</font></td></tr></table>
+This command initializes a new station. It should be placed at the beginning of the station platform. In order to finalize the creation of a station, use the Track.Stop command to place stop points following this command. All following Track.Stop commands will be associated to this station. At least one Track.Stop command must follow if trains are expected to stop at this station.<br /><br />Stations can be marked as "changing ends" in the departure time. At such stations, when the departure time has been reached, the train will automatically jump to the next station. This feature is intended to fake a reverse of traveling direction without the need to jump to stations manually from the menu.<br /><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">The "changing ends" feature is only available in the development release 1.2.11 and above.</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Station</b> <em>Name</em>; <em>ArrivalTime</em>; <em>DepartureTime</em>; <em>ForcedRedSignal</em>; <em>System</em>; <em>DepartureSound</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>Name</em></b>: The name of the station. This is displayed in the timetable and in messages, so should not be omitted.<br />
+<b><em>ArrivalTime</em></b>: The <a href="information_numberformats.html#times">time</a> the player's train is expected to arrive at this station. Special values may also appear - see below.<br />
+<b><em>DepartureTime</em></b>: The <a href="information_numberformats.html#times">time</a> the player's train is expected to depart from this station. Special values may also appear - see below.<br />
+<b><em>ForcedRedSignal</em></b>: Indicates whether the signal behind the last station stop should be red on a train approach. The default value is 0.<br />
+<b><em>System</em></b>: Indicates which built-in safety system should apply until the next station. The default value is 0.<br />
+<b><em>DepartureSound</em></b>: The sound file to be played before departure (departure time minus sound duration minus door closing time), relative to the <b>Sound</b> folder.
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Available options for <em>ArrivalTime</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<em>time</em>: The train is expected to arrive at this particular time.<br />
+<em>omitted</em>: The train may arrive at any time.<br />
+<b>P</b> or <b>L</b>: All trains are expected to pass this station.<br />
+<b>B</b>: The player's train is expected to pass this station, while all other trains are expected to stop.<br />
+<b>S</b>: The player's train is expected to stop at this station, while all other trains are expected to pass.<br />
+<b>S:</b><em>time</em>: The player's train is expected to arrive at this particular time, while all other trains are expected to pass.
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Available options for <em>DepartureTime</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<em>time</em>: The train is expected to depart at this particular time.<br />
+<em>omitted</em>: The train may depart at any time.<br />
+<b>T</b> or <b>=</b>: This is the terminal station. If <em>ForcedRedSignal</em> is set to 1, the departure signal will be held at red indefinately.<br />
+<b>T:</b><em>time</em>: This is the terminal station. If <em>ForcedRedSignal</em> is set to 1, the departure signal will still switch to green before the specified time as if this was a regular station.<br />
+<b>C</b>: This is a station at which to "change ends". See the description below.<br />
+<b>C:</b><em>time</em>: This is a station at which to "change ends". Changing ends will take place at the specified departure unless <em>StopDuration</em> interferes.
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Available options for <em>ForcedRedSignal</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>0</b>: Signals are unaffected by this station.<br />
+<b>1</b>: The signal immediately following the last station stop is hold at red until the train reaches the stopping area and the departure time.
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Available options for <em>System</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>ATS</b> or <b>0</b>: ATS should be used from this station on. The following track is not be equipped with ATC.<br />
+<b>ATC</b> or <b>1</b>: ATC should be used from this station on. The following track is equipped with ATC.
+</font></td></tr></table>
+This command initializes a new station. Prefer using the Track.Sta command, which includes more options. For the options of Track.Sta which are not offered by Track.Station, the following values apply:<br /><br />
+<table style="border-collapse: collapse;">
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><em>PassAlarm</em></td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">0 (not used)</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><em>Doors</em></td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">B (both doors must be opened)</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><em>ArrivalSound</em></td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">Not played</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><em>StopDuration</em></td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">15</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><em>PassengerRatio</em></td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">100</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;"><em>Timetable编号</em></td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">Not affected</td></tr>
+</table><br />
+The command should be placed at the beginning of the station platform. In order to finalize the creation of a station, use the Track.Stop command to place stop points following this command. All following Track.Stop commands will be associated to this station. At least one Track.Stop command must follow if trains are expected to stop at this station.<br /><br />Stations can be marked as "changing ends" in the departure time. At such stations, when the departure time has been reached, the train will automatically jump to the next station. This feature is intended to fake a reverse of traveling direction without the need to jump to stations manually from the menu.<br /><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">The "changing ends" feature is only available in the development release 1.2.11 and above.</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Stop</b> <em>Direction</em>; <font color="green"><em>BackwardTolerance</em></font>; <font color="green"><em>ForwardTolerance</em></font>; <em>Cars</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>Direction</em></b>: On which side to place a default stop post. The default value is 0.<br />
+<font color="green"><b><em>BackwardTolerance</em></b></font>: A positive floating-point number indicating the allowed tolerance in the backward direction, <b>by default</b> measured in <b>meters</b>. The default value is 5.<br />
+<font color="green"><b><em>ForwardTolerance</em></b></font>: A positive floating-point number indicating the allowed tolerance in the forward direction, <b>by default</b> measured in <b>meters</b>. The default value is 5.<br />
+<b><em>Cars</em></b>: A non-negative integer indicating for how many cars this stop point applies, or 0 for all cars. The default value is 0.
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Available options for <em>Direction</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>-1</b>: A stop post is created on the left side.<br />
+<b>0</b>: No stop post is created.<br />
+<b>1</b>: A stop post is created on the right side.
+</font></td></tr></table>
+This command places a stop point for the last created station. If there is more than one stop defined for a station, a train is expected to stop at the first Track.Stop command for which <em>Cars</em> is greater than or equal to the number of cars the train has, where a value for <em>Cars</em> of 0 indicates a stop point regardless of the amount of cars to be used as the last stop point for a station.<br /><table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em>Example of a station with multiple stop points:</em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>With Track<br />
+0100, .Sta STATION<br />
+0178, .Stop 1;;;4 ,; for 4 or less cars<br />
+0212, .Stop 1;;;6 ,; for 5 or 6 cars<br />
+0246, .Stop 1;;;8 ,; for 7 or 8 cars<br />
+0280, .Stop 1;;;0 ,; for 9 or more cars</tt></td>
+</tr>
+</table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#606060"><b>Track.Form</b> <em>轨道编号<sub>1</sub></em>; <em>轨道编号<sub>2</sub></em>; <em>RoofStructure编号</em>; <em>FormStructure编号</em></font></td></tr></table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<img src="../Images/construction_16.png" alt="" /> Description not available yet.
+</font></td></tr></table>
+<br /><a name="track_signalling" />
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<font color="#0080FF">● 11.5. Signalling and speed limits</font>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+<table><tr style="height: 2px;"><td /></tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Limit</b> <font color="blue"><em>Speed</em></font>; <em>Post</em>; <em>Cource</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><font color="blue"><em>Speed</em></font></b>: A positive floating-point number representing the speed, <b> by default</b> measured in <b>km/h</b>, or 0 to indicate no speed restriction. The default value is 0.<br />
+<b><em>Post</em></b>: The side on which to place a default Japanese-style speed limit post. The default value is 0.<br />
+<b><em>Cource</em></b>: The directional indication. The default value is 0.
+</font></td></tr></table>
+<img src="../Images/illustration_limit.png" alt="" />
+<br /><table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Options for <em>Post</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>-1</b>: The post is placed on the left side of the track.<br />
+<b>0</b>: No post will be placed.<br />
+<b>1</b>: The post is placed on the right side of the track.
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Options for <em>Cource</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>-1</b>: The post applies for a left-bound track.<br />
+<b>0</b>: The post does not indicate a particular direction.<br />
+<b>1</b>: The post applies for a right-bound track.
+</font></td></tr></table>
+This command defines the new speed limit from this point on. If the new speed limit is lower than the current speed limit, the new speed limit will take effect immediately. If the speed limit is higher than the current speed limit, the new speed limit will take effect only once the whole train has passed this point. By setting <em>Speed</em> to <tt>0</tt>, the speed restriction is released. By setting <em>Post</em> to either <tt>-1</tt> or <tt>1</tt>, a default Japanese-style speed post is placed at the respective side of the track. Setting <em>Course</em> to either <tt>-1</tt> or <tt>1</tt> includes a directional indication, which is usually used at railroad switches to indicate that the speed limit only applies if the respective direction is being taken. If <em>Speed</em> is set to <tt>0</tt>, the setting of <em>Course</em> has no effect.<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Section</b> <em>a<sub>0</sub></em>; <em>a<sub>1</sub></em>; <em>a<sub>2</sub></em>; ...; <em>a<sub>n</sub></em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>a<em><sub>i</sub></em></b>: A non-negative number specifying one of the section's aspects.
+</font></td></tr></table>
+This command starts a section, the functional part of signalling, to be used in conjunction with Track.SigF, which creates a visual representation of a section (a signal). The <em>a<sub>i</sub></em> parameters specify the aspects the section can bear. An aspect of 0 corresponds to a red section which must not be passed by a train. The <em>a<sub>0</sub></em> term is mandatory.<br /><table><tr style="height: 4px;"><td /></tr></table>
+<table style="border:1px dashed;margin-left:20pt;margin-right:20pt;">
+<tr><td bgcolor="#FFE080" style="border:2px; border-style:ridge;"><font color="#404040">
+<b>ⓘ</b> Default versus simplified section behavior
+</font></td></tr><tr><td bgcolor="#FFFFFF">
+There are two different modes of behavior on how to interpret the <em>a<sub>i</sub></em> parameters. The mode can be set via Options.SectionBehavior. The following are separate descriptions for default and simplified behavior.
+</td></tr></table>
+<table><tr style="height: 4px;"><td /></tr></table>
+<br /><b>Default behavior:</b><br />The <em>a<sub>i</sub></em> terms specify the aspect the section should bear depending on how many sections ahead are clear until a red one is encountered. The order of the terms is relevant. The same aspect may occur multiple times.<br /><table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Meanings of the <em>a<sub>i</sub></em> terms:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>a<sub>0</sub></b>: The aspect to show when this section is occupied by a train or otherwise hold at red.<br />
+<b>a<sub>1</sub></b>: The aspect to show when this section is clear, but the immediately following section is red.<br />
+<b>a<sub>2</sub></b>: The aspect to show when this section and the following section are clear, but the one immediately following the latter one is red.<br />
+<b>a<em><sub>n</sub></em></b>: The aspect to show when <em>n</em> sections are clear before a red one is encountered.
+</font></td></tr></table>
+In the case more sections ahead are clear than indicated by the <em>a<sub>i</sub></em> terms, the section will bear the aspect of <em>a<sub>n</sub></em>.<br /><br /><b>Simplified behavior:</b><br />The <em>a<sub>i</sub></em> terms specify the repertoire of aspects the section can have. A section will bear the smallest of the <em>a<sub>i</sub></em> which is greater than the current aspect of the upcoming section. If no such <em>a<sub>i</sub></em> exists, the section will bear the aspect of <em>a<sub>n</sub></em>. The order of the <em>a<sub>i</sub></em> is irrelevant. If the same aspect occurs multiple times, this has no effect.<br /><br /><table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em>Example of a Track.Section command in conjunction with a Track.SigF command:</em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>With Track<br />
+1000, .Section 0;2;4, .SigF 3;0;-3;-1</tt></td>
+</tr>
+</table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.SigF</b> <em>Signal编号</em>; <em>Section</em>; <font color="green"><em>X</em></font>; <font color="green"><em>Y</em></font>; <em>Yaw</em>; <em>Pitch</em>; <em>Roll</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>Signal编号</em></b>: A non-negative integer representing the signal to be placed as defined via Signal(<em>Signal编号</em>)<font color="gray">.Load</font>.<br />
+<b><em>Section</em></b>: A non-negative integer representing the section this signal is attached to, with 0 being the current section, 1 the upcoming section, 2 the section after that, and so on.<br />
+<b><font color="green"><em>X</em></font></b>: The X-coordinate to place the signal object, <b>by default</b> measured in <b>meters</b>. The default value is 0.<br />
+<b><font color="green"><em>Y</em></font></b>: The Y-coordinate to place the signal object, <b>by default</b> measured in <b>meters</b>. The default value is 0.<br />
+<b><em>Yaw</em></b>: The angle in degrees by which the object is rotated in the XZ-plane in clock-wise order when viewed from above. The default value is 0.<br />
+<b><em>Pitch</em></b>: The angle in degrees by which the object is rotated in the YZ-plane in clock-wise order when viewed from the left. The default value is 0.<br />
+<b><em>Roll</em></b>: The angle in degrees by which the object is rotated in the XY-plane in clock-wise order when viewed from behind. The default value is 0.
+</font></td></tr></table>
+This command creates a non-function signal, that is, a visual representation of a section as defined via Track.Section. Setting <em>Y</em> to a negative number resets the y-coordinate to 4.8 meters and attaches a default signal post. Also see Track.Section.<br /><br />If no object has been defined by Signal(<em>Signal编号</em>), one of the default Japanese signals is used:<br /><table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Default signals for <em>Signal编号</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>3</b>: A three-aspect signal having aspects <font color="#C00000">●</font>red, <font color="#FFC000">●</font>yellow and <font color="#00C000">●</font>green.<br />
+<b>4</b>: A four-aspect (type A) signal having aspects <font color="#C00000">●</font>red, <font color="#FFC000">●●</font>yellow-yellow, <font color="#FFC000">●</font>yellow and <font color="#00C000">●</font>green.<br />
+<b>5</b>: A five-aspect (type A) signal having aspects <font color="#C00000">●</font>red, <font color="#FFC000">●●</font>yellow-yellow, <font color="#FFC000">●</font>yellow, <font color="#00C000">●</font><font color="#FFC000">●</font>yellow-green and <font color="#00C000">●</font>green.<br />
+<b>6</b>: A repeating signal equivalent to that created by Track.Relay.
+</font></td></tr></table>
+<hr />
+<br /><table border="0"><tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Signal</b> <em>Aspects</em>; <em><font color="gray">Unused</font></em>; <font color="green"><em>X</em></font>; <font color="green"><em>Y</em></font>; <em>Yaw</em>; <em>Pitch</em>; <em>Roll</em><br />
+<b>Track.Sig</b> <em>Aspects</em>; <em><font color="gray">Unused</font></em>; <font color="green"><em>X</em></font>; <font color="green"><em>Y</em></font>; <em>Yaw</em>; <em>Pitch</em>; <em>Roll</em></font></td></tr></table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>Type</em></b>: The number of aspects for this signal. The default value is -2.<br />
+<b><em><font color="gray">Unused</font></em></b>: <em>This 参数 is not used by openBVE.</em><br />
+<b><font color="green"><em>X</em></font></b>: The X-coordinate to place the signal object, <b>by default</b> measured in <b>meters</b>. The default value is 0.<br />
+<b><font color="green"><em>Y</em></font></b>: The Y-coordinate to place the signal object, <b>by default</b> measured in <b>meters</b>. The default value is 0.<br />
+<b><em>Yaw</em></b>: The angle in degrees by which the object is rotated in the XZ-plane in clock-wise order when viewed from above. The default value is 0.<br />
+<b><em>Pitch</em></b>: The angle in degrees by which the object is rotated in the YZ-plane in clock-wise order when viewed from the left. The default value is 0.<br />
+<b><em>Roll</em></b>: The angle in degrees by which the object is rotated in the XY-plane in clock-wise order when viewed from behind. The default value is 0.
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Options for <em>Type</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<a href="../Images/illustration_signals_large.png"><img src="../Images/illustration_signals_small.png" alt="" /></a><br />
+<b>2</b>: A two-aspect (type A) signal having aspects <font color="#C00000">●</font>red and <font color="#FFC000">●</font>yellow.<br />
+<b>-2</b>: A two-aspect (type B) signal having aspects <font color="#C00000">●</font>red and <font color="#00C000">●</font>green.<br />
+<b>3</b>: A three-aspect signal having aspects <font color="#C00000">●</font>red, <font color="#FFC000">●</font>yellow and <font color="#00C000">●</font>green.<br />
+<b>4</b>: A four-aspect (type A) signal having aspects <font color="#C00000">●</font>red, <font color="#FFC000">●●</font>yellow-yellow, <font color="#FFC000">●</font>yellow and <font color="#00C000">●</font>green.<br />
+<b>-4</b>: A four-aspect (type B) signal having aspects <font color="#C00000">●</font>red, <font color="#FFC000">●</font>yellow, <font color="#00C000">●</font><font color="#FFC000">●</font>yellow-green and <font color="#00C000">●</font>green.<br />
+<b>5</b>: A five-aspect (type A) signal having aspects <font color="#C00000">●</font>red, <font color="#FFC000">●●</font>yellow-yellow, <font color="#FFC000">●</font>yellow, <font color="#00C000">●</font><font color="#FFC000">●</font>yellow-green and <font color="#00C000">●</font>green.<br />
+<b>-5</b>: A five-aspect (type B) signal having aspects <font color="#C00000">●</font>red, <font color="#FFC000">●</font>yellow, <font color="#00C000">●</font><font color="#FFC000">●</font>yellow-green, <font color="#00C000">●</font>green and <font color="#00C000">●●</font>green-green.<br />
+<b>6</b>: A six-aspect signal having aspects <font color="#C00000">●</font>red, <font color="#FFC000">●●</font>yellow-yellow, <font color="#FFC000">●</font>yellow, <font color="#00C000">●</font><font color="#FFC000">●</font>yellow-green, <font color="#00C000">●</font>green and <font color="#00C000">●●</font>green-green.
+</font></td></tr></table>
+This command creates a functional signal. You can choose from the available options for <em>Aspect</em> to create any of the default Japanese signals. Setting <em>X</em> to 0 creates a functional but invisible signal similar to Track.Section. Setting <em>X</em> to a non-zero number and <em>Y</em> to a negative number resets the y-coordinate to 4.8 meters and attaches a default signal post.<br /><table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em>Example of a four-aspect type B signal without a post at x=-3 and y=5:</em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>1000, Track.Signal -4;;-3;5</tt></td>
+</tr>
+</table>
+<table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em>Example of a four-aspect type B signal including a post at x=-3 and y=4.8:</em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>1000, Track.Signal -4;;-3;-1</tt></td>
+</tr>
+</table>
+Track.Signal is similar to using Track.Section and Track.SigF in one command.<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Relay</b> <font color="green"><em>X</em></font>; <font color="green"><em>Y</em></font>; <em>Yaw</em>; <em>Pitch</em>; <em>Roll</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><font color="green"><em>X</em></font></b>: The X-coordinate at which to place the object, <b>by default</b> measured in <b>meters</b>. The default value is 0.<br />
+<b><font color="green"><em>Y</em></font></b>: The Y-coordinate at which to place the object, <b>by default</b> measured in <b>meters</b>. The default value is 0.<br />
+<b><em>Yaw</em></b>: The angle in degrees by which the object is rotated in the XZ-plane in clock-wise order when viewed from above. The default value is 0.<br />
+<b><em>Pitch</em></b>: The angle in degrees by which the object is rotated in the YZ-plane in clock-wise order when viewed from the left. The default value is 0.<br />
+<b><em>Roll</em></b>: The angle in degrees by which the object is rotated in the XY-plane in clock-wise order when viewed from behind. The default value is 0.
+</font></td></tr></table>
+This commands creates a default Japanese repeating signal. The repeating signal repeats the state of the upcoming signal. Setting <em>X</em> to zero does not create a repeating signal, but forces the command to be ignored. Setting <em>X</em> to a non-zero number and <em>Y</em> to a negative number resets the y-coordinate to 4.8 and attaches a default signal post.<br /><br /><a name="track_safety" />
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<font color="#0080FF">● 11.6. Safety systems</font>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+<table><tr style="height: 2px;"><td /></tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Beacon</b> <em>Type</em>; <em>BeaconStructure编号</em>; <em>Section</em>; <em>Data</em>; <font color="green"><em>X</em></font>; <font color="green"><em>Y</em></font>; <em>Yaw</em>; <em>Pitch</em>; <em>Roll</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>Type</em></b>: A non-negative integer representing the type of the beacon to be transmitted to the train.<br />
+<b><em>BeaconStructure编号</em></b>: A non-negative integer representing the object to be placed as defined via Structure.Beacon, or -1 to not place any object.<br />
+<b><em>Section</em></b>: An integer representing the section to which the beacon is attached, namely 0 for the current section, 1 for the upcoming section, 2 for the section behind that, etc., or -1 for the next red section.<br />
+<b><em>Data</em></b>: An integer representing arbitrary data specific to the beacon type to be transmitted to the train.<br />
+<b><font color="green"><em>X</em></font></b>: The X-coordinate at which to place the object, <b>by default</b> measured in <b>meters</b>. The default value is 0.<br />
+<b><font color="green"><em>Y</em></font></b>: The Y-coordinate at which to place the object, <b>by default</b> measured in <b>meters</b>. The default value is 0.<br />
+<b><em>Yaw</em></b>: The angle in degrees by which the object is rotated in the XZ-plane in clock-wise order when viewed from above. The default value is 0.<br />
+<b><em>Pitch</em></b>: The angle in degrees by which the object is rotated in the YZ-plane in clock-wise order when viewed from the left. The default value is 0.<br />
+<b><em>Roll</em></b>: The angle in degrees by which the object is rotated in the XY-plane in clock-wise order when viewed from behind. The default value is 0.
+</font></td></tr></table>
+This command places a beacon (transponder). The object must have been loaded via Structure.Beacon(<em>BeaconStructure编号</em>) prior to using this command. When the train passes the beacon, the type of beacon and various data will be transmitted to the train, including the state of the referenced section.<br /><br />It should be noted that the built-in safety systems also receive data from these beacons as Track.Beacon(<em>Type</em>) is roughly equivalent to Track.Transponder(<em>Type</em>). Please see <a href="information_standards.html">the page about beacon standards</a> for more information.<br /><br /><hr />
+<table border="0"><tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Transponder</b> <em>Type</em>; <em>Signal</em>; <em>SwitchSystem</em>; <font color="green"><em>X</em></font>; <font color="green"><em>Y</em></font>; <em>Yaw</em>; <em>Pitch</em>; <em>Roll</em><br />
+<b>Track.Tr</b> <em>Type</em>; <em>Signal</em>; <em>SwitchSystem</em>; <font color="green"><em>X</em></font>; <font color="green"><em>Y</em></font>; <em>Yaw</em>; <em>Pitch</em>; <em>Roll</em></font></td></tr></table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>Type</em></b>: The type of the transponder. The default value is 0.<br />
+<b><em>Signal</em></b>: The signal this transponder references. The default value is 0.<br />
+<b><em>SwitchSystem</em></b>: Whether to automatically switch the safety system. The default value is 0.<br />
+<b><font color="green"><em>X</em></font></b>: The X-coordinate at which to place the object, <b>by default</b> measured in <b>meters</b>. The default value is 0.<br />
+<b><font color="green"><em>Y</em></font></b>: The Y-coordinate at which to place the object, <b>by default</b> measured in <b>meters</b>. The default value is 0.<br />
+<b><em>Yaw</em></b>: The angle in degrees by which the object is rotated in the XZ-plane in clock-wise order when viewed from above. The default value is 0.<br />
+<b><em>Pitch</em></b>: The angle in degrees by which the object is rotated in the YZ-plane in clock-wise order when viewed from the left. The default value is 0.<br />
+<b><em>Roll</em></b>: The angle in degrees by which the object is rotated in the XY-plane in clock-wise order when viewed from behind. The default value is 0.
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Options for <em>Type</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<img src="../Images/illustration_transponders.png" alt="" /><br />
+<b>0</b>: An S-type transponder used by ATS-S. Usually placed 600m in front of a signal.<br />
+<b>1</b>: An SN-type transponder used by ATS-SN. Usually placed 20m in front of a signal.<br />
+<b>2</b>: An accidental departure transponder. Usually placed shortly behind a station stop.<br />
+<b>3</b>: An ATS-P pattern renewal transponder. Usually placed 600m, 280m, 180m, 130m, 85m or 50m in front of a signal, depending on the circumstances.<br />
+<b>4</b>: An ATS-P immediate stop transponder. Usually placed either 25m or 30m in front of a signal, depending on the circumstances.
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Options for <em>Signal</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>0</b>: The upcoming signal is referenced.<br />
+<b>1</b>: The signal immediately behind the upcoming signal is referenced.<br />
+<b><em>n</em></b>: The <em>n</em>'th signal behind the upcoming signal is referenced.
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Options for <em>SwitchSystem</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>-1</b>: The transponder does not switch the train between ATS-SN and ATS-P.<br />
+<b>0</b>: The transponder automatically switches the train to ATS-SN for transponder types <em>0</em> and <em>1</em>, and to ATS-P for types <em>3</em> and <em>4</em>.
+</font></td></tr></table>
+<br />This command places a transponder, usually for the built-in safety systems ATS-SN or ATS-P. For more information about these systems and their transponders, see <a href="../use/drive.html#atssn">the user's documentation about ATS</a>.<br /><br />It should be noted that custom safety system plugins also receive data from these transponders as Track.Transponder(<em>Type</em>) is roughly equivalent to Track.Beacon(<em>Type</em>). Please see <a href="information_standards.html">the page about beacon standards</a> for more information.<br /><br />➟ <a href="../use/drive.html#atssn">Go here to find out more about ATS-SN and ATS-P.</a><br />
+➟ <a href="tutorial_ats.html">There is a tutorial available for the proper use of ATS-SN and ATS-P in route files, including all of the five transponders.</a><br />
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.AtsSn</b></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+
+</font></td></tr></table>
+This command places an S-type transponder for the built-in safety system ATS-SN, referencing the upcoming signal, and automatically switching to ATS-SN. The command is equivalent to <b>Track.Tr 0;0;0</b>. See there for more information.<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.AtsP</b></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+
+</font></td></tr></table>
+This command places a pattern renewal transponder for the built-in safety system ATS-P, referencing the upcoming signal, and automatically switching to ATS-P. The command is equivalent to <b>Track.Tr 3;0;0</b>. See there for more information.<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Pattern</b> <em>Type</em>; <font color="blue"><em>Speed</em></font></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>Type</em></b>: The type of speed restriction.<br />
+<b><font color="blue"><em>Speed</em></font></b>: A non-negative floating-point number representing the speed restriction, <b>by default</b> measured in <b>km/h</b>.
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Options for <em>Type</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b>0</b>: A temporary speed restriction.<br />
+<b>1</b>: A permanent speed restriction.
+</font></td></tr></table>
+This command defines a speed restriction for the built-in safety system ATS-P.<br /><br />A temporary speed restriction (<em>Type</em>=0) is to be inserted at the point where the speed restriction should apply. ATS-P will know about this speed restriction in advance and will brake the train so that the train meets the speed restriction at that point. Once the point is passed, the speed restriction no longer applies.<br /><br />A permanent speed restriction (<em>Type</em>=1) is to be inserted at the point where the speed restriction should apply, however, ATS-P does not know about this limit in advance and will only brake the train from that point on. For a higher degree of realism, insert permanent speed restrictions at the same point as ATS-P transponders. A permanent speed restriction, as the name suggests, is remembered by ATS-P and is only released by a subsequent permanent speed restriction.<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.PLimit</b> <font color="blue"><em>Speed</em></font></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><font color="blue"><em>Speed</em></font></b>: A positive floating-point number representing the permanent speed restriction for ATS-P, <b>by default</b> measured in <b>km/h</b>.
+</font></td></tr></table>
+This command is equivalent to <b>Track.Pattern 1;<em>Speed</em></b>. See there for more information.<br /><br /><a name="track_misc" />
+<br /><table><tr style="height: 4px;"><td /></tr></table>
+<font color="#0080FF">● 11.7. Miscellaneous</font>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font size="-1" color="#808080">
+
+</font></td></tr></table>
+<table><tr style="height: 2px;"><td /></tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Back</b> <em>BackgroundTexture编号</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>BackgroundTexture编号</em></b>: A non-negative integer representing the background image to be displayed as defined via Texture.Background(<em>BackgroundTexture编号</em>).
+</font></td></tr></table>
+This command defines which background image to show from now on.<br /><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">This command can only be used at the beginning of a block.</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Fog</b> <font color="green"><em>StartingDistance</em></font>; <font color="green"><em>EndingDistance</em></font>; <em>RedValue</em>; <em>GreenValue</em>; <em>BlueValue</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><font color="green"><em>StartingDistance</em></font></b>: A floating-point number indicating the start of fog, <b>by default</b> measured in <b>meters</b>. The default value is 0.<br />
+<b><font color="green"><em>EndingDistance</em></font></b>: A floating-point number indicating the end of fog, <b>by default</b> measured in <b>meters</b>. The default value is 0.<br />
+<b><em>RedValue</em></b>: An integer ranging from 0 to 255 representing the red component of the fog. The default value is 128.<br />
+<b><em>GreenValue</em></b>: An integer ranging from 0 to 255 representing the green component of the fog. The default value is 128.<br />
+<b><em>BlueValue</em></b>: An integer ranging from 0 to 255 representing the blue component of the fog. The default value is 128.
+</font></td></tr></table>
+This command defines the fog from this point on, or deactivates fog. If fog is to be enabled, <em>StartingDistance</em> must be less than <em>EndingDistance</em>. If fog is to be disabled, <em>StartingDistance</em> must be greater than or equal to <em>EndingDistance</em>.<br /><br />Fog affects the coloring of objects. Objects before the starting distance appear as-is, objects after the ending distance appear in the fog color, and objects in-between blend linearly between those. The background image is affected by fog as well. For the fog calculations, the background image is assumed to be at 600 meters distance from the camera, regardless of the actual viewing distance.<br /><br />Depending on Options.FogBehavior, there are two options how this command affects fog from this point on. In block-wise mode, the current fog blends from the beginning of this block to the new settings at the end of this block. The new setting is kept for following blocks. This is the default behavior. In interpolation mode, each Track.Fog command defines a control point for fog, where all of the settings (distances and colors) are interpolated linearly between the control points.<br /><br /><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0">This command can only be used at the beginning of a block.</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Brightness</b> <em>Value</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>Value</em></b>: A non-negative integer within the range from 0 to 255. The default value is 255.
+</font></td></tr></table>
+This command marks a point which affects the brightness in the cab. <em>Value</em> is measured from 0 (dark) to 255 (light), and is linearly interpolated between successive Track.Brightness commands for any given point on the track. This command should be used for tunnels, bridges, station roofs, or anything else that would affect the brightness as perceived inside the cab.<br /><table>
+<tr>
+<td width="16" valign="top" /><td>
+<font size="-1"><em>Example:</em></font>
+</td></tr><tr>
+<td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
+<tt>With Track<br />
+1200, .Brightness 255 ,; before the bridge starts<br />
+1205, .Brightness 128 ,; directly under the bridge here<br />
+1210, .Brightness 255 ,; as soon as the bridge ends</tt></td>
+</tr>
+</table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Marker</b> <em>FileName</em>; <font color="green"><em>Distance</em></font></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>FileName</em></b>: The file name for the marker image, relative to the <b>Object</b> folder.<br />
+<font color="green"><b><em>Distance</em></b></font>: A non-zero floating-point number indicating the length for which the marker image is displayed, <b>by default</b> measured in <b>meters</b>.
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Behavior for <em>Distance</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<em>negative value</em>: The marker image starts to display at the Track.Marker command, and ends -<em>Distance</em> meters after the Track.Marker command.<br />
+<em>positive value</em>: The marker image starts to display <em>Distance</em> meters before the Track.Marker command, and ends at the Track.Marker command.
+</font></td></tr></table>
+This command shows a so-called marker image, which is displayed in the top-right corner of the screen. You can use these images for advisory or informational purposes. The RGB color of 64,64,64 inside the image is made transparent.<br /><br />
+
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Marker</b> <em>FileName.xml</em></font></td></tr>
+</table><br>
+A <em>Track.Marker</em> command, linking to a single XML file is also supported. <br>
+These allow more control over markers than is available in the routefile commands. <br><br>
+These are fully described on the <a href="route_marker.html">the XML Markers page...</a><br />
+
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.TextMarker</b> <em>Text</em>; <font color="green"><em>Distance</em>; <font color="#C00000"><em>FontColor</em></font></font></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>Text</em></b>: The marker text to display. (No special characters supported).<br />
+<font color="green"><b><em>Distance</em></b></font>: A non-zero floating-point number indicating the length for which the text is displayed, <b>by default</b> measured in <b>meters</b>.<br>
+<b><em>FontColor</em></b>: The font color for this marker text</font>
+</font></td></tr></table>
+<table style="border:0px none;margin-left:40pt;margin-right:10pt;">
+<tr><td>▸ Behavior for <em>Distance</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<em>negative value</em>: The marker image starts to display at the Track.Marker command, and ends -<em>Distance</em> meters after the Track.Marker command.<br />
+<em>positive value</em>: The marker image starts to display <em>Distance</em> meters before the Track.Marker command, and ends at the Track.Marker command.
+</font></td></tr></table>
+<tr><td>▸ Available options for <em>FontColor</em>:</td></tr></table>
+<table style="border:0px none;margin-left:50pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<em>1</em>: Black.<br />
+<em>2</em>: Gray.<br />
+<em>3</em>: White.<br />
+<em>4</em>: Red.<br />
+<em>5</em>: Orange.<br />
+<em>6</em>: Green.<br />
+<em>7</em>: Blue.<br />
+<em>8</em>: Magenta.<br />
+</font></td></tr></table>
+
+This command creates a simple textual marker, which is added to the list of messages in the upper left-hand corner of the screen.<br /><br />
+
+<hr />
+<table border="0"><tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.PointOfInterest</b> <em>轨道编号</em>; <font color="green"><em>X</em></font>; <font color="green"><em>Y</em></font>; <em>Yaw</em>; <em>Pitch</em>; <em>Roll</em>; <em>Text</em><br />
+<b>Track.POI</b> <em>轨道编号</em>; <font color="green"><em>X</em></font>; <font color="green"><em>Y</em></font>; <em>Yaw</em>; <em>Pitch</em>; <em>Roll</em>; <em>Text</em></font></td></tr></table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>轨道编号</em></b>: A non-negative integer representing the rail for the point of interest.<br />
+<b><font color="green"><em>X</em></font></b>: A floating-point number representing the horizontal offset from the rail, <b>by default</b> measured in <b>meters</b>. Negative values indicate left, positive ones right.<br />
+<b><font color="green"><em>Y</em></font></b>: A floating-point number representing the vertical offset from the rail, <b>by default</b> measured in <b>meters</b>. Negative values indicate below, positive ones above.<br />
+<b><em>Yaw</em></b>: The angle in degrees by which the view is rotated in the XZ-plane in clock-wise order when viewed from above. The default value is 0.<br />
+<b><em>Pitch</em></b>: The angle in degrees by which the view is rotated in the YZ-plane in clock-wise order when viewed from the left. The default value is 0.<br />
+<b><em>Roll</em></b>: The angle in degrees by which the view is rotated in the XY-plane in clock-wise order when viewed from behind. The default value is 0.<br />
+<b><em>Text</em></b>: A textual representation of the point of interest.
+</font></td></tr></table>
+This command creates a point of interest which the user can jump to by pressing the CAMERA_POI_PREVIOUS (NUM 1) or CAMERA_POI_NEXT (NUM 7) keys. The camera will be placed at the specified location with the specified orientation. If <em>Text</em> is non-empty, a message will appear briefly showing the text.<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.PreTrain</b> <em>Time</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>Time</em></b>: The <a href="information_numberformats.html#times">time</a> at which the pretrain is at this track position.
+</font></td></tr></table>
+This commands creates a position-time-association for an invisible preceding train in order to influence signalling. Contrary to a real preceding train as created by Route.RunInterval, the invisible preceding train created by Track.PreTrain is a way of scripting where the invisible preceding train is at any given time. The position-time-associations must be in increasing order, that is, at a later track position, the associated time must also be later. Before the first scripted time, the invisible preceding train resides at the first scripted position. In-between the first and last scripted time, the invisible preceding train moves (linearly) between the scripted points. After the last scripted time, the invisible preceding train is removed and thus clears signalling.<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Announce</b> <em>FileName</em>; <font color="blue"><em>Speed</em></font></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>FileName</em></b>: The file name for the sound to play, relative to the <b>Sound</b> folder.<br />
+<font color="blue"><b><em>Speed</em></b></font>: The reference speed in km/h for speed-dependant sounds, or 0 to play the sound speed-independently. The default value is 0.
+</font></td></tr></table>
+This command plays an announcement or other kind of sound in the cab once the player's train crosses the point where this command is used. If <em>Speed</em> is set to 0 (default), the sound is played as-is. If a <em>Speed</em> is given though, the sound plays at is original pitch at the specified speed, and is pitch-modulated proportionally for other speeds, useful for custom flange sounds, pointwork sounds, etc.<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Doppler</b> <em>FileName</em>; <font color="green"><em>X</em></font>; <font color="green"><em>Y</em></font></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>FileName</em></b>: The file name for the sound to play, relative to the <b>Sound</b> folder.<br />
+<b><font color="green"><em>X</em></font></b>: A floating-point number representing the horizontal offset from rail 0, <b>by default</b> measured in <b>meters</b>. Negative values indicate left, positive ones right.<br />
+<b><font color="green"><em>Y</em></font></b>: A floating-point number representing the vertical offset from rail 0, <b>by default</b> measured in <b>meters</b>. Negative values indicate below, positive ones above.
+</font></td></tr></table>
+This command places an environmental sound effect at the specified location. The sound will play in a loop for the duration of the simulation and employs the doppler effect. (Note: All sounds in openBVE employ the doppler effect.)<br /><br /><hr />
+<table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Buffer</b></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+
+</font></td></tr></table>
+This command places a bumper. The train can collide with the bumper in both the forward and backward directions. Place this command at the beginning and the end of the route. An object is not automatically created, so use Track.FreeObj to create a visual representation of the bumper if necessary.
+
+<table><tr style="height: 2px;"><td /></tr></table>
+<hr />
+<br /><table border="0">
+<tr style="height:16"><td></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Track.Destination</b> <em>Type</em>; <em>BeaconStructure编号</em>; <em>NextDestination</em>; <em>PreviousDestination</em>; <em>TriggerOnce</em>; <font color="green"><em>X</em></font>; <font color="green"><em>Y</em></font>; <em>Yaw</em>; <em>Pitch</em>; <em>Roll</em></font></td></tr>
+</table>
+<table style="border:0px none;margin-left:10pt;margin-right:10pt;">
+<tr><td><font color="#808080">
+<b><em>Type</em></b>: Defines the types of trains for which this destination setter applies: <em>-1</em> for AI trains only, <em>0</em> for all trains and <em>1</em> for the player train only.<br />
+<b><em>BeaconStructure编号</em></b>: A non-negative integer representing the object to be placed as defined via Structure.Beacon, or -1 to not place any object.<br />
+<b><em>NextDestination</em></b>: An integer representing the destination value set when passing over this beacon in a forwards direction, or <em>-1</em> to disable.<br />
+<b><em>PreviousDestination</em></b>: An integer representing the destination value set when passing over this beacon in a reverse direction, or <em>-1</em> to disable.<br />
+<b><em>TriggerOnce</em></b>: If set to <em>0</em>, this beacon will be triggered by all valid trains which pass over it. If set to <em>1</em>, it will be triggered by the first valid train only.<br />
+<b><font color="green"><em>X</em></font></b>: The X-coordinate at which to place the object, <b>by default</b> measured in <b>meters</b>. The default value is 0.<br />
+<b><font color="green"><em>Y</em></font></b>: The Y-coordinate at which to place the object, <b>by default</b> measured in <b>meters</b>. The default value is 0.<br />
+<b><em>Yaw</em></b>: The angle in degrees by which the object is rotated in the XZ-plane in clock-wise order when viewed from above. The default value is 0.<br />
+<b><em>Pitch</em></b>: The angle in degrees by which the object is rotated in the YZ-plane in clock-wise order when viewed from the left. The default value is 0.<br />
+<b><em>Roll</em></b>: The angle in degrees by which the object is rotated in the XY-plane in clock-wise order when viewed from behind. The default value is 0.
+</font></td></tr></table>
+This command places a special beacon, which sets the destination variable, available for use by plugins and animated objects. The object must have been loaded via Structure.Beacon(<em>BeaconStructure编号</em>) prior to using this command.<br /><br /><hr />
+</body>
+
+<!-- Mirrored from www.trainsimframework.org/develop/route_csv.html by HTTrack Website Copier/3.x [XR&CO'2010], Sat, 05 May 2012 22:30:55 GMT -->
+</html>
