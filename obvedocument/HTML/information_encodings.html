@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 
@@ -7,24 +7,24 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="SHORTCUT ICON" href="../Images/favicon.png" />
 <meta name="keywords" content="openBVE,homepage" />
-<title>Character Encodings</title>
+<title>字体编码</title>
 </head>
 <body style="font-family:sans-serif;font-size:small">
-<font size="+2" color="#0080FF">Character Encodings</font><br />
+<font size="+2" color="#0080FF">字体编码</font><br />
 <table style="border:0px none;margin-left:10pt;margin-right:10pt;">
 <tr><td><font size="-1" color="#808080">
-This page describes what character encodings are and how they should be used.
+本页面描述了什么是字符编码以及如何使用它们。（译注：本页面只适用于openBVE，Hmmsim游戏界面只支持英语、德语、韩语、日语，而转换器只支持英语及部分字符，不兼容的语言会被替换或忽略）
 </font></td></tr></table>
 <br /><table><tr style="height: 4px;"><td /></tr></table>
-<font size="+1" color="#0080FF">■ Overview</font><hr />
+<font size="+1" color="#0080FF">■ 概述</font><hr />
 <table style="border:0px none;margin-left:10pt;margin-right:10pt;">
 <tr><td><font size="-1" color="#808080">
 
 </font></td></tr></table>
-A character encoding is a way to translate characters into bytes that can be stored on the hard drive. In the beginnings, one byte (256 states) was used to encode one character. As different writing systems around the world have different requirements for characters to be encoded, there are a lot of different encodings in use throughout the world. Problematically, if the encoding of a text file is not known in advance, misinterpreting the encoding can result in <em>mojibake</em> (meaningless sequence of characters).<br /><table>
+字符编码是将字符转换为可存储在硬盘上的字节的一种方式。从前，一个字节（256个信息状态）被用来编码一个字符，但由于世界各地的不同书写系统对要编码的字符有不同的要求，全世界有许多不同的编码在使用。问题在于，如果事先不知道文本文件的编码，（系统的）误解会导致 <em>乱码</em> 的出现。（无意义的字符序列）（译注：原文为mojibake）<br /><table>
 <tr>
 <td width="16" valign="top" /><td>
-<font size="-1"><em>Example of a Japanese text encoded in Shift_JIS (requires appropriate fonts available):</em></font>
+<font size="-1"><em>一个用 Shift_JIS 编写的日语文本的例子（需要适当的字体）：</em></font>
 </td></tr><tr>
 <td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
 <tt>ひらがなカタカナ漢字</tt></td>
@@ -33,7 +33,7 @@ A character encoding is a way to translate characters into bytes that can be sto
 <table>
 <tr>
 <td width="16" valign="top" /><td>
-<font size="-1"><em>The byte sequence generated from the previous example in Shift_JIS:</em></font>
+<font size="-1"><em>从上一个例子中以 Shift_JIS 生成的字符序列：</em></font>
 </td></tr><tr>
 <td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
 <tt>82 D0 82 E7 82 AA 82 C8 83 4A 83 5E 83 4A 83 69 8A BF 8E 9A</tt></td>
@@ -42,28 +42,28 @@ A character encoding is a way to translate characters into bytes that can be sto
 <table>
 <tr>
 <td width="16" valign="top" /><td>
-<font size="-1"><em>What happens if the byte sequence is misinterpreted as being ISO 8859-1 (Latin-1) instead of Shift_JIS:</em></font>
+<font size="-1"><em>如果这个字符序列被误解成 ISO 8859-1 (Latin-1) 而不是 SHIFT_JIS 的话会发生什么呢：</em></font>
 </td></tr><tr>
 <td width="16" valign="top">▶</td><td bgcolor="#D4D8FF" style="border:1px dashed;">
 <tt>‚Ð‚ç‚ª‚ÈƒJƒ^ƒJƒiŠ¿Žš</tt></td>
 </tr>
 </table>
-Usually, one particular encoding only allows to use the writing system for which it was designed for. Unicode, a standard which covers basically all characters as used in writing systems throughout the world, provides a solution here.<br /><br />While Unicode is wide-spread today, there are still some issues. First of all, Unicode is not directly a character encoding. Instead, so-called Unicode Transformation Formats (UTF) provide the means to encode particular characters. Transformation formats frequently used are UTF-8 and UTF-16.<br /><br />Route and train files are usually, for compatibility reasons, allowed to be encoded in any arbitrary encoding. As the encoding is not known in advance, the user will need to select the correct encoding for the route and the train in the settings tab in the main menu. Of course this is a nuisance and should be avoided somehow.<br /><br /><table><tr style="height: 4px;"><td /></tr></table>
-<font size="+1" color="#0080FF">■ The Byte Order Mark</font><hr />
+通常，一种特定的编码只允许在为其设计的书写系统上使用。Unicode，这种基本涵盖全世界书写系统中使用的所有字符的标准，提供了一种解决方案。<br /><br />虽然Unicode现在已广泛地传播，但它仍然存在一些问题。首先，Unicode不是直接的字符编码。相反，所谓的Unicode转换格式(UTF)提供了对特定字符进行编码的方法。经常使用的转换格式是UTF-8和UTF-16。<br /><br />线路和列车文件通常出于兼容性原因被允许包含在任意的编码当中。由于事先不知道编码，用户需要在主菜单的“设置”选项卡中为线路和列车选择正确的编码。当然这是一个麻烦，应该以某种方法避免。<br /><br /><table><tr style="height: 4px;"><td /></tr></table>
+<font size="+1" color="#0080FF">■ 字节顺序标记</font><hr />
 <table style="border:0px none;margin-left:10pt;margin-right:10pt;">
 <tr><td><font size="-1" color="#808080">
 
 </font></td></tr></table>
-UTF-16 descends from a character encoding (UTC-2) which always used two bytes to encode one character. As such, the order of those two bytes matters. In order to know in which order the bytes appear, a so-called byte order mark is frequently prepended to the text, usually automatically and transparently by the text editor. The byte order mark provides decoders a means of detecting in which byte order the file was saved in. Additionally, the byte order mark provides a fairly safe way of detecting that the text file is saved in Unicode in the first place.<br /><br />While not technically necessary, the byte order mark is also frequently used for UTF-8. As UTF-8 does not have a byte order issue, the sole purpose of using a byte order mark with UTF-8 is to provide a means to flagging the file as being encoded in UTF-8.<br /><br />As said, while Unicode allows to encode virtually all characters used in all writing systems around the world, it does not necessarily make working with text files easier if the encoding to be used was not agreed on.<br /><br />Using a byte order mark provides openBVE the ability to automatically detect the encoding for each individual file. If you have a good text editor, you will not only be able to select the encoding manually, but also if you want to save with a byte order mark or not. Notepad (Windows) always saves with a byte order mark if UTF-8 is selected as the character encoding upon saving the file, to make an acceptable example.<br /><br />Technically, the byte order mark is the first bytes of a particular text file. The byte order marks which can be automatically detected by openBVE are:<br /><br />
+UTF-16会从总是使用两个字节编码一个字符的字符编码中下降（？原文descend）。因此，这两个字节的顺序很重要。为了知道字节是以什么顺序出现的，一个所谓的字节顺序标记会为文本准备好，它通常是由文本编辑器自动生成且隐藏的。字节顺序标记为解码器提供了一种检测手段，这里面保存着该文本的字节顺序。此外，字节顺序标记提供了一种相当安全的方式来检测文件是否以Unicode保存。<br /><br />虽然没有技术上的必要，但字节顺序标记也会以UTF-8的格式使用。由于UTF-8没有字节顺序的问题，在UTF-8中使用字节顺序标记的唯一目的是提供一种标记文件以UTF-8编码的方法。<br /><br />如前所述，虽然Unicode允许对全世界所有书写系统重中的字符进行编码，但如果要使用的编码未达成一致，则不一定能使文本文件的处理更加轻松。<br /><br />字节顺序标记的使用给了openBVE一个机会来为每个独立的文件自动识别编码。如果您有一个优秀的文本编辑器，您将不仅可以手动选择编码（方式），还可以根据自身需要保存字节顺序标记与否。当保存文件时，若选择UTF-8作为字符编码，Notepad (Windows) 总会将字节顺序标记保存下来，作为一个可以接受的示例。<br /><br />技术上讲，字节顺序标记是特定文本文件的前几个字节。能被openBVE自动识别的字节顺序标记有：<br /><br />
 <table style="border-collapse: collapse;">
-<tr><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;"> Encoding</th><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;"> Hexadecimal representation</th></tr>
+<tr><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;"> 编码</th><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;"> 十六进制表示方法</th></tr>
 <tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">UTF-8</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">EF BB BF</td></tr>
 <tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">UTF-16 (big endian)</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">FE FF</td></tr>
 <tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">UTF-16 (little endian)</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">FF FE</td></tr>
 <tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">UTF-32 (big endian)</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">00 00 FE FF</td></tr>
 <tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">UTF-32 (little endian)</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">FF FE 00 00</td></tr>
 </table><br />
-You are encouraged to always save text files in one of those encodings with a byte order mark in order for openBVE to automatically detect the encoding used.
+我们鼓励你始终按照字节标记顺序将文本文件以其中一种编码保存，以便openBVE自动检测所使用的编码。
 </body>
 
 <!-- Mirrored from www.trainsimframework.org/develop/information_encodings.html by HTTrack Website Copier/3.x [XR&CO'2010], Sat, 05 May 2012 22:31:29 GMT -->
