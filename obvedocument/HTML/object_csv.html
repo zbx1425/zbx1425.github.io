@@ -23,7 +23,7 @@
 </font></td></tr></table>
 ↷ <a href="#overview">1. 概述</a><br />
 ↷ <a href="#syntax">2. 语法</a><br />
-↷ <a href="#commands">3. 可用指令</a><br />
+↷ <a href="#commands">3. 可用命令</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#createmeshbuilder">CreateMeshBuilder</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#addvertex">AddVertex</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#addface">AddFace</a><br />
@@ -48,7 +48,7 @@
 <tr><td><font size="-1" color="#808080">
 
 </font></td></tr></table>
-一个CSV文件允许使用纯文本指令来创造单个物件。该物件可以在线路或列车中使用。文件描述的物件可以包含任意数量的多边形。文件格式允许在CreatMeshBuilder部分中对多个多边形进行分组，并将颜色或纹理（也就是贴图）信息等属性分配给在每个部分中创建的多边形。这允许在同一个CreateMeshBuilder当中创建多个多边形，这些多边形共享公共属性。多边形在这里称为面（face）。<br /><br />该文件是以任意编码<a href="information_encodings.html">编码</a>的纯文本文件，但是，带字节顺序标记的UTF-8是更好的选择。数字的<a href="information_numberformats.html">解析</a> 是<b>宽松的</b>，尽管如此，生成<em>严格的</em>输出还是很有必要。文件名是任意的，但必须有扩展名<b>.csv</b>。该文件将从上到下按照每行进行解析。<br /><br />➟ <a href="object_csv_quick.html">另请参阅CSV格式的快速参考...</a><br />
+一个CSV文件允许使用纯文本命令来创造单个物件。该物件可以在线路或列车中使用。文件描述的物件可以包含任意数量的多边形。文件格式允许在CreatMeshBuilder部分中对多个多边形进行分组，并将颜色或纹理（也就是贴图）信息等属性分配给在每个部分中创建的多边形。这允许在同一个CreateMeshBuilder当中创建多个多边形，这些多边形共享公共属性。多边形在这里称为面（face）。<br /><br />该文件是以任意编码<a href="information_encodings.html">编码</a>的纯文本文件，但是，带字节顺序标记的UTF-8是更好的选择。数字的<a href="information_numberformats.html">解析</a> 是<b>宽松的</b>，尽管如此，生成<em>严格的</em>输出还是很有必要。文件名是任意的，但必须有扩展名<b>.csv</b>。该文件将从上到下按照每行进行解析。<br /><br />➟ <a href="object_csv_quick.html">另请参阅CSV格式的快速参考...</a><br />
 <br /><a name="syntax" />
 <br /><table><tr style="height: 4px;"><td /></tr></table>
 <font size="+1" color="#0080FF">■ 2. 语法</font><hr />
@@ -56,17 +56,17 @@
 <tr><td><font size="-1" color="#808080">
 
 </font></td></tr></table>
-<br />文件中的每一行都分为指令名称及其参数。所有指令的语法都是相同的：<br /><table border="0">
+<br />文件中的每一行都分为命令名称及其参数。所有命令的语法都是相同的：<br /><table border="0">
 <tr style="height:16"><td></td></tr>
-<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>指令名称</b>, <em>参数<sub>1</sub></em>, <em>参数<sub>2</sub></em>, <em>参数<sub>3</sub></em>，...，<em>参数<sub>n</sub></em></font></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>命令名称</b>, <em>参数<sub>1</sub></em>, <em>参数<sub>2</sub></em>, <em>参数<sub>3</sub></em>，...，<em>参数<sub>n</sub></em></font></td></tr>
 </table>
 <table style="border:0px none;margin-left:10pt;margin-right:10pt;">
 <tr><td><font color="#808080">
 
 </font></td></tr></table>
-<br /><em>指令名称</em>不区分大小写。如果有参数，则<em>指令名称</em>和<em>参数1</em>用逗号（U+002C）来分隔。同样，参数也用逗号分隔。指令名称和参数周围的<a href="information_whitespaces.html">空格</a>以及行的开头和结尾都会被忽略。仅忽略由空格组成的空行或空行。<br /><br />将文本写在<em>参数<sub>i</sub></em>处也可以省略该参数。在这种情况下通常会应用该指令特定的默认值。所有默认值都在可用命令部分中指定。（这一句不太懂，所以机翻）<br /><br />您可以在一行的末尾添加注释。注释由分号（U+003B）开始。注释（如果存在）在处理之前将从所有行中删除。<br /><br /><a name="commands" />
+<br /><em>命令名称</em>不区分大小写。如果有参数，则<em>命令名称</em>和<em>参数1</em>用逗号（U+002C）来分隔。同样，参数也用逗号分隔。命令名称和参数周围的<a href="information_whitespaces.html">空格</a>以及行的开头和结尾都会被忽略。仅忽略由空格组成的空行或空行。<br /><br />将文本写在<em>参数<sub>i</sub></em>处也可以省略该参数。在这种情况下通常会应用该命令特定的默认值。所有默认值都在可用命令部分中指定。（这一句不太懂，所以机翻）<br /><br />您可以在一行的末尾添加注释。注释由分号（U+003B）开始。注释（如果存在）在处理之前将从所有行中删除。<br /><br /><a name="commands" />
 <br /><table><tr style="height: 4px;"><td /></tr></table>
-<font size="+1" color="#0080FF">■ 3. 可用指令</font><hr />
+<font size="+1" color="#0080FF">■ 3. 可用命令</font><hr />
 <table style="border:0px none;margin-left:10pt;margin-right:10pt;">
 <tr><td><font size="-1" color="#808080">
 
@@ -79,7 +79,7 @@
 <tr><td><font color="#808080">
 
 </font></td></tr></table>
-This command marks the beginning of a new section of faces. It must precede any of the following commands. There might be as many CreateMeshBuilder sections as desired in the object file. All subsequent commands will then relate to the last CreateMeshBuilder section opened.<br /><br /><hr />
+这个命令标志着新一组面（多边形）的开始。它必须位于以下任何命令之前。在文件中可以根据需要添加任意数量的该指令。后续的所有命令将与前一个CreateMeshBuilder关联。<br /><br /><hr />
 <br /><br /><a name="addvertex" />
 <br /><table border="0">
 <tr style="height:16"><td></td></tr>
@@ -87,14 +87,14 @@ This command marks the beginning of a new section of faces. It must precede any 
 </table>
 <table style="border:0px none;margin-left:10pt;margin-right:10pt;">
 <tr><td><font color="#808080">
-<b><em>vX</em></b>: The x-coordinate for the vertex in meters. Negative values are left, positive ones right. The default value is 0.<br />
-<b><em>vY</em></b>: The y-coordinate for the vertex in meters. Negative values are down, positive ones up. The default value is 0.<br />
-<b><em>vZ</em></b>: The z-coordinate for the vertex in meters. Negative values are backward, positive ones forward. The default value is 0.<br />
-<b><em>nX</em></b>: The x-coordinate for the normal of this vertex. The default value is 0.<br />
-<b><em>nY</em></b>: The y-coordinate for the normal of this vertex. The default value is 0.<br />
-<b><em>nZ</em></b>: The z-coordinate for the normal of this vertex. The default value is 0.
+<b><em>vX</em></b>：顶点的x坐标，以米为单位，负值向左，正值向右，默认值为0。<br />
+<b><em>vY</em></b>：顶点的y坐标，以米为单位，负值向下，正值向上，默认值为0。<br />
+<b><em>vZ</em></b>：顶点的z坐标，以米为单位，负值向后，正值向前，默认值为0。<br />
+<b><em>nX</em></b>：顶点法线的x坐标，以米为单位，默认值为0。<br />
+<b><em>nY</em></b>：顶点法线的y坐标，以米为单位，默认值为0。<br />
+<b><em>nZ</em></b>：顶点法线的z坐标，以米为单位，默认值为0。
 </font></td></tr></table>
-This command creates a new vertex which can then be used to create faces via the AddFace or AddFace2 commands. There can be as many AddVertex commands as desired within a CreateMeshBuilder section. However, the order of the vertices given is important for other commands. The first vertex given has index 0, and subsequent vertices have indices 1, 2, 3 and so on.<br /><br />The normal is the direction perpendicular to the face at a particular point. If all vertices in a face have the same normal, the face will look flat. If used appropriately, you can give the illusion of a curved face by specifying different normals per vertex, but using the same normal on all vertices that share the same spatial coordinate - across multiple faces. If left all zero, the normal will be calculated automatically.<br /><br /><hr />
+这个命令将创建一个新顶点，然后可以将此顶点用于AddFace或AddFace2命令来创建面。在CreateMeshBuilder部分中可以根据需要添加任意数量的该指令。但是，给出顶点的顺序对后续的命令很重要。给定的第一个顶点具有索引0，后续顶点具有索引1,2,3等等。<br /><br />法线是在特定点垂直于面的方向。如果面里的所有顶点具有相同的法线，那么面将看起来平坦。如果使用得当，您可以通过为每个顶点指定不同的发法线来造成曲面的错觉 - 跨多个面在所有顶点上使用相同法线除外。如果全部为0，法线将自动计算。<br /><br /><hr />
 <br /><br /><a name="addface" />
 <br /><table border="0">
 <tr style="height:16"><td></td></tr>
@@ -102,7 +102,7 @@ This command creates a new vertex which can then be used to create faces via the
 </table>
 <table style="border:0px none;margin-left:10pt;margin-right:10pt;">
 <tr><td><font color="#808080">
-<b><em>v<sub>i</sub></em></b>: The vertex index to include in this face. Allowed values are 0 through <em>n</em>-1, where <em>n</em> is the number of AddVertex commands used.
+<b><em>v<sub>i</sub></em></b>：将要包含在此面中的顶点索引。允许的数值为0到<em>n</em>-1，<em>n</em>是所使用的AddVertex命令数量。
 </font></td></tr></table>
 This command creates a face given an arbitrary long list of vertex indices. The index corresponds to the order in which the vertices have been created by the AddVertex command, thus the AddFace command needs to be stated after the corresponding AddVertex commands. The first AddVertex command used creates index 0, and subsequent AddVertex commands create indices 1, 2, 3 and so on. The order in which the vertex indices appear is important. They need to be given in clockwise order when looking at the front of the face. The back of the face will not be visible. However, the AddFace2 command can be used to create a face which is visible from both sides. Only convex polygons are supported.<br /><br /><hr />
 <br /><br /><a name="addface2" />
