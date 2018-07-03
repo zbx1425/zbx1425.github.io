@@ -7,10 +7,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="SHORTCUT ICON" href="../Images/favicon.png" />
 <meta name="keywords" content="openBVE,homepage" />
-<title>字体编码</title>
+<title>字符编码</title>
 </head>
 <body style="font-family:sans-serif;font-size:small">
-<font size="+2" color="#0080FF">字体编码</font><br />
+<font size="+2" color="#0080FF">字符编码</font><br />
 <table style="border:0px none;margin-left:10pt;margin-right:10pt;">
 <tr><td><font size="-1" color="#808080">
 本页面描述了什么是字符编码以及如何使用它们。（译注：本页面只适用于openBVE，Hmmsim游戏界面只支持英语、德语、韩语、日语，而转换器只支持英语及部分字符，不兼容的语言会被替换或忽略）
@@ -54,7 +54,7 @@
 <tr><td><font size="-1" color="#808080">
 
 </font></td></tr></table>
-UTF-16会从总是使用两个字节编码一个字符的字符编码中下降（？原文descend）。因此，这两个字节的顺序很重要。为了知道字节是以什么顺序出现的，一个所谓的字节顺序标记会为文本准备好，它通常是由文本编辑器自动生成且隐藏的。字节顺序标记为解码器提供了一种检测手段，这里面保存着该文本的字节顺序。此外，字节顺序标记提供了一种相当安全的方式来检测文件是否以Unicode保存。<br /><br />虽然没有技术上的必要，但字节顺序标记也会以UTF-8的格式使用。由于UTF-8没有字节顺序的问题，在UTF-8中使用字节顺序标记的唯一目的是提供一种标记文件以UTF-8编码的方法。<br /><br />如前所述，虽然Unicode允许对全世界所有书写系统重中的字符进行编码，但如果要使用的编码未达成一致，则不一定能使文本文件的处理更加轻松。<br /><br />字节顺序标记的使用给了openBVE一个机会来为每个独立的文件自动识别编码。如果您有一个优秀的文本编辑器，您将不仅可以手动选择编码（方式），还可以根据自身需要保存字节顺序标记与否。当保存文件时，若选择UTF-8作为字符编码，Notepad (Windows) 总会将字节顺序标记保存下来，作为一个可以接受的示例。<br /><br />技术上讲，字节顺序标记是特定文本文件的前几个字节。能被openBVE自动识别的字节顺序标记有：<br /><br />
+UTF-16编码总是使用两个字节来表示一个字符。因此，这两个字节的顺序很重要。为了知道字节是以什么顺序出现的，一个所谓的字节顺序标记会为文本准备好，它通常是由文本编辑器自动生成且隐藏的。字节顺序标记为解码器提供了一种检测手段，这里面保存着该文本的字节顺序。此外，字节顺序标记提供了一种相当安全的方式来检测文件是否以Unicode保存。<br /><br />虽然没有技术上的必要，但字节顺序标记也会以UTF-8的格式使用。由于UTF-8没有字节顺序的问题，在UTF-8中使用字节顺序标记的唯一目的是提供一种标记文件以UTF-8编码的方法。<br /><br />如前所述，虽然Unicode允许对全世界所有书写系统重中的字符进行编码，但如果要使用的编码未达成一致，则不一定能使文本文件的处理更加轻松。<br /><br />字节顺序标记的使用给了openBVE一个机会来为每个独立的文件自动识别编码。如果您有一个优秀的文本编辑器，您将不仅可以手动选择编码（方式），还可以根据自身需要保存字节顺序标记与否。当保存文件时，若选择UTF-8作为字符编码，Notepad (Windows) 总会将字节顺序标记保存下来，作为一个可以接受的示例。<br /><br />技术上讲，字节顺序标记是特定文本文件的前几个字节。能被openBVE自动识别的字节顺序标记有：<br /><br />
 <table style="border-collapse: collapse;">
 <tr><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;"> 编码</th><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;"> 十六进制表示方法</th></tr>
 <tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">UTF-8</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">EF BB BF</td></tr>
