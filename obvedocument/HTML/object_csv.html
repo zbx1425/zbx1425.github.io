@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 
@@ -10,7 +10,7 @@
 <title>CSV物件格式</title>
 </head>
 <body style="font-family:sans-serif;font-size:small">
-<font size="+2" color="#0080FF"><b>CSV</b>物件格式</font><br />
+<font size="+2" color="#0080FF"><b>CSV</b>物件格式（适用于openBVE，Hmmsim仅供参考）</font><br />
 <table style="border:0px none;margin-left:10pt;margin-right:10pt;">
 <tr><td><font size="-1" color="#808080">
 
@@ -43,30 +43,30 @@
 &nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#settexturecoordinates">SetCoordinates</a><br />
 <br /><a name="overview" />
 <br /><table><tr style="height: 4px;"><td /></tr></table>
-<font size="+1" color="#0080FF">■ 1. Overview</font><hr />
+<font size="+1" color="#0080FF">■ 1. 概述</font><hr />
 <table style="border:0px none;margin-left:10pt;margin-right:10pt;">
 <tr><td><font size="-1" color="#808080">
 
 </font></td></tr></table>
-A CSV object allows to create a single object by using textual instructions. The object can be used in routes or in trains. The object described by the file can contain any number of individual polygons. The file format allows to group multiple polygons in CreateMeshBuilder sections in which attributes like color or texture information is assigned to all polygons created in each section. This allows for the creation of many polygons in the same CreateMeshBuilder section which share common attributes. A polygon is called a face in this file format.<br /><br />The file is a plain text file encoded in any arbitrary <a href="information_encodings.html">encoding</a>, however, UTF-8 with a byte order mark is the preferred choice. The <a href="information_numberformats.html">parsing model</a> for numbers is <b>Loose</b>, however, you are encouraged to produce <em>Strict</em> output nonetheless. The file name is arbitrary, but must have the extension <b>.csv</b>. The file is interpreted on a per-line basis, from top to bottom.<br /><br />➟ <a href="object_csv_quick.html">See also the quick reference for the CSV format...</a><br />
+一个CSV文件允许使用纯文本指令来创造单个物件。该物件可以在线路或列车中使用。文件描述的物件可以包含任意数量的多边形。文件格式允许在CreatMeshBuilder部分中对多个多边形进行分组，并将颜色或纹理（也就是贴图）信息等属性分配给在每个部分中创建的多边形。这允许在同一个CreateMeshBuilder当中创建多个多边形，这些多边形共享公共属性。多边形在这里称为面（face）。<br /><br />该文件是以任意编码<a href="information_encodings.html">编码</a>的纯文本文件，但是，带字节顺序标记的UTF-8是更好的选择。数字的<a href="information_numberformats.html">解析</a> 是<b>宽松的</b>，尽管如此，生成<em>严格的</em>输出还是很有必要。文件名是任意的，但必须有扩展名<b>.csv</b>。该文件将从上到下按照每行进行解析。<br /><br />➟ <a href="object_csv_quick.html">另请参阅CSV格式的快速参考...</a><br />
 <br /><a name="syntax" />
 <br /><table><tr style="height: 4px;"><td /></tr></table>
-<font size="+1" color="#0080FF">■ 2. Syntax</font><hr />
+<font size="+1" color="#0080FF">■ 2. 语法</font><hr />
 <table style="border:0px none;margin-left:10pt;margin-right:10pt;">
 <tr><td><font size="-1" color="#808080">
 
 </font></td></tr></table>
-<br />Each line in the file is split into the name of a command and its arguments. The syntax for all commands is the same:<br /><table border="0">
+<br />文件中的每一行都分为指令名称及其参数。所有指令的语法都是相同的：<br /><table border="0">
 <tr style="height:16"><td></td></tr>
-<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>NameOfTheCommand</b>, <em>Argument<sub>1</sub></em>, <em>Argument<sub>2</sub></em>, <em>Argument<sub>3</sub></em>, ..., <em>Argument<sub>n</sub></em></font></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>指令名称</b>, <em>参数<sub>1</sub></em>, <em>参数<sub>2</sub></em>, <em>参数<sub>3</sub></em>，...，<em>参数<sub>n</sub></em></font></td></tr>
 </table>
 <table style="border:0px none;margin-left:10pt;margin-right:10pt;">
 <tr><td><font color="#808080">
 
 </font></td></tr></table>
-<br /><em>NameOfTheCommand</em> is case-insensitive. If there are arguments, <em>NameOfTheCommand</em> and <em>Argument1</em> are separated by a comma (U+002C). Likewise, arguments are also separated by a comma (U+002C). <a href="information_whitespaces.html">White spaces</a> around the arguments and around the <em>NameOfTheCommand</em>, and well as at the beginning and the end of the line, are ignored. Empty lines or lines solely consisting of white spaces are also ignored.<br /><br />Arguments may also be omitted by leaving the text at each of the <em>Argument<sub>i</sub></em> blank. A default value will usually apply in this case, which is specific to the command used. All default values are specified in the section of available commands.<br /><br />You can use comments anywhere at the end of a line. A comment is started by a semicolon (U+003B). Comments, if present, are stripped away from all lines before these are processed.<br /><br /><a name="commands" />
+<br /><em>指令名称</em>不区分大小写。如果有参数，则<em>指令名称</em>和<em>参数1</em>用逗号（U+002C）来分隔。同样，参数也用逗号分隔。指令名称和参数周围的<a href="information_whitespaces.html">空格</a>以及行的开头和结尾都会被忽略。仅忽略由空格组成的空行或空行。<br /><br />将文本写在<em>参数<sub>i</sub></em>处也可以省略该参数。在这种情况下通常会应用该指令特定的默认值。所有默认值都在可用命令部分中指定。（这一句不太懂，所以机翻）<br /><br />您可以在一行的末尾添加注释。注释由分号（U+003B）开始。注释（如果存在）在处理之前将从所有行中删除。<br /><br /><a name="commands" />
 <br /><table><tr style="height: 4px;"><td /></tr></table>
-<font size="+1" color="#0080FF">■ 3. Available commands</font><hr />
+<font size="+1" color="#0080FF">■ 3. 可用指令</font><hr />
 <table style="border:0px none;margin-left:10pt;margin-right:10pt;">
 <tr><td><font size="-1" color="#808080">
 
