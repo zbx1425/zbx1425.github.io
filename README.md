@@ -1,2 +1,3 @@
-﻿# **Welcome Here.**
-这是**Zbx1425**在github上的烦烦烦个人网站。
+# **Welcome Here.**
+This is the personal website of **Zbx1425** on github.
+Now a Chinese version of openBVE developing documentation is located here.
