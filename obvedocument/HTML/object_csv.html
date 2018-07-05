@@ -102,9 +102,9 @@
 </table>
 <table style="border:0px none;margin-left:10pt;margin-right:10pt;">
 <tr><td><font color="#808080">
-<b><em>v<sub>i</sub></em></b>：将要包含在此面中的顶点索引。允许的数值为0到<em>n</em>-1，<em>n</em>是所使用的AddVertex命令数量。
+<b><em>v<sub>i</sub></em></b>：此数值为将要包含在此面中的顶点索引。允许的数值为0到<em>n</em>-1，<em>n</em>是所使用的AddVertex命令数量。
 </font></td></tr></table>
-This command creates a face given an arbitrary long list of vertex indices. The index corresponds to the order in which the vertices have been created by the AddVertex command, thus the AddFace command needs to be stated after the corresponding AddVertex commands. The first AddVertex command used creates index 0, and subsequent AddVertex commands create indices 1, 2, 3 and so on. The order in which the vertex indices appear is important. They need to be given in clockwise order when looking at the front of the face. The back of the face will not be visible. However, the AddFace2 command can be used to create a face which is visible from both sides. Only convex polygons are supported.<br /><br /><hr />
+此命令将创建一个以所有给出v点为顶点的面。i的值（索引值）对应于AddVertex中创建顶点的顺序，因此该命令须紧跟AddVertex命令。面的背面不可见。顶点索引出现的顺序很重要。1.当你能看到这个面时，顶点永远以顺时针排列。2.在相邻位置出现的顶点的连线不可以是该多边形的对角线。<br /><br /><hr />
 <br /><br /><a name="addface2" />
 <br /><table border="0">
 <tr style="height:16"><td></td></tr>
@@ -112,26 +112,26 @@ This command creates a face given an arbitrary long list of vertex indices. The 
 </table>
 <table style="border:0px none;margin-left:10pt;margin-right:10pt;">
 <tr><td><font color="#808080">
-<b><em>v<sub>i</sub></em></b>: The vertex index to include in this face. Allowed values are 0 through <em>n</em>-1, where <em>n</em> is the number of AddVertex commands used.
+<b><em>v<sub>i</sub></em></b>：此数值为将要包含在此面中的顶点索引。允许的数值为0到<em>n</em>-1，<em>n</em>是所使用的AddVertex命令数量。
 </font></td></tr></table>
-This command creates a face given an arbitrary long list of vertex indices. The index corresponds to the order in which the vertices have been created by the Vertex command, thus the Face command needs to be stated after the corresponding Vertex commands. The first Vertex command used creates index 0, and subsequent Vertex commands create indices 1, 2, 3 and so on. The order in which the vertex indices appear is important. They need to be given in clockwise order when looking at the front of the face. The back of the face will also be visible, however, lighting on the back face might be the same as on the front face. Only convex polygons are supported.<br /><br /><hr />
+此命令将创建一个以所有给出v点为顶点的面。i的值（索引值）对应于AddVertex中创建顶点的顺序，因此该命令须紧跟AddVertex命令。在相邻位置出现的顶点的连线不可以是该多边形的对角线。该指令可以创造两侧可见的面，且仅支持凸多边形。<br /><br /><hr />
 <br /><br /><a name="cube" />
 <br /><table border="0">
 <tr style="height:16"><td></td></tr>
-<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Cube</b>, <em>HalfWidth</em>, <em>HalfHeight</em>, <em>HalfDepth</em></font></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Cube</b>, <em>半宽</em>, <em>半高</em>, <em>半深</em></font></td></tr>
 </table>
 <table style="border:0px none;margin-left:10pt;margin-right:10pt;">
 <tr><td><font color="#808080">
-<b><em>HalfWidth</em></b>: A floating-point number representing half the width of the cube in <b>meters</b>.<br />
-<b><em>HalfHeight</em></b>: A floating-point number representing half the height of the cube in <b>meters</b>.<br />
-<b><em>HalfDepth</em></b>: A floating-point number representing half the depth of the cube in <b>meters</b>.
+<b><em>半宽</em></b>：一个表示此立方体一半宽度的浮点数，以<b>米</b>为单位。<br />
+<b><em>半高</em></b>：一个表示此立方体一半高度的浮点数，以<b>米</b>为单位。<br />
+<b><em>半深</em></b>：一个表示此立方体一半深度的浮点数，以<b>米</b>为单位。
 </font></td></tr></table>
-This command creates a cube having dimensions as specified by <em>HalfWidth</em>, <em>HalfHeight</em> and <em>HalfDepth</em>. The cube will be centered on the origin (0,0,0). Thus, on the x-axis, the cube extends from -<em>HalfWidth</em> to <em>HalfWidth</em>, on the y-axis from -<em>HalfHeight</em> to <em>HalfHeight</em> and on the z-axis from -<em>HalfDepth</em> to <em>HalfDepth</em>. The cube always has 8 vertices and 6 faces.<br /><table><tr style="height: 4px;"><td /></tr></table>
+此命令将以原点（0,0）为中心创建一个以<em>2×半宽</em>，<em>2×半高</em>和<em>2×半深</em>为尺寸的立方体。立方体总有8个顶点和6个面。如写出<em>Cube，半宽</em>的指令，则会创建一个以<em>2×半宽</em>为边长的正方体。如<em>半宽</em>，<em>半高</em>，<em>半深</em>中有一个为负值，则显示面将从外侧转向内侧。</em><br /><table><tr style="height: 4px;"><td /></tr></table>
 <table style="border:1px dashed;margin-left:20pt;margin-right:20pt;">
 <tr><td bgcolor="#FFE080" style="border:2px; border-style:ridge;"><font color="#404040">
-<b>ⓘ</b> Cube representation
+<b>ⓘ</b> Cube命令使用注意
 </font></td></tr><tr><td bgcolor="#FFFFFF">
-The Cube command is equivalent to a series of AddVertex and AddFace commands, which you need to account for when using other commands in the same CreateMeshBuilder section. The details on what the Cube command does are available <a href="object_cubecylinder.html">here</a>.
+Cube命令相当于一系列的AddVertex和AddFace命令，在同一CreateMeshBuilder部分中使用其他命令时需要考虑这些命令。<a href="object_cubecylinder.html">此处</a>提供了Cube命令的详细信息。
 </td></tr></table>
 <table><tr style="height: 4px;"><td /></tr></table>
 <hr />
