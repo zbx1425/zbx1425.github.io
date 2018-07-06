@@ -71,6 +71,7 @@
 <tr><td><font size="-1" color="#808080">
 
 </font></td></tr></table>
+<br /><br /><a name="createmeshbuilder" />
 <br /><table border="0">
 <tr style="height:16"><td></td></tr>
 <tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>CreateMeshBuilder</b></font></td></tr>
@@ -94,7 +95,7 @@
 <b><em>nY</em></b>：顶点法线的y坐标，以米为单位，默认值为0。<br />
 <b><em>nZ</em></b>：顶点法线的z坐标，以米为单位，默认值为0。
 </font></td></tr></table>
-这个命令将创建一个新顶点，然后可以将此顶点用于AddFace或AddFace2命令来创建面。在CreateMeshBuilder部分中可以根据需要添加任意数量的该指令。但是，给出顶点的顺序对后续的命令很重要。给定的第一个顶点具有索引0，后续顶点具有索引1,2,3等等。<br /><br />法线是在特定点垂直于面的方向。如果面里的所有顶点具有相同的法线，那么面将看起来平坦。如果使用得当，您可以通过为每个顶点指定不同的发法线来造成曲面的错觉 - 跨多个面在所有顶点上使用相同法线除外。如果全部为0，法线将自动计算。<br /><br /><hr />
+这个命令将创建一个新顶点，然后可以将此顶点用于AddFace或AddFace2命令来创建面。在CreateMeshBuilder部分中可以根据需要添加任意数量的该指令。但是，给出顶点的顺序对后续的命令很重要。给定的第一个顶点具有索引0，后续顶点具有索引1,2,3等等。<br /><br />法线是在特定点垂直于面的方向。如果面里的所有顶点具有相同的法线，那么面将看起来平坦。如果使用得当，您可以通过为每个顶点指定不同的法线来造成曲面的错觉 - 跨多个面在所有顶点上使用相同法线除外。如果全部为0，法线将自动计算。<br /><br /><hr />
 <br /><br /><a name="addface" />
 <br /><table border="0">
 <tr style="height:16"><td></td></tr>
@@ -118,7 +119,7 @@
 <br /><br /><a name="cube" />
 <br /><table border="0">
 <tr style="height:16"><td></td></tr>
-<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Cube</b>, <em>半宽</em>, <em>半高</em>, <em>半深</em></font></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Cube</b>, <em>半宽</em>, <em>半高</em>, <em>半深 </em></font></td></tr>
 </table>
 <table style="border:0px none;margin-left:10pt;margin-right:10pt;">
 <tr><td><font color="#808080">
@@ -126,7 +127,7 @@
 <b><em>半高</em></b>：一个表示此立方体一半高度的浮点数，以<b>米</b>为单位。<br />
 <b><em>半深</em></b>：一个表示此立方体一半深度的浮点数，以<b>米</b>为单位。
 </font></td></tr></table>
-此命令将以原点（0,0）为中心创建一个以<em>2×半宽</em>，<em>2×半高</em>和<em>2×半深</em>为尺寸的立方体。立方体总有8个顶点和6个面。如写出<em>Cube，半宽</em>的指令，则会创建一个以<em>2×半宽</em>为边长的正方体。如<em>半宽</em>，<em>半高</em>，<em>半深</em>中有一个为负值，则显示面将从外侧转向内侧。</em><br /><table><tr style="height: 4px;"><td /></tr></table>
+此命令将以原点（0,0,0）为中心创建一个以<em>2×半宽</em>，<em>2×半高</em>和<em>2×半深</em>为尺寸的立方体。立方体总有8个顶点和6个面。如写出<em>Cube，半宽</em>的指令，则会创建一个以<em>2×半宽</em>为边长的正方体。如<em>半宽</em>，<em>半高</em>，<em>半深</em>中有一个为负值，则显示面将从外侧转向内侧。</em><br /><table><tr style="height: 4px;"><td /></tr></table>
 <table style="border:1px dashed;margin-left:20pt;margin-right:20pt;">
 <tr><td bgcolor="#FFE080" style="border:2px; border-style:ridge;"><font color="#404040">
 <b>ⓘ</b> Cube命令使用注意
@@ -138,21 +139,21 @@ Cube命令相当于一系列的AddVertex和AddFace命令，在同一CreateMeshBu
 <br /><br /><a name="cylinder" />
 <br /><table border="0">
 <tr style="height:16"><td></td></tr>
-<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Cylinder</b>, <em>n</em>, <em>上底半径</em>, <em>下底半径</em>, <em>高</em></font></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Cylinder</b>, <em>n</em>, <em>上底半径</em>, <em>下底半径</em>, <em>高 </em></font></td></tr>
 </table>
 <table style="border:0px none;margin-left:10pt;margin-right:10pt;">
 <tr><td><font color="#808080">
-<b><em>n</em></b>：表示顶/底面正多边形的定点数，译者亲测该值最好为介于<b>2~32768</b>之间的整数，否则会报错。<br />
-<b><em>上底半径</em></b>: A floating-point number representing the radius for the upper base of the frustum in <b>meters</b>. Can be negative to indicate that the top cap is to be omitted.<br />
-<b><em>下底半径</em></b>: A floating-point number representing the radius for the lower base of the frustum in <b>meters</b>. Can be negative to indicate that the bottom cap is to be omitted.<br />
-<b><em>Height</em></b>: A floating-point number representing the height of the prism in <b>meters</b>. Can be negative, which will flip the frustum vertically and display it inside-out.
+<b><em>n</em></b>：表示顶/底面正多边形的定点数，译者亲测该值最好为介于<b>2~32768</b>之间的整数。<br />
+<b><em>上底半径</em></b>：顾名思义，不解释了，以<b>米</b>为单位。如该值为负数，则上底将省略。<br />
+<b><em>下底半径</em></b>：同上不解释，以<b>米</b>为单位。如该值为负数，则下底将省略。<br />
+<b><em>高</em></b>：一个表示该圆柱/圆锥/圆台高度的浮点数，以<b>米</b>为单位。可以为负值，那么该圆柱/圆锥/圆台将上下倒转且显示面将朝内。
 </font></td></tr></table>
-This command creates a <a href="http://en.wikipedia.org/wiki/Frustum">frustum</a>. If <em>LowerRadius</em> and <em>UpperRadius</em> are equal, the object generated will reduce to a <a href="http://en.wikipedia.org/wiki/Prism_(geometry)">prism</a>, which can be used as an approximation to the cylinder. If either <em>LowerRadius</em> or <em>UpperRadius</em> are zero, the object generated will reduce to a <a href="http://en.wikipedia.org/wiki/Pyramid_(geometry)">pyramid</a>. The frustum will be centered on the origin (0,0,0). On the x- and z-axes, the frustum extends from -<em>LowerRadius</em> to <em>LowerRadius</em> for the lower base and from -<em>UpperRadius</em> to <em>UpperRadius</em> for the upper base. On the y-axis, the frustum extends from -½*<em>Height</em> to ½*<em>Height</em>.<br /><br />The number of vertices <em>n</em> will usually suffice to be 6 or 8 when only small radii are used, for example to create a pole. Regardless of the values of <em>UpperRadius</em>, <em>LowerRadius</em> and <em>n</em>, the frustum will always have 2*<em>n</em> vertices, and usually <em>n</em>+2 faces unless any of the caps are omitted. If <em>UpperRadius</em> or <em>LowerRadius</em> are negative, the absolute value is being taken, but the respective caps are not created. If <em>Height</em> is negative, the roles of top and bottom are reversed and the faces will be visible from the inside, while otherwise, they will be visible from the outside.<br /><table><tr style="height: 4px;"><td /></tr></table>
+该命令将创建一个<a href="http://en.wikipedia.org/wiki/Frustum">截锥体</a>。如果<em>上底半径</em> 和<em>下底半径</em> 是相等的，这个物件将变成<a href="http://en.wikipedia.org/wiki/Prism_(geometry)">棱柱</a>，并可用作近似的圆柱。如果<em>下底半径</em> 或<em>上底半径 </em>为0，这个物件将变成<a href="http://en.wikipedia.org/wiki/Pyramid_(geometry)">棱锥</a>。创建的截椎体将以原点为中心。<br /><br />当半径的值较小时，定点数<em>n</em>为6或8足矣，例如创建一根电线杆。无论<em>上底半径</em>，<em>下底半径</em> 和<em>n </em>的值如何，该多面体将始终有2×n个顶点和n+2个面，除非省略任何顶点。若<em>上底半径 </em>或<em>下底半径 </em>为负数，则采用绝对值，但不会有相应的上限。<br /><table><tr style="height: 4px;"><td /></tr></table>
 <table style="border:1px dashed;margin-left:20pt;margin-right:20pt;">
 <tr><td bgcolor="#FFE080" style="border:2px; border-style:ridge;"><font color="#404040">
-<b>ⓘ</b> Cylinder representation
+<b>ⓘ</b> Cylinder命令使用注意
 </font></td></tr><tr><td bgcolor="#FFFFFF">
-The Cylinder command is equivalent to a series of AddVertex and AddFace commands, which you need to account for when using other commands in the same CreateMeshBuilder section. The details on what the Cylinder command does are available <a href="object_cubecylinder.html">here</a>.
+Cylinder命令相当于一系列的AddVertex和AddFace命令，在同一CreateMeshBuilder部分中使用其他命令时需要考虑这些命令。<a href="object_cubecylinder.html">此处</a>提供了Cylinder命令的详细信息
 </td></tr></table>
 <table><tr style="height: 4px;"><td /></tr></table>
 <hr />
@@ -161,7 +162,7 @@ The Cylinder command is equivalent to a series of AddVertex and AddFace commands
 <tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#606060">GenerateNormals</font></td></tr></table>
 <table style="border:0px none;margin-left:10pt;margin-right:10pt;">
 <tr><td><font color="#808080">
-<em>This command is ignored by openBVE.</em>
+<em>该命令被openBVE忽略。</em>
 </font></td></tr></table>
 <hr />
 <br /><br /><a name="translate" />
