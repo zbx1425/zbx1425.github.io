@@ -138,13 +138,13 @@ Cube命令相当于一系列的AddVertex和AddFace命令，在同一CreateMeshBu
 <br /><br /><a name="cylinder" />
 <br /><table border="0">
 <tr style="height:16"><td></td></tr>
-<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Cylinder</b>, <em>n</em>, <em>UpperRadius</em>, <em>LowerRadius</em>, <em>Height</em></font></td></tr>
+<tr><td bgcolor="#F0F0F0" style="font-family: monospace;border:1px dotted;color:#808080"><font color="#C00000"><b>Cylinder</b>, <em>n</em>, <em>上底半径</em>, <em>下底半径</em>, <em>高</em></font></td></tr>
 </table>
 <table style="border:0px none;margin-left:10pt;margin-right:10pt;">
 <tr><td><font color="#808080">
-<b><em>n</em></b>: An integer representing the number of vertices to be used for the base of the frustum.<br />
-<b><em>UpperRadius</em></b>: A floating-point number representing the radius for the upper base of the frustum in <b>meters</b>. Can be negative to indicate that the top cap is to be omitted.<br />
-<b><em>LowerRadius</em></b>: A floating-point number representing the radius for the lower base of the frustum in <b>meters</b>. Can be negative to indicate that the bottom cap is to be omitted.<br />
+<b><em>n</em></b>：表示顶/底面正多边形的定点数，译者亲测该值最好为介于<b>2~32768</b>之间的整数，否则会报错。<br />
+<b><em>上底半径</em></b>: A floating-point number representing the radius for the upper base of the frustum in <b>meters</b>. Can be negative to indicate that the top cap is to be omitted.<br />
+<b><em>下底半径</em></b>: A floating-point number representing the radius for the lower base of the frustum in <b>meters</b>. Can be negative to indicate that the bottom cap is to be omitted.<br />
 <b><em>Height</em></b>: A floating-point number representing the height of the prism in <b>meters</b>. Can be negative, which will flip the frustum vertically and display it inside-out.
 </font></td></tr></table>
 This command creates a <a href="http://en.wikipedia.org/wiki/Frustum">frustum</a>. If <em>LowerRadius</em> and <em>UpperRadius</em> are equal, the object generated will reduce to a <a href="http://en.wikipedia.org/wiki/Prism_(geometry)">prism</a>, which can be used as an approximation to the cylinder. If either <em>LowerRadius</em> or <em>UpperRadius</em> are zero, the object generated will reduce to a <a href="http://en.wikipedia.org/wiki/Pyramid_(geometry)">pyramid</a>. The frustum will be centered on the origin (0,0,0). On the x- and z-axes, the frustum extends from -<em>LowerRadius</em> to <em>LowerRadius</em> for the lower base and from -<em>UpperRadius</em> to <em>UpperRadius</em> for the upper base. On the y-axis, the frustum extends from -½*<em>Height</em> to ½*<em>Height</em>.<br /><br />The number of vertices <em>n</em> will usually suffice to be 6 or 8 when only small radii are used, for example to create a pole. Regardless of the values of <em>UpperRadius</em>, <em>LowerRadius</em> and <em>n</em>, the frustum will always have 2*<em>n</em> vertices, and usually <em>n</em>+2 faces unless any of the caps are omitted. If <em>UpperRadius</em> or <em>LowerRadius</em> are negative, the absolute value is being taken, but the respective caps are not created. If <em>Height</em> is negative, the roles of top and bottom are reversed and the faces will be visible from the inside, while otherwise, they will be visible from the outside.<br /><table><tr style="height: 4px;"><td /></tr></table>
