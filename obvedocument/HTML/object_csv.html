@@ -1,0 +1,268 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<!-- Mirrored from www.trainsimframework.org/develop/object_csv.html by HTTrack Website Copier/3.x [XR&CO'2010], Sat, 05 May 2012 22:30:46 GMT -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="SHORTCUT ICON" href="../Images/favicon.png">
+<meta name="keywords" content="openBVE,homepage">
+<title>CSV物件格式</title>
+<link rel="stylesheet" type="text/css" href="Why_dont_oBVE_development_team_use_css.css"></head>
+<body style="font-family:sans-serif;font-size:small">
+<font size="+2" color="#0080FF"><b>CSV</b>物件格式（适用于openBVE，Hmmsim仅供参考）</font><br>
+<br>
+<br><br>
+<font size="+1" color="#0080FF">■ 目录</font><hr>
+<br>
+↷ <a href="#overview">1. 概述</a><br>
+↷ <a href="#syntax">2. 语法</a><br>
+↷ <a href="#commands">3. 可用命令</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#createmeshbuilder">CreateMeshBuilder</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#addvertex">AddVertex</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#addface">AddFace</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#addface2">AddFace2</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#cube">Cube</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#cylinder">Cylinder</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#translate">Translate, TranslateAll</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#scale">Scale, ScaleAll</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#rotate">Rotate, RotateAll</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#shear">Shear, ShearAll</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#mirror">Mirror, MirrorAll</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#setcolor">SetColor</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#setemissivecolor">SetEmissiveColor</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#setblendmode">SetBlendMode</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#loadtexture">LoadTexture</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#setdecaltransparentcolor">SetDecalTransparentColor</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;↷ <a href="#settexturecoordinates">SetTextureCoordinates</a><br>
+<br><a name="overview"></a>
+<br><br>
+<font size="+1" color="#0080FF">■ 1. 概述</font><hr>
+<br>
+一个CSV文件允许使用纯文本命令来创造单个物件。该物件可以在线路或列车中使用。文件描述的物件可以包含任意数量的多边形。文件格式允许在CreatMeshBuilder部分中对多个多边形进行分组，并将颜色或纹理（也就是贴图）信息等属性分配给在每个部分中创建的多边形。这允许在同一个CreateMeshBuilder当中创建多个多边形，这些多边形共享公共属性。多边形在这里称为面（face）。<br><br>该文件是以任意编码<a href="information_encodings.html">编码</a>的纯文本文件，但是，带字节顺序标记的UTF-8是更好的选择。数字的<a href="information_numberformats.html">解析</a> 是<b>宽松的</b>，尽管如此，生成<em>严格的</em>输出还是很有必要。文件名是任意的，但必须有扩展名<b>.csv</b>。该文件将从上到下按照每行进行解析。<br><br>➟ <a href="object_csv_quick.html">另请参阅CSV格式的快速参考...</a><br>
+<br><a name="syntax"></a>
+<br><br>
+<font size="+1" color="#0080FF">■ 2. 语法</font><hr>
+<br>
+<br>文件中的每一行都分为命令名称及其参数。所有命令的语法都是相同的：<br><span class="command"><b>命令名称</b>, <em>参数<sub>1</sub></em>, <em>参数<sub>2</sub></em>, <em>参数<sub>3</sub></em>，...，<em>参数<sub>n</sub></em></span><br>
+<br>
+<br><em>命令名称</em>不区分大小写。如果有参数，则<em>命令名称</em>和<em>参数1</em>用逗号（U+002C）来分隔。同样，参数也用逗号分隔。命令名称和参数周围的<a href="information_whitespaces.html">空格</a>以及行的开头和结尾都会被忽略。仅忽略由空格组成的空行或空行。<br><br>将文本写在<em>参数<sub>i</sub></em>处也可以省略该参数。在这种情况下通常会应用该命令特定的默认值。所有默认值都在可用命令部分中指定。（这一句不太懂，所以机翻）<br><br>您可以在一行的末尾添加注释。注释由分号（U+003B）开始。注释（如果存在）在处理之前将从所有行中删除。<br><br><a name="commands"></a>
+<br><br>
+<font size="+1" color="#0080FF">■ 3. 可用命令</font><hr>
+<br>
+<br><br><a name="createmeshbuilder"></a>
+<br><span class="command"><b>CreateMeshBuilder</b></span><br>
+<br>
+这个命令标志着新一组面（多边形）的开始。它必须位于以下任何命令之前。在文件中可以根据需要添加任意数量的该指令。后续的所有命令将与前一个CreateMeshBuilder关联。<br><br><hr>
+<br><br><a name="addvertex"></a>
+<br><span class="command"><b>AddVertex</b>, <em>vX</em>, <em>vY</em>, <em>vZ</em>, <em>nX</em>, <em>nY</em>, <em>nZ</em></span><br>
+<span class="param">
+<b><em>vX</em></b>：顶点的x坐标，以米为单位，负值向左，正值向右，默认值为0。<br>
+<b><em>vY</em></b>：顶点的y坐标，以米为单位，负值向下，正值向上，默认值为0。<br>
+<b><em>vZ</em></b>：顶点的z坐标，以米为单位，负值向后，正值向前，默认值为0。<br>
+<b><em>nX</em></b>：顶点法线的x坐标，以米为单位，默认值为0。<br>
+<b><em>nY</em></b>：顶点法线的y坐标，以米为单位，默认值为0。<br>
+<b><em>nZ</em></b>：顶点法线的z坐标，以米为单位，默认值为0。
+</span><br>
+这个命令将创建一个新顶点，然后可以将此顶点用于AddFace或AddFace2命令来创建面。在CreateMeshBuilder部分中可以根据需要添加任意数量的该指令。但是，给出顶点的顺序对后续的命令很重要。给定的第一个顶点具有索引0，后续顶点具有索引1,2,3等等。<br><br>法线是在特定点垂直于面的方向。如果面里的所有顶点具有相同的法线，那么面将看起来平坦。如果使用得当，您可以通过为每个顶点指定不同的法线来造成曲面的错觉 - 跨多个面在所有顶点上使用相同法线除外。<b>请尽量使用简单的面和复杂的法线而不是复杂的面来达成曲面或凹凸效果。这能节省性能开支。</b>如果全部为0，法线将自动计算。<br><br><hr>
+<br><br><a name="addface"></a>
+<br><span class="command"><b>AddFace</b>, <em>v<sub>1</sub></em>, <em>v<sub>2</sub></em>, <em>v<sub>3</sub></em>, ..., <em>v<sub>max</sub></em></span><br>
+<span class="param">
+<b><em>v<sub>i</sub></em></b>：此数值为将要包含在此面中的顶点索引。允许的数值为0到<em>n</em>-1，<em>n</em>是所使用的AddVertex命令数量。
+</span><br>
+此命令将创建一个以所有给出v点为顶点的面。i的值（索引值）对应于AddVertex中创建顶点的顺序，因此该命令须紧跟AddVertex命令。面的背面不可见。顶点索引出现的顺序很重要。1.当你能看到这个面时，顶点永远以顺时针排列。2.在相邻位置出现的顶点的连线不可以是该多边形的对角线。<br><br>
+<img src="../Images/VertexExample.png" onclick="location.href='../Images/VertexExample.png'" width="800px"><hr>
+<br><br><a name="addface2"></a>
+<br><span class="command"><b>AddFace2</b>, <em>v<sub>1</sub></em>, <em>v<sub>2</sub></em>, <em>v<sub>3</sub></em>, ..., <em>v<sub>max</sub></em></span><br>
+<span class="param">
+<b><em>v<sub>i</sub></em></b>：此数值为将要包含在此面中的顶点索引。允许的数值为0到<em>n</em>-1，<em>n</em>是所使用的AddVertex命令数量。
+</span><br>
+此命令将创建一个以所有给出v点为顶点的面。i的值（索引值）对应于AddVertex中创建顶点的顺序，因此该命令须紧跟AddVertex命令。在相邻位置出现的顶点的连线不可以是该多边形的对角线。该指令可以创造两侧可见的面，且仅支持凸多边形。<br>
+需要注意的是，在目前的openBVE版本里使用这个指令可能造成一些光照错误。这个错误也许会在将来被纠正。<br><br><hr>
+<br><br><a name="cube"></a>
+<br><span class="command"><b>Cube</b>, <em>半宽</em>, <em>半高</em>, <em>半深 </em></span><br>
+<span class="param">
+<b><em>半宽</em></b>：一个表示此立方体一半宽度（X轴向，左右）的浮点数，以<b>米</b>为单位。<br>
+<b><em>半高</em></b>：一个表示此立方体一半高度（Y轴向，上下）的浮点数，以<b>米</b>为单位。<br>
+<b><em>半深</em></b>：一个表示此立方体一半深度（Z轴向，前后）的浮点数，以<b>米</b>为单位。
+</span><br>
+此命令将以原点（0,0,0）为中心创建一个以<em>两倍的半宽</em>，<em>两倍的半高</em>和<em>两倍的半深</em>为尺寸的立方体。立方体总有8个顶点和6个面。如果不指定半高和半深，写出<em>Cube，半宽</em>的指令，则会创建一个以<em>2×半宽</em>为边长的正方体。如<em>半宽</em>，<em>半高</em>，<em>半深</em>中有一个为负值，则显示面将从外侧转向内侧。<br><br>
+<table style="border:1px dashed;margin-left:20pt;margin-right:20pt;">
+<tr><td bgcolor="#FFE080" style="border:2px; border-style:ridge;"><font color="#404040">
+<b>ⓘ</b> Cube命令使用注意
+</font></td></tr><tr><td bgcolor="#FFFFFF">
+Cube命令相当于一系列的AddVertex和AddFace命令，会影响顶点索引，所以在同一CreateMeshBuilder部分中使用其他命令时需要考虑这些命令。<a href="object_cubecylinder.html">此处</a>提供了Cube命令的详细信息。
+</td></tr></table>
+<br>
+<hr>
+<br><br><a name="cylinder"></a>
+<br><span class="command"><b>Cylinder</b>, <em>n</em>, <em>上底半径</em>, <em>下底半径</em>, <em>高 </em></span><br>
+<span class="param">
+<b><em>n</em></b>：表示顶/底面正多边形的定点分段数，译者亲测该值最好为介于<b>2~32768</b>之间的整数。<br>
+<b><em>上底半径</em></b>：顾名思义，不解释了，以<b>米</b>为单位。如该值为负数，则上底将省略。<br>
+<b><em>下底半径</em></b>：同上不解释，以<b>米</b>为单位。如该值为负数，则下底将省略。<br>
+<b><em>高</em></b>：一个表示该圆柱/圆锥/圆台高度的浮点数，以<b>米</b>为单位。可以为负值，那么该圆柱/圆锥/圆台将上下倒转且显示面将朝内。
+</span><br>
+该命令将创建一个<a href="http://en.wikipedia.org/wiki/Frustum">截锥体</a>。如果<em>上底半径</em> 和<em>下底半径</em> 是相等的，这个物件将变成<a href="http://en.wikipedia.org/wiki/Prism_(geometry)">棱柱</a>，并可用作近似的圆柱。如果<em>下底半径</em> 或<em>上底半径 </em>为0，这个物件将变成<a href="http://en.wikipedia.org/wiki/Pyramid_(geometry)">棱锥</a>。创建的截椎体将以原点为中心。<br><br>当半径的值较小时，<b>顶点数<em>n</em>为6或8足矣</b>，例如创建一根电线杆。无论<em>上底半径</em>，<em>下底半径</em> 和<em>n </em>的值如何，该多面体将始终有2×n个顶点和n+2个面，除非省略任何顶点。若<em>上底半径 </em>或<em>下底半径 </em>为负数，则采用绝对值，但不会有相应的上限。<br>
+<b>由于面分割过细会严重影响性能，导致您的用户卡爆（尤其是在低配电脑和手机上），译者推荐您在视觉效果可以接受的情况下尽量使用小一些的n值，造成粗糙一些的分割。您甚至有时不应该使用此指令和圆柱，而应该使用一个大平面贴上渐变色的材质来模仿圆柱的效果，以求尽量流畅的游戏体验。</b><br><br>
+<table style="border:1px dashed;margin-left:20pt;margin-right:20pt;">
+<tr><td bgcolor="#FFE080" style="border:2px; border-style:ridge;"><font color="#404040">
+<b>ⓘ</b> Cylinder命令使用注意
+</font></td></tr><tr><td bgcolor="#FFFFFF">
+Cylinder命令相当于一系列的AddVertex和AddFace命令，在同一CreateMeshBuilder部分中使用其他命令时需要考虑这些命令。<a href="object_cubecylinder.html">此处</a>提供了Cylinder命令的详细信息
+</td></tr></table>
+<br>
+<hr>
+<br><br><span class="commandlegacy">GenerateNormals</span><br>
+<span class="param">
+<em>未给出的情况下，openBVE会自动计算法线坐标。所以该命令被openBVE忽略。</em>
+</span><br>
+<hr>
+<br><br><a name="translate"></a>
+<br><span class="command"><b>Translate</b>, <em>X</em>, <em>Y</em>, <em>Z</em><br>
+<b>TranslateAll</b>, <em>X</em>, <em>Y</em>, <em>Z</em></span><br>
+<span class="param">
+<b><em>X</em></b>：一个表示顶点在x轴上移动距离的浮点数，以<b>米</b>为单位。负值向左平移，正值向右平移。默认值为0。<br>
+<b><em>Y</em></b>：一个表示顶点在y轴上移动距离的浮点数，以<b>米</b>为单位。负值向下平移，正值向上平移。默认值为0。<br>
+<b><em>Z</em></b>：一个表示顶点在z轴上移动距离的浮点数，以<b>米</b>为单位。负值向后平移，正值向前平移。默认值为0。
+</span><br>
+<b>Translate</b>命令将移动从CreateMeshBuilder到Translate之间创建的所有顶点，且后续顶点不受影响。您可以在CreateMeshBuilder部分中根据需要使用尽可能多的Translate命令。<b>TranslateAll</b>不仅影响当前CreateMeshBuilder部分中创建的顶点，还会影响到之前所有CreateMeshBuilder部分中创建的顶点，这对于在文件末尾插入来平移整个物件很有用。<br><br><hr>
+<br><br><a name="scale"></a>
+<br><span class="command"><b>Scale</b>, <em>X</em>, <em>Y</em>, <em>Z</em><br>
+<b>ScaleAll</b>, <em>X</em>, <em>Y</em>, <em>Z</em></span><br>
+<span class="param">
+<b><em>X</em></b>：一个非零浮点数，表示x轴上的缩放比例前项（即X:1），默认值为1。<br>
+<b><em>Y</em></b>：一个非零浮点数，表示y轴上的缩放比例前项（即Y:1），默认值为1。<br>
+<b><em>Z</em></b>：一个非零浮点数，表示z轴上的缩放比例前项（即Z:1），默认值为1。
+</span><br>
+<b>Scale</b>命令将缩放从CreateMeshBuilder到Scale之间创建的所有顶点，且后续顶点不受影响。您可以在CreateMeshBuilder部分中根据需要使用尽可能多的Scale命令。<b>ScaleAll</b>不仅影响当前CreateMeshBuilder部分中创建的顶点，还会影响到之前所有CreateMeshBuilder部分中创建的顶点，这对于在文件末尾插入来缩放整个物件很有用。<br><br><hr>
+<br><br><a name="rotate"></a>
+<br><span class="command"><b>Rotate</b>, <em>X</em>, <em>Y</em>, <em>Z</em>, <em>角度 </em><br>
+<b>RotateAll</b>, <em>X</em>, <em>Y</em>, <em>Z</em>, <em>角度 </em></span><br>
+<span class="param">
+<b><em>X</em></b>：旋转轴的x方向。负值指向左侧，正值指向右侧。默认值为0。<br>
+<b><em>Y</em></b>：旋转轴的x方向。负值指向左侧，正值指向右侧。默认值为0。<br>
+<b><em>Z</em></b>：旋转轴的x方向。负值指向左侧，正值指向右侧。默认值为0。<br>
+<b><em>角度 </em></b>：以度为单位的旋转角度，负值逆时针，正值顺时针，默认值为0。
+</span><br>
+<b>Rotate</b>命令将旋转从CreateMeshBuilder到Rotate之间创建的所有顶点，且后续顶点不受影响。旋转轴通过<em>X </em>，<em>Y </em>和<em>Z </em>值指定。旋转将发生在垂直于该轴的平面中。该轴的零向量被视为（1,0,0），所有其他方向都将标准化。<br><br>您可以在CreateMeshBuilder部分中根据需要使用尽可能多的Rotate命令。<b>RotateAll</b>不仅影响当前CreateMeshBuilder部分中创建的顶点，还会影响到之前所有CreateMeshBuilder部分中创建的顶点，这对于在文件末尾插入来旋转整个物件很有用。<br><br>※由于官方的说明文档原文有些晦涩，就算翻译过来也可能会看不懂，这里译者再开一段来讲讲本人是如何使用Rotate命令的。我倾向于“一对一”式的写法，即一个Rotate命令完成物件在一个坐标轴上的旋转，上文提到的X,Y,Z被我用来标记在该坐标轴上是否做出旋转动作，0代表否，1代表是。然后再用<em>角度 </em>参数说明旋转的角度，正值为顺时针，负值为逆时针。例如<b>Rotate,0,1,0,180</b>表示将该物件以y轴为基准旋转180度。<br><br><hr>
+<br><br><a name="shear"></a>
+<br><span class="command"><b>Shear</b>, <em>dX</em>, <em>dY</em>, <em>dZ</em>, <em>sX</em>, <em>sY</em>, <em>sZ</em>, <em>r</em><br>
+<b>ShearAll</b>, <em>dX</em>, <em>dY</em>, <em>dZ</em>, <em>sX</em>, <em>sY</em>, <em>sZ</em>, <em>r</em></span><br>
+<span class="param">
+<b><em>dX</em></b>：向量D的x坐标，默认为0。<br>
+<b><em>dY</em></b>：向量D的y坐标，默认为0。<br>
+<b><em>dZ</em></b>：向量D的z坐标，默认为0。<br>
+<b><em>sX</em></b>：向量S的x坐标，默认为0。<br>
+<b><em>sY</em></b>：向量S的y坐标，默认为0。<br>
+<b><em>sZ</em></b>：向量S的z坐标，默认为0。<br>
+<b><em>r</em></b>：表示取代载体的比例。默认为0。
+</span><br>
+该指令执行斜切。<br>
+※由于翻译团队水平不足，经过反复讨论和测试，甚至咨询开发者后也没能明白本指令的参数含义和具体用法。由于本指令在实际物件中用途较少，也无法找到实例参考学习。对各位开发者造成的不便敬请谅解。我们在下方贴上了机翻内容和openBVE主程序中对该指令处理的代码。<br><br><b>Shear</b>命令为当前CreateMeshBuilder部分中到目前为止创建的所有顶点执行<a href="http://en.wikipedia.org/wiki/Shear_mapping">剪切映射（英文维基百科）</a>。<b>ShearAll</b>不仅影响当前CreateMeshBuilder部分中创建的顶点，还会影响到之前所有CreateMeshBuilder部分中创建的顶点，这对于在文件末尾插入来剪切整个物件很有用。<br><br><img src="../Images/illustration_shear.png" alt="">
+<br><br>剪切映射在原点周围进行。宽松地说，将物体沿方向D切成平面，然后沿方向S移位。通常，D和S是垂直的。D和S总是标准化。如果<em>r </em>为0，则不执行转换。如果D和S垂直，则<em>r </em>的1值对应45度的斜率。<br>
+<span class="code" style="white-space:pre;font-size:10px">/* 代码语言：C# */
+private static void ApplyShear(MeshBuilder Builder, double dx, double dy, double dz, double sx, double sy, double sz, double r) {
+			for (int j = 0; j < Builder.Vertices.Length; j++) {
+				double n = r * (dx * Builder.Vertices[j].Coordinates.X + dy * Builder.Vertices[j].Coordinates.Y + dz * Builder.Vertices[j].Coordinates.Z);
+				Builder.Vertices[j].Coordinates.X += sx * n;
+				Builder.Vertices[j].Coordinates.Y += sy * n;
+				Builder.Vertices[j].Coordinates.Z += sz * n;
+			}
+			for (int j = 0; j < Builder.Faces.Length; j++) {
+				for (int k = 0; k < Builder.Faces[j].Vertices.Length; k++) {
+					if (Builder.Faces[j].Vertices[k].Normal.X != 0.0f | Builder.Faces[j].Vertices[k].Normal.Y != 0.0f | Builder.Faces[j].Vertices[k].Normal.Z != 0.0f) {    
+						double nx = (double)Builder.Faces[j].Vertices[k].Normal.X;
+						double ny = (double)Builder.Faces[j].Vertices[k].Normal.Y;
+						double nz = (double)Builder.Faces[j].Vertices[k].Normal.Z;
+						double n = r * (sx * nx + sy * ny + sz * nz);
+						nx -= dx * n;
+						ny -= dy * n;
+						nz -= dz * n;
+						World.Normalize(ref nx, ref ny, ref nz);
+						Builder.Faces[j].Vertices[k].Normal.X = (float)nx;
+						Builder.Faces[j].Vertices[k].Normal.Y = (float)ny;
+						Builder.Faces[j].Vertices[k].Normal.Z = (float)nz;
+					}
+				}
+			}
+}
+</span><br><hr>
+<br><br><a name="mirror"></a>
+<br><span class="command"><b>Mirror</b>, <em>X</em>, <em>Y</em>, <em>Z</em><br>
+<b>MirrorAll</b>, <em>X</em>, <em>Y</em>, <em>Z</em></span><br>
+<span class="param">
+<b><em>X</em></b>：决定x轴是否被镜像。默认值为0（否）。<br>
+<b><em>Y</em></b>：决定y轴是否被镜像。默认值为0（否）。<br>
+<b><em>Z</em></b>：决定z轴是否被镜像。默认值为0（否）。<br>
+</span><br>
+<b>Mirror</b>命令将镜像从CreateMeshBuilder到Mirror之间创建的所有顶点，且后续顶点不受影响。<b>此处镜像只是沿着某坐标轴翻转，并不是对称。</b>镜像的方向通过<em>X </em>，<em>Y </em>和<em>Z </em>值指定。您可以在CreateMeshBuilder部分中根据需要使用尽可能多的Mirror命令。<b>MirrorAll</b>不仅影响当前CreateMeshBuilder部分中创建的顶点，还会影响到之前所有CreateMeshBuilder部分中创建的顶点，这对于在文件末尾插入来镜像整个物件很有用。<br><br>※敬请注意，此命令仅<b>openBVE1.5.3.1（ObjectViewer1.5.2.0）</b>及以上版本可用，目前openBVE1.5.3.1以下版本及Hmmsim不兼容。<br><br><hr>
+<br><br><a name="setcolor"></a>
+<br><span class="command"><b>SetColor</b>, <em>红色分量</em>, <em>绿色分量</em>, <em>蓝色分量</em>, <em>透明度</em></span><br>
+<span class="param">
+<b><em>R</em></b>：该颜色的红色分量，范围为0（黑）~255（红），默认值为0。<br>
+<b><em>G</em></b>：该颜色的绿色分量，范围为0（黑）~255（绿），默认值为0。<br>
+<b><em>B</em></b>：该颜色的蓝色分量，范围为0（黑）~255（蓝），默认值为0。<br>
+<b><em>透明度</em></b>：该颜色的透明度，范围为0（透明）~255（不透明），默认值为255。
+</span><br>
+该命令将设置从CreateMeshBuilder到SetColor之间创建的所有面的颜色。如果未贴上材质，则将使用上述四个值对该面进行着色。（以下是译者个人理解，会和原文有出入）<br>如果使用了材质，那么程序将会解析图片中每个像素的颜色，逐个与上述<em>红、绿、蓝</em>值进行比较，并选取两个（原RGB值和定义的RGB值）当中的较小值作为该像素的最终颜色，如<em>红、绿、蓝</em>值为255,255,255则不变色，如为0,0,0则全部变为黑色。在路线中使用照明时，实际颜色可能会根据照明条件而变化，但通常会变暗。<br><br><hr>
+<br><br><a name="setemissivecolor"></a>
+<br><span class="command"><b>SetEmissiveColor</b>, <em>红色分量</em>, <em>绿色分量</em>, <em>蓝色分量</em></span><br>
+<span class="param">
+<b><em>R</em></b>：该颜色的红色分量，范围为0（黑）~255（红），默认值为0。<br>
+<b><em>G</em></b>：该颜色的绿色分量，范围为0（黑）~255（绿），默认值为0。<br>
+<b><em>B</em></b>：该颜色的蓝色分量，范围为0（黑）~255（蓝），默认值为0。
+</span><br>
+该命令将为已在当前CreateMeshBuilder部分中创建的所有面设置自发光颜色。SetColor命令受光照影响，而SetEmissiveColor不会，因此该命令应用于自身发光的面，如信号灯的发光部分。如<em>红、绿、蓝</em>值为0,0,0，则该面将不做任何改变，如值为255,255,255，该面将在任何时候保持原色。<br><br><hr>
+<br><br><a name="setblendmode"></a>
+<br><span class="command"><b>SetBlendMode</b>, <em>混色模式</em>, <em>半发光距离</em>, <em>光衰减模式</em></span><br>
+<span class="param">
+<b><em>混色模式</em></b>：将要使用的混色模式，默认为正常。<br>
+<b><em>半发光距离</em></b>：发光强度为50%时视点和物体的距离，以米为单位。该值必须是1到4095范围内的整数，或0表示禁用此功能。默认值为0。<br>
+<b><em>光衰减模式</em></b>：将要使用的光衰减模式，默认为四次倒数。
+</span><br>
+<span class="selectable">▸ <em>混色模式 </em>命令中的可用选项：</span><br>
+<span class="options">
+<b>Normal（正常）</b>：正常渲染物体。<br>
+<b>Additive（叠加）</b>：叠加渲染物体。
+</span><br>
+<span class="selectable">▸ <em>光衰减模式 </em>命令中的可用选项：</span><br>
+<span class="options">
+<b>DivideExponent2（平方倒数）</b>：光的强度通过函数 <em>x</em><sup>2</sup> / (<em>x</em><sup>2</sup> + <em>发光半距离</em><sup>2</sup>) 来决定，其中 <em>x</em> 是视点到物体的距离，以米为单位。<br>
+<b>DivideExponent4（四次倒数）</b>：光的强度通过函数 <em>x</em><sup>4</sup> / (<em>x</em><sup>4</sup> + <em>发光半距离</em><sup>4</sup>) 来决定，其中 <em>x</em> 是视点到物体的距离，以米为单位。
+</span><br>
+此命令为当前CreateMeshBuilder部分中的所有面设置混色模式。普通模式用材质像素替换屏幕像素。叠加模式将材质像素的颜色（数值）与屏幕像素颜色（数值）相加。0为下限，255为上限。所以添加黑色（0,0,0）不会改变屏幕像素，添加白色（255,255,255）结果恒为白色。如果<em>发光半距离</em>不为0，当视点接近物体时，物体会逐渐淡出（变得透明）。通过设置<em>光衰减模式 </em>可以确定特定距离的精确光强度。平方倒数创建一个更平滑的过渡，但光汇合到最大强度的过程非常缓慢，而四次倒数创建更锐利的过渡，且光线汇合更快。<br><br><table cellspacing="0"><tr>
+<td><font color="red">⚠</font></td>
+<td>&nbsp;</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+<td bgcolor="#E0E0E0"><b>openBVE 2的未来兼容性说明：</b> <br>
+在openBVE的未来版本计划中，将只有叠加模式受支持（因为默认模式就是正常，不写这条指令不就好了），且有可能会不再使用<em>光衰减模式</em>这个参数。请避免在这条指令中使用正常模式。</td>
+<td bgcolor="#E0E0E0">&nbsp;</td>
+</tr></table>
+<hr>
+<br><br><a name="loadtexture"></a>
+<br><span class="command"><b>LoadTexture</b>, <em>日间材质</em>, <em>夜间材质</em></span><br>
+<span class="param">
+<b><em>日间材质</em></b>：将要加载的日间材质的文件名，最好和CSV文件在同一目录下。<br>
+<b><em>夜间材质</em></b>：将要加载的夜间材质的文件名，最好和CSV文件在同一目录下。
+</span><br>
+此命令将加载一或二个材质并将其用于当前CreateMeshBuilder部分中的所有面。目前openBVE支持的格式有bmp，png，jpg，gif，tif。<b>Hmmsim仅支持bmp</b>。您也可以使用包含完整Alpha通道（即包含透明和半透明）的png格式，但请尽量不要使用，因为很吃性能，且叠加的透明面会造成深度排序的问题。没有Alpha通道（全不透明）的材质可以与SetDecalTransparentColor命令配合使用来达到性能更好的透明效果。<br><br>如果使用了<em>夜间材质</em>，它指定在夜间光照状态（.Brightness 0）下使用的材质，而<em>日间材质</em>指定在日间光照状态（.Brightness 255）下使用的材质。两个材质会根据光照状态互相混合（.Brightness 1~254），材质也需要以此来进行设计。如果指定了<em>夜间材质</em>，就必须同时指定<em>日间材质</em>。如果没有指定<em>夜间材质</em>，暗光照条件会使日间材质更黑。必须使用SetTextureCoordinates指令设定好材质与各顶点的关系，材质才能被正常显示。<br><br><hr>
+<br><br><a name="setdecaltransparentcolor"></a>
+<br><span class="command"><b>SetDecalTransparentColor</b>, <em>红色分量</em>, <em>绿色分量</em>, <em>蓝色分量</em></span><br>
+<span class="param">
+<b><em>R</em></b>：该颜色的红色分量，范围为0（黑）~255（红），默认值为0。<br>
+<b><em>G</em></b>：该颜色的绿色分量，范围为0（黑）~255（绿），默认值为0。<br>
+<b><em>B</em></b>：该颜色的蓝色分量，范围为0（黑）~255（蓝），默认值为0。
+</span><br>
+这条指令为已经创建的所有面指定一个蒙版式的透明色（例如屏蔽门和车窗）。刚刚加载的材质中与指定的红、绿、蓝颜色相同的像素都会变为透明的。这种蒙版式的透明色比起使用全Alpha通道（透明与半透明）的png高效多了，所以比起把材质部分填成透明，不如绘制全不透明的材质，然后将材质中要透明的部分填为固定颜色，再使用此指令将这些部分“挖空”。必须使用SetTextureCoordinates指令设定好材质与各顶点的关系，材质才能被正常显示。<br><br><hr>
+<br><br><a name="settexturecoordinates"></a>
+<br><span class="command"><b>SetTextureCoordinates</b>, <em>顶点索引</em>, <em>水平偏移量(U)</em>, <em>垂直偏移量(V)</em></span><br>
+<span class="param">
+<b><em>顶点索引</em></b>：这个材质坐标匹配的模型顶点。范围是0到<em>AddVertex指令创建的顶点数量</em>-1。<br>
+<b><em>水平偏移量(U)</em></b>：这个材质坐标相对于模型左边缘的位置。一个0~1之间的数字，0代表最左边，1代表最右边。<br>
+<b><em>垂直偏移量(V)</em></b>：这个材质坐标相对于模型上边缘的位置。一个0~1之间的数字，0代表最上边，1代表最下边。
+</span><br>
+这条指令为<em>顶点索引</em>指定的顶点匹配一个材质坐标。由于这个索引是要匹配一个已经创建了的顶点的，所以这条指令要放在AddVertex指令的后面。其实说实话，<em>U</em>和<em>V</em>并不是严格的要位于0~1之间的，当<em>U</em>或<em>V</em>的值大于0小于1时，如下图所示（应该解释得很清楚了），当指定顶点上的<em>U</em>或<em>V</em>值大于1，程序将把材质横纵向无限平铺（就是无数张图片组成的一个格子状的二维平面），U值“2”对应在该平面中所有左起第二列图片的右边线，V值“5”对应在该平面中所有第五行图片的下边线，而“2,5”则对应该平面中第二列第五行的那张图片的右下角（也就是前面所述两条垂直直线的交点）。使用大于1的U和V值，您可以将材质以平铺的方式在面上重复多次地贴图。<br>
+<img src="../Images/TextureCoordinateExample.png" onclick="location.href='../Images/TextureCoordinateExample.png'" width="800px"><hr>
+<!-- Mirrored from www.trainsimframework.org/develop/object_csv.html by HTTrack Website Copier/3.x [XR&CO'2010], Sat, 05 May 2012 22:30:47 GMT -->
+</html>

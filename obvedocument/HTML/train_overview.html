@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<!-- Mirrored from www.trainsimframework.org/develop/train_overview.html by HTTrack Website Copier/3.x [XR&CO'2010], Sat, 05 May 2012 22:31:06 GMT -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="SHORTCUT ICON" href="../Images/favicon.png">
+<meta name="keywords" content="openBVE,homepage">
+<title>Developing trains</title>
+</head>
+<body style="font-family:sans-serif;font-size:small">
+<font size="+2" color="#0080FF">车辆开发 - 概述</font><br>
+<br>
+<br>openBVE车辆包括一系列单独的配置文件、位图和声音组成。以下是所需要的文件列表及其意义的概述。<br><br><br>
+<font size="+1" color="#0080FF">■ 特征</font><hr>
+<br>
+<a href="train_train_dat.html"><b>train.dat：</b></a><br>这是车辆特征的核心配置文件，且是强制性的，openBVE程序以该文件为车辆的识别标志。<br>
+<img src="../Images/icon_train.png" onclick="location.href='../Images/icon_train.png'" width="16px"><br><br>
+<font size="+1" color="#0080FF">■ 面板（驾驶室）</font><hr>
+<br>
+<a href="train_panel_animated.html"><b>panel.animated：</b></a><br>此文件允许创建完全3D的驾驶室。如果此文件存在于车辆文件夹中，则它将优先于panel.cfg以及pane2.cfg文件。<br><br><a href="train_panel2_cfg.html"><b>panel2.cfg：</b></a><br>此文件允许创建一个限定视点位置的2D驾驶室。如果存在于车辆文件夹中，则它优先于panel.cfg。panel2.cfg已完全取代panel.cfg，因为它提供了更多功能。<br><br><a href="train_panel_cfg.html"><b>panel.cfg：</b></a><br>此文件已经过时，并已被panel2.cfg完全取代，应该使用它来代替。<br><br><br>
+<font size="+1" color="#0080FF">■ 声音</font><hr>
+<br>
+<a href="train_default_sounds.html"><b>默认声音：</b></a><br>如果文件夹内没有<em>sound.cfg</em>，则车辆文件夹内的声音文件应被替换成对应的程序默认名字。<br><br><a href="train_sound_cfg.html"><b>sound.cfg：</b></a><br>这定义了要使用的声音文件的名称。如果要使插件特定的声音可用，则需要该文件。<br><br><br>
+<font size="+1" color="#0080FF">■ 保安系统</font><hr>
+<br>
+<b>内置系统：</b><br>内置保安系统 ATS-SN，ATS-P和ATC 仅在没有<em>ats.cfg </em>文件时使用，并且要以<em>train.dat</em>中配置的保安系统为准。<br><br><a href="train_ats_cfg.html"><b>ats.cfg：</b></a><br>此文件定义要使用的外部列车插件。有关如何创建插件的信息，请参阅<a href="train_plugin.html">此处</a>。<br><br><br>
+<font size="+1" color="#0080FF">■ 杂项</font><hr>
+<br>
+<a href="train_extensions_cfg.html"><b>extensions.cfg：</b></a><br>该文件定义了其他文件未涵盖的特征（车辆的外观）。<br>
+</body>
+
+<!-- Mirrored from www.trainsimframework.org/develop/train_overview.html by HTTrack Website Copier/3.x [XR&CO'2010], Sat, 05 May 2012 22:31:06 GMT -->
+</html>

@@ -1,0 +1,174 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"><!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<title>Playing openBVE &#8211; openBVE</title>
+<meta name="description" content="Instructions on how to install and play new addons">
+
+
+</head>
+
+<body id="page">
+<h1>openBVE游戏操作</h1>
+
+<div id="main" role="main">
+  <article class="hentry">
+    <div class="entry-content">
+      <h1 id="a-quick-overview-on-the-simulation-controls">游戏控制的简要说明</h1>
+
+<p>该页面介绍游戏的驾驶界面和控制方法。当你进入游戏驾驶列车，您应该会看到一个差不多这样的界面：</p>
+
+<p><img src="driving_1.jpg" alt="A sample cab-view" /></p>
+
+<p>在这篇文章里，我们将介绍界面中各个部分的意义，以及如何控制游戏中的列车。</p>
+
+<p><strong><em>请注意：</em></strong>由于您是可以重新绑定键盘按键的，我们会同时写出一个按键的功能名称和默认键位，以便您重新指定按键或使用摇杆后仍然能通过功能名称找到对应按键。例如：<strong>POWER_INCRASE 增加牵引功率 (Z)</strong>。</p>
+
+<p>此外，还应该注意列车开发者是可以自己编写车载信号系统扩展程序的，这可能影响到列车的操作方法。本文主要针对于采用游戏内置信号系统的列车。如果您的列车采用了自定义信号系统，操作方法可能存在不同，您应该寻找或向开发者索要对应列车信号系统的操作说明。</p>
+
+<hr />
+
+<h2 id="1-the-reverser-power-lever-and-brake-controls">1.换向器、牵引和制动手柄</h2>
+
+<p>列车最基础的控制是通过换向器、牵引手柄（即油门）、制动手柄（即刹车）和紧急制动器实现的。</p>
+
+<ol>
+  <li>
+    <p>换向器、牵引手柄和制动手柄的状态是在屏幕左下角显示的。</p>
+  </li>
+  <li>
+    <p>紧急制动器的工作状态和制动手柄状态在一起显示。如果施加了紧急制动，制动手柄状态那里会显示“紧急”。</p>
+  </li>
+  <li>
+    <p>如果列车使用联控手柄（牵引手柄和制动手柄合为一体），两个系统的状态也会在一起显示。</p>
+  </li>
+</ol>
+
+<h3 id="the-reverser">换向器</h3>
+
+<p>换向器改变列车的运行方向。换向器可以处于三个位置：<em>B</em>（向后倒车），<em>N</em>（中位空档）和<em>F</em>（向前前进）。</p>
+
+<p>在很多情况下，当您开始驾驶列车时，列车的换向器都是位于中位的，您需要手动将它移动到向前位置，然后列车才可以移动。</p>
+
+<ul>
+  <li>
+    <p>按下<strong>REVERSER_FORWARD 前推换向器 (F)</strong>键可以使换向器向前移动一个位置。</p>
+  </li>
+  <li>
+    <p>按下<strong>REVERSER_BACKWARD 后拉换向器 (B)</strong>键可以使换向器向后移动一个位置。</p>
+  </li>
+</ul>
+
+<h3 id="the-power-lever">牵引（功率，油门）手柄</h3>
+
+<p>牵引手柄控制电动机的输出功率。手柄处于<em>零位</em>时，电动机的电源被切断。如果手柄处于加速级位，界面上将显示像<em>牵引1</em>、<em>牵引2</em>、<em>牵引3</em>之类的文字。可用的手柄级位数量随列车而定。总体来说，更高的牵引级位加速更快。不过注意在轨道湿滑（如果线路作者有模拟）等情况下，采用过高的牵引级位会导致车轮转动力量过大而摩擦力不足，造成车轮打滑，无法加速。</p>
+
+<ul>
+  <li>
+    <p>按下<strong>POWER_INCREASE 增加牵引功率 (Z)</strong>键可以增加牵引级位。（注意BVE是日式铁道模拟游戏，日式列车上增加功率是向后拉杆）</p>
+  </li>
+  <li>
+    <p>按下<strong>POWER_DECREASE 减少牵引功率 (A)</strong>键可以增加牵引级位。（注意BVE是日式铁道模拟游戏，日式列车上减少功率是向前推杆）</p>
+  </li>
+  <li>
+    <p>在使用联控手柄的列车上，按下<strong>SINGLE_POWER 后拉联控手柄 (Z)</strong>键可以减少牵引级位。（同上）</p>
+  </li>
+  <li>
+    <p>在使用联控手柄的列车上，按下<strong>SINGLE_NEUTRAL 回中联控手柄 (A)</strong>或<strong>SINGLE_BRAKE 前推联控手柄 (Q)</strong>键可以减少牵引级位。（同上）</p>
+  </li>
+</ul>
+
+<h3 id="the-notched-brake-lever">分级制动手柄</h3>
+
+<p>制动手柄控制电磁制动的功率或空气制动的压力。手柄处于<em>缓解</em>时，制动器不施加制动。如果手柄处于制动级位，界面上将显示像<em>制动1</em>、<em>制动2</em>、<em>制动3</em>之类的文字。可用的手柄级位数量随列车而定。总体来说，更高的制动级位减速更快。不过注意在轨道湿滑（如果线路作者有模拟）等情况下，采用过高的制动级位会导致车轮被抱死（懂汽车的肯定知道这个），无法减速。</p>
+
+<ul>
+  <li>
+    <p>在使用分离手柄的列车上，按下<strong>BRAKE_INCREASE 增加制动级位 (.)</strong>按键可以增加制动级位。</p>
+  </li>
+  <li>
+    <p>在使用分离手柄的列车上，按下<strong>BRAKE_DECREASE 减少制动级位 (,)</strong>按键可以减少制动级位。</p>
+  </li>
+  <li>
+    <p>在使用联控手柄的列车上，按下<strong>SINGLE_BRAKE 前推联控手柄 (Q)</strong>按键可以增加制动级位。</p>
+  </li>
+  <li>
+    <p>在使用联控手柄的列车上，按下<strong>SINGLE_NEUTRAL 回中联控手柄 (A)</strong>或<strong>SINGLE_POWER 后拉联控手柄 (Z)</strong>按键可以减少制动级位。</p>
+  </li>
+</ul>
+
+<p>有些列车安装有抑速制动系统。抑速制动级位在<em>缓解</em>和<em>制动1</em>之间，自动调节制动力来抵消列车下坡时的加速度，使列车下坡时速度保持恒定。不过，抑速制动没那么智能，并不会在上坡时自动加速。</p>
+
+<h3 id="the-automatic-air-brake">自动空气制动器</h3>
+
+<p>有一些列车（例如部分有轨电车）并没有分级的制动手柄，只有一个手动操作的制动阀门。这些列车的牵引和制动手柄都是分离的。这个制动阀门的状态包括<em>缓解</em>，<em>保持</em>和<em>增压</em>三个位置。</p>
+
+<ul>
+  <li>
+    <p>按下<strong>BRAKE_INCREASE 增加制动级位 (.)</strong>可以将阀门从<em>缓解</em>移动到<em>保持</em>、从<em>保持</em>移动到<em>增压</em>。</p>
+  </li>
+  <li>
+    <p>按下<strong>BRAKE_DECREASE 减少制动级位 (,)</strong>可以将阀门从<em>增压</em>移动到<em>保持</em>、从<em>保持</em>移动到<em>缓解</em>。</p>
+  </li>
+</ul>
+
+<p><img src="driving_2.jpg" alt="A train with an automatic air brake" /></p>
+
+<p>为了正确操作自动空气制动器，需要持续注意制动气缸中的空气压力。在上方截图中，制动缸压力是通过右侧压力表的红色指针显示的。当阀门处于<em>缓解</em>位时，制动气缸中的空气压力慢慢减小，使得制动力慢慢减小。当气压为零时，列车不施加制动。当阀门处于<em>增压</em>位时，制动气缸中的空气压力慢慢增大，使得制动力慢慢增大。当气压达到最大值时，列车也减速最快。当阀门处于<em>保持</em>位时，制动气泵不工作，制动气缸中的空气压力维持不变，列车保持现在的制动力继续减速。</p>
+
+<p>请注意在自动空气制动机中，阀门并不是直接控制气缸的，而是通过一根总风管（直通管，制动管）间接控制的。所以，从移动阀门位置到气缸压力真正开始变化是有一些延迟的。在操作时应该考虑延迟，提前操作，才能准确地控制制动。</p>
+
+<p>另外，有些列车的驾驶室里并没有制动缸压力表，而是可能有一个总风管（直通管，制动管）压力表。总风管压力和制动缸压力是正好相反的：总风管压力越高，制动力越弱；总风管压力越低，制动力越强。当气压为零时，列车施加紧急制动。</p>
+
+<h3 id="the-emergency-brake">紧急制动器</h3>
+
+<ul>
+  <li>
+    <p>在使用分离手柄的列车上，按下<strong>BRAKE_EMERGENCY 紧急制动级位 (/)</strong>按键施加紧急制动。</p>
+  </li>
+  <li>
+    <p>在使用联控手柄的列车上，按下<strong>SINGLE_EMERGENCY 紧急制动位置 (1)</strong>按键施加紧急制动。</p>
+  </li>
+</ul>
+
+<p>紧急制动通常比常用制动的制动力更大。</p>
+
+<p>按下一个减少制动级位的按键，例如<strong>BRAKE_DECREASE 减少制动级位 (,)</strong>, <strong>SINGLE_NEUTRAL 联控手柄回中 (A)</strong> or <strong>SINGLE_POWER 联控手柄后拉 (Z)</strong>（随列车而定）即可解除紧急制动。在一些空气制动列车上，解除紧急制动需要给直通管重新加压，可能会耗时半分钟左右。</p>
+
+<hr />
+
+<h2 id="2-the-eb-and-const-speed-systems">2.驾驶失知制动装置和定速装置</h2>
+
+<p>安装了<em>驾驶失知制动装置</em>或<em>定速装置</em>的列车在界面右下角显示它们的状态。</p>
+
+<p><em>驾驶失知制动装置</em>会持续监控换向器、加速和制动手柄的状态。如果列车驾驶持续一分钟没有进行任何操作，将会触发警铃，同时指示器会变为<font color="orange">橙色</font>。此时你必须在5秒内按下<strong>SECURITY_A2 车载信号系统A2按键 (delete)</strong>。否则，ATS-SN将采取紧急制动。将换向器移至中位，制动手柄移至紧急制动，牵引手柄移至零位，然后按下<strong>SECURITY_B1 车载信号系统B1按键 (home)</strong>键，紧急制动将会缓解。使用笔记本的同志们对不住了，如果键盘上没有，改下键位吧。</p>
+
+<p><em>定速装置</em>调节牵引力，使列车保持现有速度。它并不会施加制动来避免列车在下坡路段加速（跟上面的抑速制动真™是一对）。如果列车有安装，可以通过<strong>DEVICE_CONSTSPEED 定速设备开关 (backspace)</strong>按键开关它。当该设备启动时，<em>定速</em>指示器将变为<font color="green">绿色</font>。该设备只会选择小于目前牵引级位的加速功率，所以一般来说，应当在使用<em>定速装置</em>时将牵引手柄推到最大级位。</p>
+
+<hr />
+
+<h2 id="3-operating-the-doors">3.操作车门</h2>
+
+<p>在某些列车上，必须手动操作车门；而在另一些列车上车门会自动开关，或者会由车掌或列车员代为操作。如果有车门没有完全关闭，界面下方中部会显示车门状态指示器。</p>
+
+<p>有两个指示器：左侧车门和右侧车门。指示器使用颜色来表示车门的状态。<font color="gray">灰色</font>表示该车门已经关好，<font color="orange">橙色</font>表示车门正在动作，<font color="green">绿色</font>或<font color="blue">蓝色</font>表示车门开启完成。</p>
+
+<p>如果车门可以自动关闭，它将显示为<font color="blue">蓝色</font>。如果车门必须被手动操作，它将显示为<font color="green">绿色</font>。</p>
+
+<p>如果车门可以手动操作，使用<strong>DOORS_LEFT 开关左侧车门 (F5)</strong>来操作左侧车门，<strong>DOORS_RIGHT 开关右侧车门 (F6)</strong>来操作右侧车门。</p>
+    </div><!-- /.entry-content -->
+    
+  </article>
+</div><!-- /#main -->
+
+  <footer role="contentinfo">
+    <span>&copy; 2018 openBVE项目组。由 zbx1425 翻译。</span>
+
+  </footer>
+</div><!-- /.footer-wrapper -->
+
+</body>
+</html>

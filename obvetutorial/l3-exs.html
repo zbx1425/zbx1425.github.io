@@ -1,0 +1,69 @@
+<!doctype html> 
+<HTML> 
+<HEAD>
+   <META CHARSET="utf-8">
+   <TITLE>线路开发教程-配套练习:第一条线路</TITLE>
+   
+   <LINK HREF="contentpage.css" REL="stylesheet" TYPE="text/css" />
+   <LINK HREF="document.css" REL="stylesheet" TYPE="text/css" />
+   <SCRIPT LANGUAGE="javascript" SRC="nav.js" TYPE="text/javascript"></SCRIPT>
+   
+   <SCRIPT LANGUAGE="javascript" TYPE="text/javascript">
+		function toggledisplay(nm){
+			arr = document.getElementsByName(nm);
+			for (var k = 0, length = arr.length; k < length; k++) {
+ 				if (arr[k].style.display=="none"){
+					arr[k].style.display="";
+				} else {
+					arr[k].style.display="none";
+				}
+			}
+		}
+		//window.onload=function(){toggledisplay("answer");}
+   </SCRIPT> 
+</HEAD>
+<BODY>
+<DIV CLASS="maindiv" ID="maindiv" STYLE="">
+	<DIV STYLE="margin-top:140px"> 
+		<H2 CLASS="critical" STYLE="padding:5px">请您先自己试着查阅和作答或者猜测，再点击下方的这个按钮显示答案来校对结果。不要直接看答案。不要直接看答案。请您至少想一想……不推荐您过快地阅读本教程。</H2>
+		<A HREF="javascript:toggledisplay('answer')" STYLE="text-decoration:none">
+            <SPAN CLASS="button red"> 
+            <SPAN CLASS="icon" STYLE="background-image: url(globalimage/unfold-icon.png);"></SPAN>
+            <SPAN CLASS="text"> 显示/隐藏答案 
+        </SPAN> </SPAN> </A>
+		<TABLE width="80%" style="margin:auto;border-spacing:4px;">
+			<TR><TD colspan="2" align="center"><B><HR>第一部分：查阅并答出示例线路中出现的以下指令的用途。</B></TD></TR>
+			<TR><TD colspan="2" style="font-family:monospace">Options.ObjectVisibility 1</TD></TR>
+			<TR><TD width="50%"><TEXTAREA style="width:100%;resize:none;" rows="3" placeholder="&#10;此处答题"></TEXTAREA></TD>
+				<TD width="50%" style="padding-left:10px;display:none" name="answer">改变游戏对于物体可见性的处理方法，使得后方的物体不会消失。所有OpenBVE线路都应该有这一步设置。<SPAN class="critical">开发文档中有更详细的解释，请前往阅读。</SPAN></TD></TR>
+			<TR><TD colspan="2" style="font-family:monospace"><HR>Train.File CRT1000</TD></TR>
+			<TR><TD width="50%"><TEXTAREA style="width:100%;resize:none;" rows="3" placeholder="&#10;此处答题"></TEXTAREA></TD>
+				<TD width="50%" style="padding-left:10px;display:none" name="answer">载入并设定本线路所使用的列车为CRT1000型。与这列列车有关的文件存放在<code>LegacyContent/Train/CRT1000</code>文件夹中。</SPAN></TD></TR>
+			<TR><TD colspan="2" style="font-family:monospace"><HR>Train.Run(0).Set 0 与 Train.Flange(0).Set 0</TD></TR>
+			<TR><TD width="50%"><TEXTAREA style="width:100%;resize:none;" rows="3" placeholder="&#10;此处答题"></TEXTAREA></TD>
+				<TD width="50%" style="padding-left:10px;display:none" name="answer">指定列车在默认的轨道上行驶时使用0号走行音和摩擦音。如果没有书写，不仅列车会没有声音，游戏也会因为没有进行这个必要的分配判断线路无效。</SPAN></TD></TR>
+			<TR><TD colspan="2" style="font-family:monospace"><HR>Structure.Rail(0).Load zbx1425/tutorial/rail/gndblst0.csv</TD></TR>
+			<TR><TD width="50%"><TEXTAREA style="width:100%;resize:none;" rows="3" placeholder="&#10;此处答题"></TEXTAREA></TD>
+				<TD width="50%" style="padding-left:10px;display:none" name="answer">为默认的轨道(种类为0)载入这个带道砟轨枕的地面轨道模型，指定轨道外观(您可用Object Viewer查看模型)。如果不加入，您就不能在游戏中看到轨道。</SPAN></TD></TR>
+			<TR><TD colspan="2" style="font-family:monospace"><HR>Track.Sta DemoStart;;;;L;;;;30</TD></TR>
+			<TR><TD width="50%"><TEXTAREA style="width:100%;resize:none;" rows="3" placeholder="&#10;此处答题"></TEXTAREA></TD>
+				<TD width="50%" style="padding-left:10px;display:none" name="answer">增设一个名为DemoStart的车站，左侧开门，最少停车30秒。位置按它上方的主轨道位置指定，游戏从该位置开始显示那个蓝色的停车标条。另一条同理。</SPAN></TD></TR>
+			<TR><TD colspan="2" style="font-family:monospace"><HR>Track.Stop 1</TD></TR>
+			<TR><TD width="50%"><TEXTAREA style="width:100%;resize:none;" rows="3" placeholder="&#10;此处答题"></TEXTAREA></TD>
+				<TD width="50%" style="padding-left:10px;display:none" name="answer">为它上面的那个车站指定停车点。1表示标牌放在轨道右面(您能看到)，该停车点不论编组数量。由于列车长80米，它的放置位置也和Track.Sta相距80米。</SPAN></TD></TR>
+			<TR style="height:40px;"><TD colspan="2"></TD></TR>
+			<TR><TD colspan="2" align="center"><B><HR>第二部分：思考题与答案。</B></TD></TR>
+			<TR><TD colspan="2" style="font-family:monospace">Options命名空间的指令一般都放在开头，为什么？Structure、Route和Train等又为什么一般放在开头？</TD></TR>
+			<TR><TD width="50%"><TEXTAREA style="width:100%;resize:none;" rows="3" placeholder="&#10;此处答题"></TEXTAREA></TD>
+				<TD width="50%" style="padding-left:10px;display:none" name="answer">Options命名空间内的指令会改变游戏设置，并影响游戏处理其他指令。模型结构必须先加载再使用，另外两个则设置基础的信息。Track永远放在最后。</TD></TR>
+			<TR><TD colspan="2" style="font-family:monospace"><HR>为何Options.ObjectVisibility不加会后悔？</TD></TR>
+			<TR><TD width="50%"><TEXTAREA style="width:100%;resize:none;" rows="3" placeholder="&#10;此处答题"></TEXTAREA></TD>
+				<TD width="50%" style="padding-left:10px;display:none" name="answer">默认情况下OpenBVE沿袭(为了兼容)BVE一贯的臭毛病，不显示后方的物体，导致向后看时都不正确。用这个来把它改过来(Hmmsim则不沿袭所以无需)。</TD></TR>
+			<TR><TD colspan="2" style="font-family:monospace"><HR>为何要有Train.Run(0).Set 0 和 Train.Flange(0).Set 0 这两条指令？</TD></TR>
+			<TR><TD width="50%"><TEXTAREA style="width:100%;resize:none;" rows="3" placeholder="&#10;此处答题"></TEXTAREA></TD>
+				<TD width="50%" style="padding-left:10px;display:none" name="answer">这是给列车分配在0号默认轨道应当使用的声音(列车开发时已录好)的编号。让列车有声音。因为没有人会做没声的线路，没有该指令的线路会被视为无效。</TD></TR>
+		</TABLE>
+		<P>辛苦了！答题结束后，请按顶部红色按钮查看答案，并校对您懂得了多少。</P>
+		<P>我们建议您将本章重读几遍来深刻了解和记忆本章内容，而不是走马观花地不停翻页。在您准备好后，请从上方线路图中再次点击本讲返回文章，或者选择下一讲继续学习。</P>
+	</DIV>
+</DIV>

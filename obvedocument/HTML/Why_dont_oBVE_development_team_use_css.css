@@ -1,0 +1,71 @@
+/*
+OpenBVE development team simply doesn't use css at all.
+It seems they enjoy copying the same line of text again and again and again.
+And they are using tables everywhere. They even use tables for vertical spaces adjustment, which sounds strange.
+WHY DON'T THEY SIMPLY USE CSS?!
+    -   From the Chinese translation team
+        Contact us at zbx1425@126.com
+*/
+
+.head1 {
+	font-size : 20px;
+	color : #0080FF;
+	display : inline-table;
+}
+
+.head2 {
+	color : #0080FF;
+	display : inline-table;
+}
+
+.command {
+	color : #C00000;
+	background-color : #F0F0F0;
+	border-width : 1px;
+	border-style : dotted;
+	border-color : #808080;
+	font-family : monospace;
+    margin : 5px;
+	padding : 1px;
+	display : inline-table;
+}
+
+.commandlegacy {
+	color : #606060;
+	background-color : #F0F0F0;
+	border-width : 1px;
+	border-style : dotted;
+	border-color : #808080;
+	font-family : monospace;
+    margin : 5px;
+	padding : 1px;
+	display : inline-table;
+}
+
+.param {
+	color : #808080;
+	margin-left : 10pt;
+	margin-right : 10pt;
+	display : inline-table;
+}
+
+.code {
+	background-color : #D4D8FF;
+	border-width : 1px;
+	border-style : dashed;
+	display : inline-table;
+	margin : 5px;
+	padding : 1px;
+}
+
+.selectable {
+	margin-left : 40pt;
+	margin-right : 10pt;
+	display : inline-table;
+}
+
+.options {
+	margin-left : 50pt;
+	margin-right : 10pt;
+	display : inline-table;
+}

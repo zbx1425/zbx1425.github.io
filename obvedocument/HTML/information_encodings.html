@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<!-- Mirrored from www.trainsimframework.org/develop/information_encodings.html by HTTrack Website Copier/3.x [XR&CO'2010], Sat, 05 May 2012 22:31:29 GMT -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="SHORTCUT ICON" href="../Images/favicon.png">
+<meta name="keywords" content="openBVE,homepage">
+<title>字符编码</title>
+<link rel="stylesheet" type="text/css" href="Why_dont_oBVE_development_team_use_css.css"></head>
+<body style="font-family:sans-serif;font-size:small">
+<font size="+2" color="#0080FF">字符编码</font><br>
+<span class="param">
+本页面描述了什么是字符编码以及如何使用它们。（译注：本页面只适用于openBVE，Hmmsim游戏界面只支持英语、德语、韩语、日语，而转换器只支持英语及部分字符，不兼容的语言会被替换或忽略）
+</span><br>
+<br><br>
+<font size="+1" color="#0080FF">■  概述</font><hr>
+<br>
+字符编码是将字符转换为可存储在硬盘上的字节的一种方式。从前，一个字节（256个信息状态）被用来编码一个字符，但由于世界各地的不同书写系统对要编码的字符有不同的要求，全世界有许多不同的编码在使用。问题在于，如果事先不知道文本文件的编码，（系统的）误解会导致 <em>乱码</em> 的出现。（无意义的字符序列）译注：原文为mojibake<br><span class="code">
+<tt>ひらがなカタカナ漢字</tt></span><br>
+<span class="code">
+<tt>82 D0 82 E7 82 AA 82 C8 83 4A 83 5E 83 4A 83 69 8A BF 8E 9A</tt></span><br>
+<span class="code">
+<tt>‚Ð‚ç‚ª‚ÈƒJƒ^ƒJƒiŠ¿Žš</tt></span><br>
+通常，一种特定的编码只允许在为其设计的书写系统上使用。Unicode，这种基本涵盖全世界书写系统中使用的所有字符的标准，提供了一种解决方案。<br><br>虽然Unicode现在已广泛地传播，但它仍然存在一些问题。首先，Unicode不是直接的字符编码。相反，所谓的Unicode转换格式(UTF)提供了对特定字符进行编码的方法。经常使用的转换格式是UTF-8和UTF-16。<br><br>线路和列车文件通常出于兼容性原因被允许包含在任意的编码当中。由于事先不知道编码，用户需要在主菜单的“设置”选项卡中为线路和列车选择正确的编码。当然这是一个麻烦，应该以某种方法避免。<br><br><br>
+<font size="+1" color="#0080FF">■ 字节顺序标记</font><hr>
+<br>
+UTF-16编码总是使用两个字节来表示一个字符。因此，这两个字节的顺序很重要。为了知道字节是以什么顺序出现的，一个所谓的字节顺序标记会为文本准备好，它通常是由文本编辑器自动生成且隐藏的。字节顺序标记为解码器提供了一种检测手段，这里面保存着该文本的字节顺序。此外，字节顺序标记提供了一种相当安全的方式来检测文件是否以Unicode保存。<br><br>虽然没有技术上的必要，但字节顺序标记也会以UTF-8的格式使用。由于UTF-8没有字节顺序的问题，在UTF-8中使用字节顺序标记的唯一目的是提供一种标记文件以UTF-8编码的方法。<br><br>如前所述，虽然Unicode允许对全世界所有书写系统中的字符进行编码，但如果要使用的编码未达成一致，则不一定能使文本文件的处理更加轻松。<br><br>字节顺序标记的使用给了openBVE一个机会来为每个独立的文件自动识别编码。如果您有一个优秀的文本编辑器，您将不仅可以手动选择编码（方式），还可以根据自身需要保存字节顺序标记与否。当保存文件时，若选择UTF-8作为字符编码，Notepad (Windows) 总会将字节顺序标记保存下来，作为一个可以接受的示例。<br><br>技术上讲，字节顺序标记是特定文本文件的前几个字节。能被openBVE自动识别的字节顺序标记有：<br><br>
+<table style="border-collapse: collapse;">
+<tr><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;"> 编码</th><th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;"> 十六进制表示方法</th></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">UTF-8</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">EF BB BF</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">UTF-16 (big endian)</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">FE FF</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">UTF-16 (little endian)</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">FF FE</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">UTF-32 (big endian)</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">00 00 FE FF</td></tr>
+<tr><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">UTF-32 (little endian)</td><td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">FF FE 00 00</td></tr>
+</table><br>
+我们鼓励你始终按照字节标记顺序将文本文件以其中一种编码保存，以便openBVE自动检测所使用的编码。
+</body>
+
+<!-- Mirrored from www.trainsimframework.org/develop/information_encodings.html by HTTrack Website Copier/3.x [XR&CO'2010], Sat, 05 May 2012 22:31:29 GMT -->
+</html>

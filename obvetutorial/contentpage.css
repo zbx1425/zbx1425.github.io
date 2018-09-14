@@ -1,0 +1,99 @@
+html, body {height:            100%;            box-sizing:            border-box;}
+body {overflow-y:scroll;}
+* {padding:   0;   margin:   0}
+p {
+text-indent:    2em;
+margin:    0.5em 0em
+}
+li {margin-left:    4em}
+.maindiv {margin:auto;width:970px;min-height:100%;z-index:-1;padding:0px 20px;background-color:blanchedalmond}
+span.button
+{
+display:    table;
+padding:    5px;
+
+border-radius:    3px 3px 3px 3px;
+-moz-border-radius:    3px 3px 3px 3px;
+-webkit-border-radius:    3px 3px 3px 3px;
+
+background-color:    rgba(0, 0, 0, 0.05);
+-webkit-box-shadow:    inset 0px 1px 2px 0px rgba(0,0,0,0.1);
+-moz-box-shadow:    inset 0px 1px 2px 0px rgba(0,0,0,0.1);
+box-shadow:    inset 0px 1px 2px 0px rgba(0,0,0,0.1);
+}
+
+span.button:hover
+{
+cursor:    pointer;
+}
+span.button > *
+{
+display:    inline;
+-webkit-box-sizing:    border-box;
+-moz-box-sizing:    border-box;
+box-sizing:    border-box;
+}
+
+span.button:active > span.text
+{
+-webkit-box-shadow:    inset 0px 5px 5px -5px rgba(0,0,0,0.35) !important;
+-moz-box-shadow:    inset 0px 5px 5px -5px rgba(0,0,0,0.35) !important;
+box-shadow:    inset 0px 5px 5px -5px rgba(0,0,0,0.35) !important;
+}
+
+span.button > span.icon, span.button > span.text
+{
+display:    inline-table;
+border:    1px solid #000;
+max-height:    38px;
+}
+
+span.button > span.icon
+{
+display:    inline-block;
+float:    left;
+background:    no-repeat center;
+border-right:    none !important;
+height:    38px;
+width:    40px;
+
+border-radius:    3px 0px 0px 3px;
+-moz-border-radius:    3px 0px 0px 3px;
+-webkit-border-radius:    3px 0px 0px 3px;
+
+-webkit-box-shadow:    inset 1px 1px 0px 0px rgba(255,255,255,0.3);
+-moz-box-shadow:    inset 1px 1px 0px 0px rgba(255,255,255,0.3);
+box-shadow:    inset 1px 1px 0px 0px rgba(255,255,255,0.3);
+}
+
+span.button > span.text
+{
+padding:    7px 10px;
+border-radius:    0px 3px 3px 0px;
+-moz-border-radius:    0px 3px 3px 0px;
+-webkit-border-radius:    0px 3px 3px 0px;
+
+-webkit-box-shadow:    inset 1px 1px 0px 0px rgba(255,255,255,0.3);
+-moz-box-shadow:    inset 1px 1px 0px 0px rgba(255,255,255,0.3);
+box-shadow:    inset 1px 1px 0px 0px rgba(255,255,255,0.3);
+}
+
+span.button.red > span.icon, span.button.red > span.text {border-color: #c62b2b;color: #FFF;font-weight: bolder;}
+span.button.red > span.icon {background-color: #d53f3f;}
+span.button.red > span.text {background-color: #f05050;}
+span.button.red:hover > span.icon {background-color: #e34d4d;}
+span.button.red:hover > span.text {background-color: #f95f5f;}
+
+span.button.green > span.icon, span.button.green > span.text {border-color: #78c62b;color: #000;font-weight: bolder;}
+span.button.green > span.icon {background-color: #8ad53f;}
+span.button.green > span.text {background-color: #a0f050;}
+span.button.green:hover > span.icon {background-color: #98e34d;}
+span.button.green:hover > span.text {background-color: #acf95f;}
+
+span.button.blue > span.icon, span.button.blue > span.text {border-color: #2bc6c6;color: #000;font-weight: bolder;}
+span.button.blue > span.icon {background-color: #3fd5d5;}
+span.button.blue > span.text {background-color: #50f0f0;}
+span.button.blue:hover > span.icon {background-color: #4de3e3;}
+
+span.button.blue:
+hover > span.text {background-color: #5ff9f9;}

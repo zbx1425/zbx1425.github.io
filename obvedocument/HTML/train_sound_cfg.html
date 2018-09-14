@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<!-- Mirrored from www.trainsimframework.org/develop/train_sound_cfg.html by HTTrack Website Copier/3.x [XR&CO'2010], Sat, 05 May 2012 22:31:23 GMT -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="SHORTCUT ICON" href="../Images/favicon.png">
+<meta name="keywords" content="openBVE,homepage">
+<title>The sound.cfg file format</title>
+</head>
+<body style="font-family:sans-serif;font-size:small">
+<font size="+2" color="#0080FF">The <b>sound.cfg</b> file format</font><br>
+<br>
+<br><br>
+<font size="+1" color="#0080FF">■ Contents</font><hr>
+<br>
+↷ <a href="#overview">1. Overview</a><br>
+↷ <a href="#syntax">2. Syntax</a><br>
+↷ <a href="#content">3. Content of the file</a><br>
+<br><a name="overview"></a>
+<br><br>
+<font size="+1" color="#0080FF">■ 1. Overview</font><hr>
+<br>
+The sound.cfg file allows to reference which sound files should be used, how they are called and where they are located relative to the train folder.<br><br>The sound.cfg file is a plain text file encoded in any arbitrary <a href="information_encodings.html">encoding</a>, however, UTF-8 with a byte order mark is the preferred choice. The <a href="information_numberformats.html">parsing model</a> for numbers is <b>Strict</b>. The file is required to be located inside the train folder and is expected to be named <b>sound.cfg</b>. The file is interpreted on a per-line basis, from top to bottom.<br><br>➟ <a href="train_sound_cfg_quick.html">See also the quick reference for the sound.cfg...</a><br>
+<br><a name="syntax"></a>
+<br><br>
+<font size="+1" color="#0080FF">■ 2. Syntax</font><hr>
+<br>
+<br>Each line in the file can be empty (or solely consist of white spaces) and will be ignored, can mark the beginning of a new section or contain key-value pairs inside a section. All key-value pairs relate to the last section opened.<br><br>A new section is opened by starting the line with an opening bracket (U+005B) and ending it with a closing bracket (U+005D). The text in-between the brackets indicates the name of the section and is case-insensitive. White spaces at the beginning and the end of the line are ignored, as well as at the beginning and the end of the name of the section. Thus, the beginning of the section has the following form:<br><br><span class="command">[NameOfTheSection]</span><br>
+<br>
+<br>A key-value pair is indicated by giving the key, an equals sign (U+003D) and then the value. The key is case-insensitive. White spaces at the beginning and the end of the line are ignored, as well as in front and after the equals sign. Alternatively, white spaces surrounding the key and the value are ignored. Thus, a key-value pair as the following form:<br><br><span class="command">NameOfTheKey = Value</span><br>
+<br>
+<br>You can use comments anywhere at the end of a line. A comment is started by a semicolon (U+003B). Comments, if present, are stripped away from all lines before these are processed.<br><br><a name="content"></a>
+<br><br>
+<font size="+1" color="#0080FF">■ 3. Content of the file</font><hr>
+<br>
+The first line in the file is required to be the following:<br><br><span class="command">Version 1.0</span><br>
+<br>
+<br>Following the version line, these are the sections that can be used and their key-value pairs. In all key-value pairs, the parameter <em>FileName</em> corresponds to the file name of the sound to reference, relative to the train folder.<br><br><hr>
+<br>
+<font color="#0080FF">● [Run]</font>
+<br>
+<br>
+<br><span class="command"><em>Index</em> = <em>FileName</em></span><br>
+<br>
+Assigns a run sound. The non-negative integer <em>Index</em> represents the type of run sound to use. Route developers can choose which run sound to play for a given piece of track. Please see the page about <a href="information_standards.html">standards</a> for further information.<br><br>The sound is played at a pitch proportional to the speed. The recording should correspond to a speed of 90 km/h.<br><br><hr>
+<br>
+<font color="#0080FF">● [Flange]</font>
+<br>
+<br>
+<br><span class="command"><em>Index</em> = <em>FileName</em></span><br>
+<br>
+Assigns a flange sound. The non-negative integer <em>Index</em> represents the type of flange sound to use. Route developers can choose which flange sound to play for a given piece of track. Please see the page about <a href="information_standards.html">standards</a> for further information.<br><br>The sound is played at a pitch proportional to the speed. The recording should correspond to a speed of 45 km/h.<br><br><hr>
+<br>
+<font color="#0080FF">● [Motor]</font>
+<br>
+<br>
+<br><span class="command"><em>Index</em> = <em>FileName</em></span><br>
+<br>
+Assigns a motor sound. The non-negative integer <em>Index</em> represents the index of the motor sound that can be referenced in the #MOTOR_<em>Xn</em> sections of the train.dat. Please see the documentation for the <a href="train.html">train.dat</a> for more information.<br><br><hr>
+<br>
+<font color="#0080FF">● [Switch]</font>
+<br>
+<br>
+<br><span class="command">Index = <em>FileName</em></span><br>
+<br>
+Assigns a switch sound- These are played once per axle when the train crosses a block containing pointwork. The non-negative integer <em>Index</em> represents the type of switch sound to use. Route developers can choose which flange sound to play for a given piece of track. Please see the page about <a href="information_standards.html">standards</a> for further information.
+<br><br><hr>
+<br>
+<font color="#0080FF">● [Brake]</font>
+<br>
+<br>
+<br><span class="command">BC Release High = <em>FileName</em></span><br>
+<br>
+Played occasionally when the pressure in the brake cylinder is decreased from a high value.<br><br><span class="command">BC Release = <em>FileName</em></span><br>
+<br>
+Played occasionally when the pressure in the brake cylinder is decreased from a non-high value to a non-zero value.<br><br><span class="command">BC Release Full = <em>FileName</em></span><br>
+<br>
+Played occasionally when the pressure in the brake cylinder is decreased to zero value.<br><br><span class="command">Emergency = <em>FileName</em></span><br>
+<br>
+Played once when the emergency brakes are activated.<br><br><span class="command">BP Decomp = <em>FileName</em></span><br>
+<br>
+For trains with automatic air brake, is played when the handle is moved into the SRV or EMG position. For other trains, is played when the brake notch is decreased.<br><br><hr>
+<br>
+<font color="#0080FF">● [Compressor]</font>
+<br>
+<br>
+<br><span class="command">Attack = <em>FileName</em></span><br>
+<br>
+Played once when the air compressor is activated.<br><br><span class="command">Loop = <em>FileName</em></span><br>
+<br>
+Played in a loop for the duration the air compressor is active.<br><br><span class="command">Release = <em>FileName</em></span><br>
+<br>
+Played once when the air compressor is deactivated.<br><br><hr>
+<br>
+<font color="#0080FF">● [Suspension]</font>
+<br>
+<br>
+<br><span class="command">Left = <em>FileName</em></span><br>
+<br>
+Played occasionally when the train sways to the left side.<br><br><span class="command">Right = <em>FileName</em></span><br>
+<br>
+Played occasionally when the train sways to the right side.<br><br><hr>
+<br>
+<font color="#0080FF">● [Horn]</font>
+<span class="param"><b><em>Looped Horns</em></b><br><br></span><br>
+<br><span class="command">PrimaryLoop = <em>FileName</em>
+<br>SecondaryLoop = <em>FileName</em>
+<br>MusicLoop = <em>FileName</em></span><br>
+<br>
+Played in a loop whilst the given horn is active.<br><br><span class="command">PrimaryEnd = <em>FileName</em>
+<br>SecondaryEnd = <em>FileName</em>
+<br>MusicEnd = <em>FileName</em></span><br>
+<br>
+Played once when the given horn is released.<br><br>
+
+
+
+<span class="param"><b><em>Legacy Horns</em></b><br><br></span><br>
+<br><span class="command">Secondary = <em>FileName</em></span><br>
+<br>
+Played once whilst the secondary horn is active.<br><br><span class="command">Music = <em>FileName</em></span><br>
+<br>
+Played in a continuous loop whilst the music horn is active.<br><br>
+
+
+
+<hr><br>
+<font color="#0080FF">● [Horn]</font>
+<span class="param"></span><br>
+<br>
+Played once when the left doors open.<br><br><span class="command">Open Right = <em>FileName</em></span><br>
+<br>
+Played once when the right doors open.<br><br><span class="command">Close Left = <em>FileName</em></span><br>
+<br>
+Played once when the left doors close.<br><br><span class="command">Close Right = <em>FileName</em></span><br>
+<br>
+Played once when the right doors close.<br><br><hr>
+<br>
+<font color="#0080FF">● [Ats]</font>
+<br>
+<br>
+<br><span class="command"><em>Index</em> = <em>FileName</em></span><br>
+<br>
+Assigns a plugin sound. The non-negative integer <em>Index</em> represents the sound index. Train plugin developers can choose which sound to play. The assignment of sounds needs to be coordinated with the plugin developer.<br><br><hr>
+<br>
+<font color="#0080FF">● [Buzzer]</font>
+<br>
+<br>
+<br><span class="command">Correct = <em>FileName</em></span><br>
+<br>
+Played once when the train stops at a station, but needs to correct its stop position.<br><br><hr>
+<br>
+<font color="#0080FF">● [Pilot Lamp]</font>
+<br>
+<br>
+<br><span class="command">On = <em>FileName</em></span><br>
+<br>
+Played once as soon as the doors have closed and the train is ready for departure.<br><br><span class="command">Off = <em>FileName</em></span><br>
+<br>
+Played once as soon as the doors start to open.<br><br><hr>
+<br>
+<font color="#0080FF">● [Brake Handle]</font>
+<br>
+<br>
+<br><span class="command">Apply = <em>FileName</em></span><br>
+<br>
+Played once when the brake notch is increased to any value below the emergency brake position.<br><br><span class="command">Release = <em>FileName</em></span><br>
+<br>
+Played once when the brake notch is decreased to any value above brake notch zero.<br><br><span class="command">Min = <em>FileName</em></span><br>
+<br>
+Played once when the brake notch is decreased to brake notch zero.<br><br><span class="command">Max = <em>FileName</em></span><br>
+<br>
+Played once when the emergency brakes are applied.<br><br><hr>
+<br>
+<font color="#0080FF">● [Master Controller]</font>
+<br>
+<br>
+<br><span class="command">Up = <em>FileName</em></span><br>
+<br>
+Played once when the power notch is increased to any value below the maximum power notch.<br><br><span class="command">Down = <em>FileName</em></span><br>
+<br>
+Played once when the power notch is decreased to any value above power notch 0.<br><br><span class="command">Min = <em>FileName</em></span><br>
+<br>
+Played once when the power notch is decreased to brake notch zero.<br><br><span class="command">Max = <em>FileName</em></span><br>
+<br>
+Played once when the power notch is increased to the maximum power notch.<br><br><hr>
+<br>
+<font color="#0080FF">● [Reverser]</font>
+<br>
+<br>
+<br><span class="command">On = <em>FileName</em></span><br>
+<br>
+Played once when the reverser is moved into any non-neutral position.<br><br><span class="command">Off = <em>FileName</em></span><br>
+<br>
+Played once when the reverser is moved into the neutral position.<br><br><hr>
+<br>
+<font color="#0080FF">● [Breaker]</font>
+<br>
+<br>
+<br><span class="command">On = <em>FileName</em></span><br>
+<br>
+Played once when power is resumed (was interrupted before). There is a series of circumstances when that can happen, for example when moving from power notch zero to power notch one, assuming the reverser is non-neutral and the brakes are released. It can also happen when the power notch is already non-zero, but the reverser or brakes previously interrupted the power. The safety systems can also interrupt power.<br><br><span class="command">Off = <em>FileName</em></span><br>
+<br>
+Played once when power is interrupted or resumed. There is a series of circumstances when that can happen, for example when moving from power notch zero to power notch one, or vice versa, assuming the reverser is non-neutral and the brakes are released. The safety systems can also interrupt power.<br><br><hr>
+<br>
+<font color="#0080FF">● [Others]</font>
+<br>
+<br>
+<br><span class="command">Noise = <em>FileName</em></span><br>
+<br>
+Played in a loop all the time for the duration of the simulation.<br><br><span class="command">Shoe = <em>FileName</em></span><br>
+<br>
+Played in a loop when the brake shoe rubs against the wheels. The sound is played at a pitch inversely proportional to the speed, and the volume of the sound decreases with increasing speeds.
+</body>
+
+<!-- Mirrored from www.trainsimframework.org/develop/train_sound_cfg.html by HTTrack Website Copier/3.x [XR&CO'2010], Sat, 05 May 2012 22:31:24 GMT -->
+</html>

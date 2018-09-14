@@ -1,0 +1,197 @@
+<!doctype html> 
+<HTML> 
+<HEAD>
+   <META CHARSET="utf-8">
+   <TITLE>线路开发教程:第一条线路</TITLE>
+   
+   <LINK HREF="contentpage.css" REL="stylesheet" TYPE="text/css" />
+   <LINK HREF="document.css" REL="stylesheet" TYPE="text/css" />
+   <SCRIPT LANGUAGE="javascript" SRC="nav.js" TYPE="text/javascript"></SCRIPT>
+   
+   <SCRIPT LANGUAGE="javascript" TYPE="text/javascript">
+		function togglearea(id){
+			var elem = document.getElementById(id);
+			if (elem.style.display=="none"){
+				elem.style.display="";
+			} else {
+				elem.style.display="none";
+			}
+		}
+   </SCRIPT> 
+</HEAD>
+<BODY>
+<DIV CLASS="maindiv" ID="maindiv" STYLE=""> 
+   <DIV STYLE="margin-top:140px"> 
+	<A HREF="../obvedocument/HTML/route_csv.html" target="_blank"
+                     STYLE="text-decoration:none">
+                  <SPAN CLASS="button green"> 
+                  <SPAN CLASS="icon"
+                        STYLE="background-image: url(globalimage/unfold-icon.png);"></SPAN>
+                  <SPAN CLASS="text"> 查看线路文件格式文档 
+                  </SPAN> </SPAN> </A>
+      <P>比起干讲理论，实践更能让人清晰地了解知识。现在就带大家写出大家的第一条线路。</P>
+	  <P>事实上，虽然写出一条高质量的openBVE/Hmmsim线路是一个技术活，但是写出一条能玩的线路并不是一件难事！按照openBVE的基本要求，只要满足以下条件，就是一条可以游玩的线路：</P>
+	  <OL>
+		<LI><B>是一个按照<A HREF="../obvedocument/HTML/route_csv.html" TARGET="_blank">CSV线路格式</A>编写的CSV文件。</B>做线路可不是涂鸦，线路文件是有一个特定的编写格式的。</LI>
+		<LI><B>文件中至少按照格式指令定义两个车站。</B>一条线路必须有起点站和终点站。</LI>
+		<LI><B>文件中指定该线路的配套列车。</B>没有列车怎么玩？嗯？</LI>
+		<LI><B>文件中至少按照格式指令载入一个物件模型或设定一种轨道。</B>物件模型是线路的全部可视内容，没有模型的线路就真可谓“好一似食尽鸟投林，白茫茫大地真干净”——空空如也。openBVE通过这一方式判断一个CSV文件是否是线路文件。</LI>
+	  </OL>
+	  <P>由于让您复制粘贴代码实在是件没有必要的事，我们已经随配套线路资源一起附带了一条最简单的线路。打开openBVE，并在线路列表中寻找DemoRoute启动。</P>
+	  <IMG SRC="l3image/demoselect.png" STYLE="margin-left:2em" WIDTH="50%"/>
+	  <P>小技巧1：是不是觉得右下角的列车信息显示区域太小了，显示不开所有的文字？最大化窗口即可解决问题。</P>
+	  <P>小技巧2：如果感觉图片太小，可以在Firefox中右键选择【查看图像】（看完后点击左上角后退按钮），<BR>或在Chrome中右键选择【在新标签页中打开图片】。</P>
+	  <IMG SRC="l3image/demoplay.png" STYLE="margin-left:2em" WIDTH="50%"/>
+	  <P>效果如图。该线路载入了一个轨道模型，所以您能看到轨道。线路包括相距500米的两个车站，没有任何外景，唯一的物件是放在轨道旁的默认停车位置牌。虽然游戏性显然是不尽如人意的，但是它可以玩嘛！另外，如果您不清楚该如何控制openBVE中的列车，请参见<A HREF="../obvemainsite/playbasic.html" TARGET="_blank">列车基础控制教程</A>。</P>
+	  <hr>
+	  <P>接下来，我们就分析一下这个线路文件，来向大家简单介绍一下线路开发的基本格式。</P>
+	  <P>浏览到LegacyContent/Railway/Route/DemoRoute.csv，右键并选择带Notepad++的那一项打开，并在顶端菜单栏选择[语言]->[OpenBVE]。我们来看看这个文件内部的秘密！</P>
+	  <SPAN CLASS="code" STYLE="white-space:pre;margin-left:2em;padding-left:1em;padding-right:4em;">With Options
+; 一定写上这个，不然您会后悔
+.ObjectVisibility 1
+
+With Route
+
+With Train
+	.File CRT1000
+	.Run(0).Set 0
+	.Flange(0).Set 0
+
+With Structure
+	.Rail(0).Load zbx1425/tutorial/rail/gndblst0.csv
+
+With Texture
+
+With Cycle
+
+With Signal
+
+With Track
+0
+	.Sta DemoStart;;;;L;;;;30
+80
+	.Stop 1
+500
+	.Sta DemoEnd;;;;L;;;;30
+580
+	.Stop 1</SPAN>
+	  <P>OpenBVE线路文件的最基本元素是<B>指令</B>。指令就是你告诉游戏你要干什么——<EM>这儿放个房子！这儿加个车站！</EM>发号施令的感觉有没有？哈哈！</P>
+	  <P>为了便于编写，使文件结构清晰，OpenBVE游戏中的指令都是分在几个<B>命名空间</B>中的。虽说这个名字看起来很高大上，但事实上这就是个跟分类意思差不多的东西，所有的指令根据用途被分为几类。指令的名称分为两部分，中间有个点，前面是分类，后面是真正的指令名。比如说 <EM>Track.Sta</EM> 这条指令，Track的意思是轨道，Sta是Station的简写，意思是车站，这条指令的意思就是 <EM>在轨道上放一个车站</EM> 。简单明了不是吗？各个命名空间中的指令都有着不同的用途（由于Hmmsim功能较少，不支持一部分内容），它们的用途分别是：</P>
+	  <table style="margin:auto">
+		<tr align="center">
+			<th>命名空间</th>
+			<th>用途</th>
+			<th>Hmmsim</th>
+			<th width="40px"></th>
+			<th>命名空间</th>
+			<th>用途</th>
+			<th>Hmmsim</th>
+		</tr>
+		<tr align="center">
+			<td>Options</td>
+			<td>调节OpenBVE的程序设定，使线路正确加载</td>
+			<td style="color:red">不支持</td>
+			<td></td>
+			<td>Route</td>
+			<td>设定线路的基本信息和参数</td>
+			<td style="color:red">不支持</td>
+		</tr>
+		<tr align="center">
+			<td>Train</td>
+			<td>加载线路所用列车，设定列车配置信息</td>
+			<td>支持</td>
+			<td></td>
+			<td>Structure</td>
+			<td>加载线路所用模型</td>
+			<td>支持</td>
+		</tr>
+		<tr align="center">
+			<td>Texture</td>
+			<td>加载线路背景图片</td>
+			<td>支持</td>
+			<td></td>
+			<td>Cycle</td>
+			<td>设定循环地面和轨道，扩展单段长度</td>
+			<td>支持</td>
+		</tr>
+		<tr align="center">
+			<td>Signal</td>
+			<td>加载线路所用信号机模型</td>
+			<td style="color:red">不支持</td>
+			<td></td>
+			<td><b>Track</b></td>
+			<td><b>设计全线轨道一路下来的车站、风景等</b></td>
+			<td><b>支持</b></td>
+		</tr>
+	  </table>
+	  <hr>
+	  <P>可能有的读者看到这儿就说啊：“不对啊，我怎么连Track.Sta的影子都没看见，只看见一个With Track, .Sta呢？对啦，With指令是一个特殊的指令——它规定从它以下所有的直接以点开头的指令都和它指定的这个命名空间有关。这也是非常合乎情理的，毕竟大家都习惯把一类的东西搁在一块儿，这下什么Track啊Structure的分类写上几十遍几百遍，大家也都烦了，不如这样省点事。比如说，下面两段代码实际效果相同：</P>
+	  <SPAN CLASS="code" STYLE="white-space:pre;margin-left:2em;padding-left:1em;padding-right:4em;">With Track
+0,.Sta DemoStart;;;;L;;;;30
+80,.Stop 1
+500,.Sta DemoEnd;;;;L;;;;30
+580,.Stop 1</SPAN>
+	  <SPAN CLASS="code" STYLE="white-space:pre;margin-left:2em;padding-left:1em;padding-right:4em;">;不使用With，可以看到Track出现四次
+0,Track.Sta DemoStart;;;;L;;;;30
+80,Track.Stop 1
+500,Track.Sta DemoEnd;;;;L;;;;30
+580,Track.Stop 1</SPAN>
+	  <P>（在CSV线路文件中，逗号也可以表示换行，来把分行内容写在一行上，用以节省空间）</P>
+	  <hr>
+	  <P>不过可能大家会发现，指令的后面还有东西呢！比如说Track.Sta，后面怎么还有那么一大堆呢？这些叫作<B>参数</B>。什么是参数呢？就比如说如果要设置一个车站，可不是光说“设置一个车站！”就完了，还得想想车站叫什么，停车多长时间，哪边开门？这些就是通过参数的形式给出的。通俗地来说，指令就是要干什么，参数就是要怎样干。各个参数之间使用分号（英文半角的那个）分隔。详细介绍各条指令的参数的含义超出本教程范围，但我们还有一篇<A HREF="../obvedocument/HTML/route_csv.html" TARGET="_blank">开发文档</A>，那里可是进行了详细的介绍。比如说，我们拿出起点站的定义举个例子：</P>
+	  <SPAN CLASS="code" STYLE="white-space:pre;margin-left:2em;padding-left:1em;padding-right:4em;">Track.Sta DemoStart;;;;L;;;;30</SPAN><BR>
+	  <P>我们再看一眼文档里对于Track.Sta指令的解释：</P>
+	  <div style="background:lightyellow;border:solid thin;padding:4px;">
+	  <span class="command" STYLE="font-size:14px"><b>Track.Sta</b> <em>站名</em>; <em>到达时间</em>; <em>发车时间</em>; <em>停车铃</em>; <em>开门方向</em>; <em>强制红灯</em>; <em>信号系统</em>; <em>到达广播</em>; <em>停车时间</em>; <em>乘车率</em>; <em>发车广播</em>; <em>时刻表编号</em></span><br>
+	  <span class="param" STYLE="font-size:14px"> <b><em>站名</em></b>：该车站的站名。将会在时刻表和提示信息中显示，所以不应留空。<br>
+      <b><em>到达时间</em></b>：玩家驾驶的列车应当到达此站的<a href="information_numberformats.html#times">时间</a>。可以使用特殊值表示额外信息——见下。<br>
+      <b><em>发车时间</em></b>：玩家驾驶的列车应当从此站发车的<a href="information_numberformats.html#times">时间</a>。可以使用特殊值表示额外信息——见下。<br>
+      <b><em>停车铃</em></b>：指示停车警铃设备（如果列车有安装）是否应该鸣响以提示列车驾驶在这站停车。默认值是0。<br>
+      <b><em>开门方向</em></b>：指示列车应开启的车门方向。默认值是0，L为左，R为右。<br>
+      <b><em>强制红灯</em></b>：指示是否应该将最后一个停车点后方的信号机（发车信号机）在玩家驾驶列车接近时设为红色。默认值是0。<br>
+      <b><em>信号系统</em></b>：指示从此站到下一站之间的区间安装的列车信号系统。默认值是0。<br>
+      <b><em>到达广播</em></b>：一个相对于<b>Sound</b>文件夹的路径，指向列车停站时播放的音频。<br>
+      <b><em>停车时间</em></b>：一个正浮点数表示列车在车站的最小停车时间（包括开关门时间）。默认值是15。<br>
+      <b><em>乘车率</em></b>：一个非负浮点数表示在该站列车上乘客的相对数量。作为参考，100差不多是正常载客量，而250则表示超载列车。输入值应当在0~250之间。默认值是100。<br>
+      <b><em>发车广播</em></b>：一个相对于<b>Sound</b>文件夹的路径，指向在发车前（发车时间-关门时间-音频时长）要播放的音频。<br>
+      <b><em>时刻表编号</em></b>：一个非负整数，指示一个由Train.Timetable指定的，从此站开始要显示的时刻表。默认保持上站设定。</span></div>
+	  <P>按照顺序一一对应，一目了然！请注意有些地方留空了，有些参数没有给出，这意味着这些地方采用默认值。例如，在到达广播处留空表示没有到达广播。我们就可以看出，这条指令设定了一个叫作DemoStart，开门方向向左，停车30秒的车站。</P>
+	  <P>大家可以前往文档对照查找其它的几条指令，来弄清它们的具体意思。</P>
+	  <P CLASS="critical">请您务必搜索查看文档中对命令的解释，来更好地了解指令。</P>
+	  <P>此外，大家可能还会发现一些分号开头的指令。这些是什么呢？这些叫作<B>注释</B>。注释是给人看的，用来让大家编写线路时思路更清晰。比如说一个线路可能七扭八弯，有许多车站，这时就可以用注释标定车站等重要地点的位置。注释既可以写在单独的一行上，也可以写在一行的末尾。</P>
+	  <BR>
+	  <hr>
+	  <P>此外，您可能还会发现有些行上写的并不是指令，而是数字。这是CSV线路格式每条指令的基础和意义所在。这些数字被称为<B>主轨道位置</B>。在OpenBVE和Hmmsim中，真正意义上的轨道只有一条，就是玩家控制的列车所在的那条，一切其它的轨道都是只作装饰作用而不能行车的。游戏中的所有物件也都是相对于这条轨道来设置的，放在这条轨道旁边的，毕竟物件放在玩家看不到的地方毫无意义啊。而这个主轨道位置，就是指定一个点到主轨道开头位置的距离。</P>
+	  <P>您可能会注意到上述的指令的定义还是缺点什么——既然有了干什么、怎么干，为什么就没有在哪里干呢？像我们刚刚设定车站和停车点时，都没有在指令中指定它们的位置。这就是<B>主轨道位置</B>的意义所在。它指定它下方所有指令的生效位置。每条Track命名空间里的指令都根据它上方的第一个主轨道位置来确定它的生效位置，也就是说主轨道位置是可以一对多的。例如，如果我们把刚刚的代码以主轨道的形式表现出来，那就是：</P>
+	  <DIV STYLE="width:700px;width:fit-content;width:-webkit-fit-content;width:-moz-fit-content;margin:auto;margin-top:40px">
+		<IMG WIDTH="120px" SRC="l3image/HXD3C.png" style="position:absolute;margin-left:70px;margin-top:-10px;opacity:0.4;" />
+		<SPAN STYLE="display: inline-block;width: 200px;height: 3em;text-align: center;color:black;text-decoration: none;font-size: 15px;font-weight: bold;position: relative;margin-left: -20px;margin-right: -20px;font-family: 宋体,sans-serif;line-height:17px;z-index:1;top: -17px;">开始位置<BR>增设车站DemoStart<BR>●</SPAN>
+		<SPAN STYLE="display: inline-block;width: 200px;height: 3em;text-align: center;color:black;text-decoration: none;font-size: 15px;font-weight: bold;position: relative;margin-left: -80px;margin-right: -20px;font-family: 宋体,sans-serif;line-height:17px;z-index:1;top: 17px;">●<BR>80米处<BR>设定车站停车位置</SPAN>
+		<SPAN STYLE="display: inline-block;width: 200px;height: 3em;text-align: center;color:black;text-decoration: none;font-size: 15px;font-weight: bold;position: relative;margin-left: 200px;margin-right: -20px;font-family: 宋体,sans-serif;line-height:17px;z-index:1;top: -17px;">500米处<BR>增设车站DemoEnd<BR>●</SPAN>
+		<SPAN STYLE="display: inline-block;width: 200px;height: 3em;text-align: center;color:black;text-decoration: none;font-size: 15px;font-weight: bold;position: relative;margin-left: -80px;margin-right: -20px;font-family: 宋体,sans-serif;line-height:17px;z-index:1;top: 17px;">●<BR>580米处<BR>设定车站停车位置</SPAN>
+		<div style='margin-left:80px;margin-right:0px;border-top:thick solid;border-color:red;position:relative;top:-30px;z-index: 0;text-align:center'>—》主&nbsp;&nbsp;轨&nbsp;&nbsp;道 —》</div>
+	  </DIV>
+	  <P>请您注意这条线在左边不出头，而在右边是出头的。这是因为主轨道不会结束，而是向前无限延展。您在实际游戏中也可以看到这一点。相反，主轨道并不向后延伸。所以我们建议您在实际开发线路时不要像这条最简线路一样把车站放至开头，而是在后方留足空间，以便之后放置更完善的外景。</P>
+	  <P>OpenBVE游戏中的线路都是线性的，由单一的一根轨道组成。这使我们制作时可以条理清晰，但是这也意味着在曲线方面我们可能需要做一些复杂的数学计算，来准确算出曲线造成的位移。但是对于现阶段的制作者来说，可能还不会很多的遇到这些问题。</P>
+	  <br>
+	  <h2>● 思考</h2>
+	  <hr>
+	  <ol>
+	  <li>搞懂这条最简单线路中的每条指令。</li>
+	  <li>Options命名空间的指令一般都放在开头，为什么？Structure、Route和Train等又为什么一般放在开头？</li>
+	  <li>为何Options.ObjectVisibility不加会后悔？（您可找到第二章安装的西条线线路删除并对比尝试）</li>
+	  <li>为何要有Train.Run(0).Set 0 和 Train.Flange(0).Set 0 这两条指令？（您可删除尝试）</li>
+	  </ol>
+	  <P CLASS="critical"><B>请您不要直接前进到下一讲。</B>请自行搜索思考和查看这几道问题，搞懂出现的这几条指令的意义和用法。对于3和4小题，请您务必自行实践删除尝试。不要急着翻页，不要急着翻页。请自己先想一想，试一试。点击下方绿色按钮可以进入答题页，互动答题，查看答案。</P>
+	  <A HREF="l3-exs.html" STYLE="text-decoration:none;">
+			<SPAN CLASS="button green"> 
+			<SPAN CLASS="icon" STYLE="background-image: url(globalimage/unfold-icon.png);"></SPAN>
+			<SPAN CLASS="text"> 进入互动答题页面
+      </SPAN> </SPAN> </A>
+	  <P CLASS="critical">在实践第3题时可能难以察觉到变化。在此给您一个提示：按F2切换车外视角，方向键转动视角方向；列车向前开，转头往后看。</P>
+      <P>好的！在了解编写线路的基本格式并尽量试图想明白思考题后，我们可以根据知识对线路稍加修改，增加它的可玩性。我们建议您将本章重读几遍来深刻了解和记忆本章内容，而不是走马观花地不停翻页。在您准备好后，请从上方线路图中选择下一讲。</P>
+      
+   </DIV>
+</DIV>
+</BODY>
+</HTML> 
