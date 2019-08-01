@@ -36,124 +36,102 @@
     <font size="+1" color="#0080FF">■ Contents 目录</font>
     <hr>
     <br> ↷
-    <a href="#overview">1. Overview 简介</a>
+    <a href="#overview">1. 简介</a>
     <br> ↷
-    <a href="#description">2. Sections 段落结构语法</a>
+    <a href="#description">2. 段落结构</a>
     <br> ↷
-    <a href="#operators">3. List of infix notation operators 中缀表示法运算符表</a>
+    <a href="#operators">3. 运算符</a>
     <br> ↷
-    <a href="#functions">4. List of functions 函数表</a>
+    <a href="#functions">4. 函数</a>
     <br> ↷
-    <a href="#variables">5. List of variables 变量表</a>
+    <a href="#variables">5. 变量</a>
     <br> ↷
-    <a href="#performance">6. Performance 性能</a>
+    <a href="#performance">6. 性能</a>
     <br> ↷
-    <a href="#tips">7. Tips 提示</a>
+    <a href="#tips">7. 提示</a>
     <br> ↷
-    <a href="#examples">8. Example functions 函数范例</a>
+    <a href="#examples">8. 函数范例</a>
     <br> ↷
-    <a href="#grammar">9. Formal Grammar 格式化语法</a>
+    <a href="#grammar">9. 格式化语法</a>
     <br>
     <br>
     <a name="overview"></a>
     <br>
     <br>
-    <font size="+1" color="#0080FF">■ 1. Overview 简介</font>
+    <font size="+1" color="#0080FF">■ 1. 简介</font>
     <hr>
-    <br> 动画物体格式允许你将模型对象以一定的算法规范而做出相应的动画效果。
-    <br> The ANIMATED object format is a container format allowing you to reference other objects (B3D/CSV/X) and to apply animation
-    to them.
+    <br> 动画(.animated)物体格式使你可以引用组合其他的多个模型(B3D/CSV/...)并给它们添加动画。
     <br>
-    <br> 它还允许仅对对象进行分组（包括其他的动画物体）而不将其动画化。
+    <br> 除了制作动画之外，你也能只用它来组合多个模型（包括其他的动画(.animated)物体）。
 
-    <br> It also allows to just group other objects (including other ANIMATED objects) without animating them.
     <br>
-    <br> 动画物体可以用在 CSV/RW 格式的线路（除了某些特别的指令不允许使用），或者是在列车的
-    <em>extensions.cfg</em> 文件中作为一个列车动画对象（比如开关车门等），或者是在
+    <br> 动画物体可以用在 CSV/RW 格式的线路中（除了某些特别的指令不允许使用），或者是在列车的
+    <em>extensions.cfg</em> 文件中作为一个列车外部模型对象（比如开关车门等），或者是在
     <em>panel.animated</em> 文件中作为3D驾驶室中的动画物体（比如控制杆，速度指针等）。
-    <br> Animated objects can be used in CSV/RW routes (unless explicitly disallowed by some commands), as train exterior objects
-    via the
-    <em>extensions.cfg</em>, and as 3D cabs via the
-    <em>panel.animated</em> file.
     <br>
     <br>
     <br>
-    <font color="#0080FF">● Basics 基本格式</font>
+    <font color="#0080FF">● 基本格式</font>
     <br>
-    <br> 动画将会通过以下类型的语句执行：
-    <br> Animation is performed via the following primitives:
+    <br> 动画是通过以下类型的语句实现的：
     <br>
     <br>
     <table cellspacing="0">
         <tr>
             <td valign="top">●</td>
             <td>&nbsp;</td>
-            <td>状态变化 —— 简单的在不同的时间点切换成不同的对象
-                <br> State changes - basically allowing to switch between different objects at any time</td>
+            <td>状态变化 —— 简单的在不同的时间点切换成不同的对象</td>
         </tr>
     </table>
     <table cellspacing="0">
         <tr>
             <td valign="top">●</td>
             <td>&nbsp;</td>
-            <td>坐标变换 —— 在三个独立的方向轴（XYZ）上移动物体
-                <br> Translation - moving objects in three independent directions</td>
+            <td>坐标变换 —— 在三个独立的方向轴（XYZ）上移动物体</td>
         </tr>
     </table>
     <table cellspacing="0">
         <tr>
             <td valign="top">●</td>
             <td>&nbsp;</td>
-            <td>角度变换 —— 在三个独立的轴（XYZ）上旋转物体
-                <br> Rotation - rotating objects around three independent axes</td>
+            <td>角度变换 —— 在三个独立的轴（XYZ）上旋转物体</td>
         </tr>
     </table>
     <table cellspacing="0">
         <tr>
             <td valign="top">●</td>
             <td>&nbsp;</td>
-            <td>纹理变换 —— 允许在两个独立的方向（UV）上移动对象的纹理坐标及大小
-                <br> Texture shifts - allowing to shift the texture coordinates of objects in two independent directions</td>
+            <td>纹理变换 —— 允许在两个独立的方向（UV）上移动对象的纹理坐标</td>
         </tr>
     </table>
     <br>
     <br>
-    <font color="#0080FF">● A little formality 一点点编码格式</font>
+    <font color="#0080FF">● 一点点编码格式</font>
     <br>
     <br> 这个动画文件可以是任何
     <a href="information_encodings.html">编码格式</a>的纯文本文件， 但是，使用 UTF-8 编码是最佳的选择。 数字的
     <a href="information_numberformats.html">解析格式</a>是严格的。 文件名可以是任意的，但是后缀名必须为 .animated。 这个文件将会从上到下通过分析各行的数据进行解释。
-    <br> The file is a plain text file encoded in any arbitrary
-    <a href="information_encodings.html">encoding</a>, however, UTF-8 with a byte order mark is the preferred choice. The
-    <a href="information_numberformats.html">parsing model</a> for numbers is
-    <b>Strict</b>. The file name is arbitrary, but must have the extension
-    <b>.animated</b>. The file is interpreted on a per-line basis, from top to bottom.
     <br>
     <br>
     <a name="description"></a>
     <br>
     <br>
-    <font size="+1" color="#0080FF">■ 2. Sections 段落结构语法</font>
+    <font size="+1" color="#0080FF">■ 2. 段落结构</font>
     <hr>
     <br>
     <br>
-    <font color="#0080FF">● The
-        <code>[Include]</code> section
+    <font color="#0080FF">● 
         <code>[Include]</code> 段落</font>
     <br>
     <br>
     <br> 你可以使用
-    <code>[Include]</code> 段落来简单给一组模型分组，这可以让你将动画物体作为一个容器来组织你的物体。当然
+    <code>[Include]</code> 段落来引入组合其他的模型，这可以让你将动画物体作为一个容器来组织你的物体。当然
     <code>[Include]</code> 段落的数量是随意的，你可以给任意数量的对象进行分组操作。
-    <br> You can use the [Include] section to just include other objects, but without animating them. This allows you to use
-    the ANIMATED object file as a container to group other objects. There can be any number of [Include] sections within
-    the file.
     <br>
     <br>
     <span class="command">[Include]</span>
     <br>
     <br>这将开始这个段落。
-    <br> This starts the section.
     <br>
     <br>
     <span class="command">
@@ -170,7 +148,7 @@
         </em>
         <br> ...
     </span>
-    <br> 定义一系列的 B3D/CSV/X/ANIMATED 模型对象来组合在一起
+    <br> 定义一系列的 B3D/CSV/X/ANIMATED 模型对象来组合在一起。
     <br>
     <br>
     <span class="command">
@@ -180,31 +158,24 @@
             <em>Z</em>
         </b>
     </span>
-    <br>将你组合的模型按照三维坐标来偏移模型。
-    <br> This defines the position of the objects, basically allowing you to offset them with respect to the rest of the ANIMATED
-    object file.
+    <br>将你引入的模型按照三维坐标来偏移。对于其下的文件都有效。
     <br>
     <br>
     <hr>
     <br>
-    <font color="#0080FF">● The
-        <code>[Object]</code> section
+    <font color="#0080FF">● 
         <code>[Object]</code> 段落</font>
     <br>
     <br>
     <br>你可以使用
-    <code>[Object]</code> 段落来创建一个普通的动画，但是你需要通过
-    <code>States</code> 参数设置至少一个状态，并使用相应的功能来组织动画即可。
+    <code>[Object]</code> 段落来创建一个普通的动画。这需要你通过
+    <code>States</code> 参数设置至少一个状态，并使用相应的函数来控制动画。
     <code>[Object]</code> 段落数量也是随意的。
-    <br>You can use the [Object] section to create a single animation. This requires to set up at least one state via the
-    <em>States</em> parameter, and to use any combination of functions you want, which provide control over the animation. There
-    can be any number of [Object] sections within the file.
     <br>
     <br>
     <span class="command">[Object]</span>
     <br>
     <br> 这个是段落的开头。
-    <br> This starts the section.
     <br>
     <br>
     <span class="command">
@@ -215,14 +186,7 @@
         </b>
     </span>
     <br>
-    <br> 定义对象的整体位置， 这将会相对于 CSV/B3d 文件中的最终位置坐标而偏移， 这个指令将会在解析最后才被执行。 例如你如果需要旋转对象， 此时旋转的的中心点是原点 (0,0,0)，
-    <em>
-        <code>Position</code>
-    </em> 命令只会在旋转之后来才会进行偏移坐标操作。
-    <br> Defines the position of the object. This basically corresponds to a final TranslateAll command in the respective CSV/B3D
-    file, but is performed after any of the functions are performed. For example, if you want to use rotation, then keep
-    in mind that rotation is done around the origin (0,0,0). The
-    <em>Position</em> command allows you to reposition the object after the rotation is performed.
+    <br> 定义对象的整体位置。这将会相对于 CSV/B3d 文件中的最终位置坐标而偏移，但这个指令将会在解析最后才被执行。例如你如果需要旋转对象， 此时旋转的的中心点仍然是原点 (0,0,0)，<em><code>Position</code></em> 命令只会在旋转之后来才会进行偏移坐标操作。
     <br>
     <br>
     <span class="command">
@@ -239,25 +203,16 @@
         </b>
     </span>
     <br>
-    <br> 加载 CSV/B3D/X 模型对象，每加载一个文件就会自带一个状态索引值，从第一个文件开始为 0 不断递增，一般当你需要使用状态更改的时候才需要使用多个文件。
-    <br> Loads
-    <em>n</em> objects of CSV/B3D/X extension. Please note that the first file indicated has state index 0. Use multiple files
-    only if you want to use state changes.
+    <br> 加载<em>n</em>个 CSV/B3D/X 模型对象，每加载一个文件就会自带一个状态索引值，从第一个文件开始为 0 不断递增，一般当你需要使用状态变化的时候才需要使用多个文件。这样你可以在多个物体之间选择一个显示或不显示。
     <br>
     <br>
     <span class="command">
         <b>StateFunction =
-            <em>公式</em>
+            <em>式子</em>
         </b>
     </span>
     <br>
-    <br> 这个定义了状态变化，其公式的值将会被四舍五入到整数，如果这个整数在 0 ~ n-1 之间（n为你使用 States 指令时所得到的状态索引值），那么这样将会显示出相应的状态，如果索引值指向的对象不存在，则不会显示任何东西。如果你需要做出一个物体的开关效果可以选择后者。
-    <br> This defines the function for state changes. The result of the
-    <em>Formula</em> is rounded toward the nearest integer. If that integer is between 0 and
-    <em>n</em>-1, where
-    <em>n</em> is the number of states as defined via
-    <em>States</em>, the respective state is shown, otherwise, no object is shown. You can make use of the latter if you want
-    an object to toggle on/off with only one state.
+    <br> 这个指令指定状态变化所遵循的式子，其值将会被四舍五入到整数，如果这个整数在 0 ~ n-1 之间（n为你使用 States 指令时所设定的状态数量），那么这样将会显示出相应的状态，如果索引值指向的对象不存在，则不会显示任何物体。如果你需要做出一个物体的开关效果，可以选择后者。
     <br>
     <br>
     <span class="command">
@@ -283,10 +238,6 @@
     <em>TranslateXFunction</em>，
     <em>TranslateYFunction</em>和
     <em>TranslateZFunction</em>的偏移方向，默认方向是：
-    <br> These define the directions for the
-    <em>TranslateXFunction</em>,
-    <em>TranslateYFunction</em> and
-    <em>TranslateZFunction</em>, respectively. The default directions are:
     <br>
     <br>
     <em>TranslateXDirection = 1, 0, 0</em>
@@ -298,33 +249,23 @@
     <br>这样意味着
     <code>TranslateXFunction</code>将会默认向右移动，
     <code>TranslateYFunction</code>默认向上移动，
-    <code>TranslateZFunction</code>默认向前移动，这也是为什么这样命名的原因。如果你要定义其他方向的话，那么只需要考虑三个函数和相关方向的独立公式即可。
-    <br>This means that TranslateXFunction will move right by default, TranslateYFunction up and TranslateZFunction forward,
-    which is also why TranslateXFunction and so on bear their names. If you define other directions, then simply think of
-    the three functions and associated directions as three independent ways to move the object in that direction.
+    <code>TranslateZFunction</code>默认向前移动，这也是为什么这样命名的原因。如果你要定义其他方向的话，那么只需要考虑三个函数和相关方向的独立公式即可。在大多数情况下，您不需要使用这三个指令。
     <br>
     <br>
     <span class="command">
         <b>TranslateXFunction =
-            <em>公式</em>
+            <em>式子</em>
         </b>
         <br>
         <b>TranslateYFunction =
-            <em>公式</em>
+            <em>式子</em>
         </b>
         <br>
         <b>TranslateZFunction =
-            <em>公式</em>
+            <em>式子</em>
         </b>
     </span>
-    <br> 这个定义了对象偏移到相应方向的方式。<em>公式</em>需要返回从原位置移动的米数。三个坐标轴将会和公式相乘得出最终坐标，所以如果你想<b style="background-color: black">让车门更容易甩飞<b/>让物体运动速度加快的话，那么可以尝试把公式乘以二或者是方向轴乘以二。
-    <br> These define the functions to move the object into the respective direction. The
-    <em>Formula</em> needs to return the amount of meters to move from the initial position. The
-    <em>X</em>,
-    <em>Y</em> and
-    <em>Z</em> parameters in the respective direction are multiplied by the result of
-    <em>Formula</em>, so you could for example either multiple the formula by 2 or the direction by 2 if you want to double the
-    speed of movement.
+    <br> 这个指令指定的式子将对象偏移到相应方向。<em>式子</em>需要返回从原位置移动的米数。三个<em>Translate*Direction</em>将会和式子相乘得出最终结果，所以如果你想<b style="background-color: black">让车门甩飞（误）</b>让物体运动速度加快的话，那么可以尝试把式子乘以二或者是方向轴乘以二。
     <br>
     <br>
     <span class="command">
@@ -346,10 +287,10 @@
             <em>Z坐标</em>
         </b>
     </span>
-    <br> These define the directions for the
+    <br> 这将会分别定义
     <em>RotateXFunction</em>,
-    <em>RotateYFunction</em> and
-    <em>RotateZFunction</em>, respectively. The default directions are:
+    <em>RotateYFunction</em> 和
+    <em>RotateZFunction</em>, 的旋转方向。默认方向是：
     <br>
     <br>
     <em>RotateXDirection = 1, 0, 0</em>
@@ -358,29 +299,27 @@
     <br>
     <em>RotateZDirection = 0, 0, 1</em>
     <br>
-    <br>This means that RotateXFunction will rotate around the x-axis by default, RotateYFunction around the Y-axis, and RotateZFunction
-    around the z-axis, which is also why RotateXFunction and so on bear their names. If you define other directions, then
-    simply think of the three functions and associated directions as three independent ways to rotate the object.
+    <br>这样意味着
+    <code>RotateXFunction</code>将会默认绕X轴旋转，
+    <code>RotateYFunction</code>默认绕Y轴，
+    <code>RotateZFunction</code>默认绕Z轴，这也是为什么这样命名的原因。如果你要定义其他方向的话，那么只需要考虑三个函数和相关方向的独立公式即可。在大多数情况下，您不需要使用这三个指令。
     <br>
     <br>
     <span class="command">
         <b>RotateXFunction =
-            <em>Formula</em>
+            <em>式子</em>
         </b>
         <br>
         <b>RotateYFunction =
-            <em>Formula</em>
+            <em>式子</em>
         </b>
         <br>
         <b>RotateZFunction =
-            <em>Formula</em>
+            <em>式子</em>
         </b>
     </span>
-    <br> These define the functions to rotate along the respective direction in counter-clockwise order. The
-    <em>Formula</em> needs to return the angle by which to rotate in radians. The order in which the rotations are performed
-    is: RotateXFunction (first), RotateYFunction (then) and RotateZFunction (last). If you use more than one rotation function
-    at a time, bear this order in mind. If necessary, overwrite the default directions for the rotations if you need a different
-    order.
+    <br> 这些式子指定了将物体在相应的方向上逆时针旋转的度数。
+    <em>式子</em>的结果应该是所需要旋转度数的<b>弧度制</b>形式。旋转的默认顺序是X->Y->Z。如果你需要进行多个轴上的旋转，设计时请记好这个顺序。 如果必须使用不同的顺序，请使用Rotate*Direction指令重新定义轴向。
     <br>
     <br>
     <span class="command">
@@ -399,11 +338,9 @@
             <em>DampingRatio</em>
         </b>
     </span>
-    <br> These define damping for the corresponding functions. If not used, damping will not be performed.
-    <em>NaturalFrequency</em> is a non-negative value corresponding to the angular frequency of an assumed undamped oscillator
-    in radians per second.
-    <em>DampingRatio</em> is a non-negative value indicating the type of damping. Values between 0 and 1 represent under-damping,
-    1 represents critical damping, and values above 1 represent over-damping.
+    <br> 这个指令定义相关的旋转的阻尼系数。如果没有指定，旋转就没有阻尼效果，
+    <em>自然速率</em>是一个代表对应旋转运动理想无阻力时的角速度的非负值。单位是弧度每秒。
+    <em>阻尼比</em> 是一个代表阻尼成都的非负值。0与1之间代表阻尼不足，1代表临界阻尼，1以上代表过阻尼。详情请查阅对应的物理文献。
     <br>
     <br>
     <span class="command">
@@ -417,48 +354,43 @@
             <em>Y</em>
         </b>
     </span>
-    <br> These define the directions for the
-    <em>TextureShiftXFunction</em> and
-    <em>TextureShiftYFunction</em>, respectively. The default directions are:
+    <br>这定义了对应的
+    <em>TextureShiftXFunction</em> 和
+    <em>TextureShiftYFunction</em>的方向。默认方向是：
     <br>
     <br>
     <em>TextureShiftXDirection = 1, 0</em>
     <br>
     <em>TextureShiftYDirection = 0, 1</em>
     <br>
-    <br>This means that TextureShiftXFunction will shift the texture right by default, and TextureShiftYFunction down, which
-    is also why TextureShiftXFunction and so on bear their names. If you define other directions, then simply think of the
-    two functions and associated directions as two independent ways to shift textures on the objects.
+    <br>这样意味着 TranslateXFunction将会默认正方向向右偏移， TranslateYFunction默认正方向向下偏移， 这也是为什么这样命名的原因。如果你要定义其他方向的话，那么只需要考虑函数和相关方向的独立公式即可。在大多数情况下，您不需要使用这两个指令。 
     <br>
     <br>
     <span class="command">
         <b>TextureShiftXFunction =
-            <em>Formula</em>
+            <em>式子</em>
         </b>
         <br>
         <b>TextureShiftYFunction =
-            <em>Formula</em>
+            <em>式子</em>
         </b>
     </span>
-    <br> These define the functions to shift the texture in the respective direction. The texture is shifted by the return value
-    of
-    <em>Formula</em> in texture coordinates. The integer part of the result is ignored, and a fractional part of 0.5 represents
-    moving the texture half way. The SetTextureCoordinate commands in the object file define the coordinates, which are then
-    added the outcome of these formulas.
+    <br>这个式子在对应的方向偏移材质的UV坐标。材质坐标按照
+    <em>式子</em>的结果偏移。结果的整数部分被忽略，0.5的小数代表把材质偏移一半。最终结果是式子结果和材质中UV坐标之和。
     <br>
     <br>
     <br>
     <span class="command">
         <b>TrackFollowerFunction =
-            <em>Formula</em>
+            <em>式子</em>
         </b>
         <br>
     </span>
-    <br> This defines the function which moves an object along the path of
-    <b>Rail 0</b>.
-    <em>Formula</em> must return a distance in meters, for which the object is then moved, respecting the curves and height changes
+    <br>这个式子将物体沿着
+    <b>Rail 0(主轨道)</b>移动一定的距离。
+    <em>式子</em>需要返回物体以米为单位的移动距离，并受
     of
-    <b>Rail 0</b>.
+    <b>Rail 0(主轨道)</b>的弯曲转折影响。
     <br>
     <br>
     <span class="command">
@@ -469,10 +401,10 @@
     <br>
     <br>
     <em>Value</em> =
-    <b>Timetable</b>: All faces will show the timetable bitmap as set up by CSV/RW routes.
+    <b>Timetable</b>: 该物体的所有面都会显示CSV/RW线路中所指定的时刻表图片。
     <br>
     <em>Value</em> =
-    <b>None</b>: The original textures will be displayed on the faces (default behavior).
+    <b>None</b>: 不改变物体材质 (默认)。
     <br>
     <br>
     <span class="command">
@@ -481,10 +413,7 @@
         </b>
     </span>
     <br>
-    <br> This defines the minimum amount of time that needs to pass before the functions are updated. A value of 0 forces the
-    functions to be updated every frame. Please note that objects outside of the visual range might be updated less frequently
-    regardless of this parameter. Use RefreshRate when you don't need a perfectly smooth animation (in order to optimize
-    performance), or when you deliberately want the object to be only updated in fixed intervals.
+    <br> 这个指令定义了物体动画状态刷新的间隔。当值等于0时，物体将被每帧刷新一次。请注意不论取值如何，可视范围外的物体的刷新频率都会更低。你可以在不需要一个十分平滑的动画（这可以优化性能），或你希望物体以一个固定的时间频率变动时，你可以使用这个指令。
     <br>
     <br>
     <hr>
@@ -496,26 +425,20 @@
             <td>&nbsp;</td>
             <td bgcolor="#E0E0E0">&nbsp;</td>
             <td bgcolor="#E0E0E0">
-                <b>openBVE 2 compatibility note:</b>
-                <br> During the development of openBVE (v0.9) and during the development of the animated object format, there
-                were certain commands in existance ending in
-                <em>RPN</em>, such as
-                <em>TranslateXFunctionRPN</em>. These commands never made it into any official release (v1.0) and were thus never
-                meant to be used outside of development environments. While they are still available undocumentedly, they
-                will be removed for openBVE 2. If you are using these commands, please get rid of them as soon as possible.</td>
+                <b>openBVE 2 兼容性注意事项：</b>
+                <br> 在openBVE(v0.9)和动画模型格式的开发进程中，设计了几个名字以
+                <em>RPN</em>结尾的指令，例如
+                <em>TranslateXFunctionRPN</em>。这些指令早已过时，在正式版本(v1.0)中已被弃用，不应在开发环境外使用。虽然openBVE仍然保留了对这些指令的运行支持，它们仍然被计划在openBVE 2中彻底删除。如果你还在用这几个指令，趁早扔了吧！</td>
             <td bgcolor="#E0E0E0">&nbsp;</td>
         </tr>
     </table>
     <hr>
     <br>
     <br>
-    <font color="#0080FF">● About the formulas</font>
+    <font color="#0080FF">● 关于式子</font>
     <br>
-    <br> First of all, infix notation, which is what you can enter for
-    <em>Formula</em>, is converted into functional notation. Thus for every infix notation, there is a corresponding functional
-    notation. Some functions do not have an infix operator and can thus only be entered in functional notation. For operators,
-    precedence plays an important role. You can use parantheses to override the order of precedence just as in any usual
-    mathematical formula. Names of functions are case-insensitive.
+    <br>首先，你输入
+    <em>式子</em>的符号都会被转换为函数。因此对于每个运算符都有对应的函数，而一些函数则没有与运算符对应，于是只能以函数形式输入。计算顺序在运算符中意义很大。你可以像在数学式里面一样使用括号改变计算顺序。函数的名字不分大小写。
     <br>
     <br>
     <table cellspacing="0">
@@ -525,8 +448,7 @@
             </td>
             <td>&nbsp;</td>
             <td bgcolor="#E0E0E0">&nbsp;</td>
-            <td bgcolor="#E0E0E0">Please note that if the result of any mathematical operation or function would be infinity, indeterminate or
-                non-real, 0 is returned. Numeric overflow is not prevented, so you need to take that into account yourself.</td>
+            <td bgcolor="#E0E0E0">请注意：如果某个数学计算的结果是正负无穷或虚数，它会被视作0。openBVE不负责处理数值溢出问题，请自行考虑。</td>
             <td bgcolor="#E0E0E0">&nbsp;</td>
         </tr>
     </table>
@@ -534,19 +456,19 @@
     <a name="operators"></a>
     <br>
     <br>
-    <font size="+1" color="#0080FF">■ 3. List of infix notation operators</font>
+    <font size="+1" color="#0080FF">■ 3. 运算符</font>
     <hr>
     <br>
     <br>
-    <font color="#0080FF">● Basic arithmetics</font>
+    <font color="#0080FF">● 基本数学运算符</font>
     <br>
     <br>
 
     <table style="border-collapse: collapse;">
         <tr>
-            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">Infix</th>
-            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">Functional</th>
-            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">Description</th>
+            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">运算符形式</th>
+            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">函数形式</th>
+            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">描述</th>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
@@ -560,7 +482,7 @@
                     <em>a</em>,
                     <em>b</em>, ...]</tt>
             </td>
-            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">Represents addition</td>
+            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">加法</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
@@ -574,7 +496,7 @@
                     <em>a</em>,
                     <em>b</em>]</tt>
             </td>
-            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">Represents subtraction</td>
+            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">减法</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
@@ -586,7 +508,7 @@
                 <tt>Minus[
                     <em>a</em>]</tt>
             </td>
-            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">Negates the number</td>
+            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">取相反数</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
@@ -600,7 +522,7 @@
                     <em>a</em>,
                     <em>b</em>,...]</tt>
             </td>
-            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">Represents multiplication</td>
+            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">乘法</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
@@ -614,21 +536,21 @@
                     <em>a</em>,
                     <em>b</em>]</tt>
             </td>
-            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">Represents division</td>
+            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">除法</td>
         </tr>
     </table>
     <br>
     <br>
-    <font color="#0080FF">● Comparisons</font>
+    <font color="#0080FF">● 比较</font>
     <br>
-    <br> All comparisons return 1 for true and 0 for false.
+    <br> 比较条件成立时结果为1，不成立时为0。
     <br>
     <br>
     <table style="border-collapse: collapse;">
         <tr>
-            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">Infix</th>
-            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">Functional</th>
-            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">Description</th>
+            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">运算符形式</th>
+            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">函数形式</th>
+            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">说明</th>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
@@ -642,9 +564,9 @@
                     <em>a</em>,
                     <em>b</em>]</tt>
             </td>
-            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">True (1) if
-                <em>a</em> equals
-                <em>b</em>
+            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">如果
+                <em>a</em> 等于
+                <em>b</em> 则成立
             </td>
         </tr>
         <tr>
@@ -659,9 +581,9 @@
                     <em>a</em>,
                     <em>b</em>]</tt>
             </td>
-            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">True (1) if
-                <em>a</em> does not equal
-                <em>b</em>
+            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">如果
+                <em>a</em> 不等于
+                <em>b</em> 则成立
             </td>
         </tr>
         <tr>
@@ -676,9 +598,9 @@
                     <em>a</em>,
                     <em>b</em>]</tt>
             </td>
-            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">True (1) if
-                <em>a</em> is less than
-                <em>b</em>
+            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">如果
+                <em>a</em> 小于
+                <em>b</em> 则成立
             </td>
         </tr>
         <tr>
@@ -693,9 +615,9 @@
                     <em>a</em>,
                     <em>b</em>]</tt>
             </td>
-            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">True (1) if
-                <em>a</em> is greater than
-                <em>b</em>
+            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">如果
+                <em>a</em> 大于
+                <em>b</em> 则成立
             </td>
         </tr>
         <tr>
@@ -710,9 +632,9 @@
                     <em>a</em>,
                     <em>b</em>]</tt>
             </td>
-            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">True (1) if
-                <em>a</em> is less than or equal to
-                <em>b</em>
+            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">如果
+                <em>a</em> 小于等于
+                <em>b</em> 则成立
             </td>
         </tr>
         <tr>
@@ -727,9 +649,9 @@
                     <em>a</em>,
                     <em>b</em>]</tt>
             </td>
-            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">True (1) if
-                <em>a</em> is greater than or equal to
-                <em>b</em>
+            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">如果
+                <em>a</em> 大于等于
+                <em>b</em> 则成立
             </td>
         </tr>
     </table>
@@ -1131,118 +1053,109 @@
     <a name="variables"></a>
     <br>
     <br>
-    <font size="+1" color="#0080FF">■ 5. List of variables</font>
+    <font size="+1" color="#0080FF">■ 5. 变量</font>
     <hr>
     <br>
     <br>
-    <font color="#0080FF">● Primitives</font>
+    <font color="#0080FF">● 基础</font>
     <br>
     <br>
 
     <table style="border-collapse: collapse;">
         <tr>
-            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">Variable</th>
-            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">Description</th>
+            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">变量</th>
+            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">描述</th>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>value</tt>
             </td>
-            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The value returned by the function in the last evaluation. At the beginning of the simulation, this is 0.</td>
+            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">这个式子上一次计算的结果。第一次计算时为0。</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>delta</tt>
             </td>
-            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The time difference since the last evaluation of the function in seconds. Please note that there is no guaranteed
-                time that elapses between successive function calls.</td>
+            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">从上次计算这一式子到现在相隔的时间，以秒为单位。请注意openBVE不能保证式子两次计算之间的时间间隔永远相等。</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>currentState</tt>
             </td>
-            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">Returns the current numerical state of the object.</td>
+            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">物体目前所处的状态编号。</td>
         </tr>
     </table>
     <br>
     <br>
-    <font color="#0080FF">● Time and camera</font>
+    <font color="#0080FF">● 时间和视角</font>
     <br>
     <br>
 
     <table style="border-collapse: collapse;">
         <tr>
-            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">Variable</th>
-            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">Description</th>
+            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">变量</th>
+            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">描述</th>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>time</tt>
             </td>
-            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The current in-game time measured in seconds since midnight of the first day.</td>
+            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">从游戏中第一天的午夜开始算起的秒数。</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>cameraDistance</tt>
             </td>
-            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The non-negative cartesian distance measured from the object to the camera in meters.</td>
+            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">物体与游戏视角摄像机之间的几何距离，以米为单位。</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>cameraMode</tt>
             </td>
-            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">Returns 0 if the camera is currently in a 2D or 3D cab, 1 otherwise.</td>
+            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">0代表游戏正处于司机室视角，1反之。</td>
         </tr>
     </table>
     <br>
     <br>
-    <font color="#0080FF">● Trains</font>
+    <font color="#0080FF">● 列车</font>
     <br>
-    <br> Generally, objects attached to a particular train and car return values for that train and car, unless stated otherwise.
-    For scenery objects, the reference is the driver's car of the nearest train (not necessarily the player's train).
+    <br>一般来说，指派到列车模型的动画物体中的变量返回对应列车和车厢的对应参数，除非指定了其他的车厢编号。
+    而外景物体中的变量则反映距离其最近的列车的司机室所在车厢的情况（不一定是玩家列车）。
     <br>
-    <br>In some of the following variables,
-    <em>carIndex</em> has the following meaning: 0 is the 1
-    <sup>st</sup> car from the front, 1 is the 2
-    <sup>nd</sup> car from the front, etc., while -1 is the 1
-    <sup>st</sup> car from the rear, -2 is the 2
-    <sup>nd</sup> car from the rear, etc. In general, car indices from -
-    <em>cars</em> to
-    <em>cars</em>-1 represent existing cars, where
-    <em>cars</em> is the number of cars the train has, while values outside of this range represent non-existing cars. As all
-    trains have at least 1 car, indices -1 and 0 are guaranteed to exist for any train.
+    <br>在下方一些变量中，
+    <em>车厢编号</em>代表这一意味：0是前方第1节车厢，1是前方第2节，以此类推；而-1代表尾部第1节，-2代表尾部第2节，同样以此类推。总的来说，由 -
+    <em>车厢总数</em> to
+    <em>车厢总数</em>-1 的数字代表存在的车厢，而其他的代表不存在的车厢。由于列车至少有一节车厢，0和-1这两个车厢编号总是存在的。
     <br>
     <br>
     <br>
-    <font color="#0080FF">● Trains (general)</font>
+    <font color="#0080FF">● 列车(总体)</font>
     <br>
     <br>
 
     <table style="border-collapse: collapse;">
         <tr>
-            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">Variable</th>
-            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">Description</th>
+            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">变量</th>
+            <th bgcolor="#D0D0D0" style=" border: 2px; border-style: ridge; padding: 4px;">描述</th>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>cars</tt>
             </td>
-            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The number of cars the train has.</td>
+            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">列车的车厢总数。</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>speed</tt>
             </td>
-            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The signed actual speed of the current car in m/s. Is positive when the train travels forward, and negative when
-                the train travels backward.</td>
+            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">当前车厢的有符号实际速度，单位为m/s。向前为正，向后为负。</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>speed[
-                    <em>carIndex</em>]</tt>
+                    <em>车厢编号</em>]</tt>
             </td>
-            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The signed actual speed of the car
-                <em>carIndex</em> in m/s. Is positive when the train travels forward, and negative when the train travels backward.</td>
+            <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">对应车厢的有符号实际速度，单位为m/s。向前为正，向后为负。</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
@@ -1255,10 +1168,10 @@
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>speedometer[
-                    <em>carIndex</em>]</tt>
+                    <em>车厢编号</em>]</tt>
             </td>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The signed perceived speed of the car
-                <em>carIndex</em> in m/s as it would appear to a speedometer on wheel slip and wheel lock.</td>
+                <em>车厢编号</em> in m/s as it would appear to a speedometer on wheel slip and wheel lock.</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
@@ -1269,10 +1182,10 @@
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>acceleration[
-                    <em>carIndex</em>]</tt>
+                    <em>车厢编号</em>]</tt>
             </td>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The actual acceleration of the car
-                <em>carIndex</em> in m/s².</td>
+                <em>车厢编号</em> in m/s².</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
@@ -1283,10 +1196,10 @@
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>accelerationMotor[
-                    <em>carIndex</em>]</tt>
+                    <em>车厢编号</em>]</tt>
             </td>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The acceleration which the motor of the car
-                <em>carIndex</em> currently generates in m/s².</td>
+                <em>车厢编号</em> currently generates in m/s².</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
@@ -1298,10 +1211,10 @@
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>distance[
-                    <em>carIndex</em>]</tt>
+                    <em>车厢编号</em>]</tt>
             </td>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The non-negative cartesian distance measured from the object to the car
-                <em>carIndex</em> in meters, or 0 if the car does not exist. Only meaningful for scenery objects.</td>
+                <em>车厢编号</em> in meters, or 0 if the car does not exist. Only meaningful for scenery objects.</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
@@ -1314,10 +1227,10 @@
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>trackDistance[
-                    <em>carIndex</em>]</tt>
+                    <em>车厢编号</em>]</tt>
             </td>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The signed track distance measured from the object to the car
-                <em>carIndex</em> of the nearest train in meters. Is positive when the center of the car is in front of the object,
+                <em>车厢编号</em> of the nearest train in meters. Is positive when the center of the car is in front of the object,
                 and negative if behind. Returns 0 if the car does not exist. Only meaningful for scenery objects.</td>
         </tr>
     </table>
@@ -1341,10 +1254,10 @@
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>mainReservoir[
-                    <em>carIndex</em>]</tt>
+                    <em>车厢编号</em>]</tt>
             </td>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The current pressure in the main reservoir in car
-                <em>carIndex</em>, measured in Pa.</td>
+                <em>车厢编号</em>, measured in Pa.</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
@@ -1355,10 +1268,10 @@
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>emergencyReservoir[
-                    <em>carIndex</em>]</tt>
+                    <em>车厢编号</em>]</tt>
             </td>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The current pressure in the emergency reservoir in car
-                <em>carIndex</em>, measured in Pa.</td>
+                <em>车厢编号</em>, measured in Pa.</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
@@ -1369,10 +1282,10 @@
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>brakePipe[
-                    <em>carIndex</em>]</tt>
+                    <em>车厢编号</em>]</tt>
             </td>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The current pressure in the brake pipe in car
-                <em>carIndex</em>, measured in Pa.</td>
+                <em>车厢编号</em>, measured in Pa.</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
@@ -1383,10 +1296,10 @@
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>brakeCylinder[
-                    <em>carIndex</em>]</tt>
+                    <em>车厢编号</em>]</tt>
             </td>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The current pressure in the brake cylinder in car
-                <em>carIndex</em>, measured in Pa.</td>
+                <em>车厢编号</em>, measured in Pa.</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
@@ -1397,10 +1310,10 @@
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>straightAirPipe[
-                    <em>carIndex</em>]</tt>
+                    <em>车厢编号</em>]</tt>
             </td>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The current pressure in the straight air pipe in car
-                <em>carIndex</em>, measured in Pa.</td>
+                <em>车厢编号</em>, measured in Pa.</td>
         </tr>
     </table>
     <br>
@@ -1424,10 +1337,10 @@
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>doors[
-                    <em>carIndex</em>]</tt>
+                    <em>车厢编号</em>]</tt>
             </td>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The state of the doors of car
-                <em>carIndex</em>. Returns 0 if fully closed, 1 if fully opened, or any intermediate value, biasing doors that
+                <em>车厢编号</em>. Returns 0 if fully closed, 1 if fully opened, or any intermediate value, biasing doors that
                 are in a more open state.</td>
         </tr>
         <tr>
@@ -1440,10 +1353,10 @@
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>leftDoors[
-                    <em>carIndex</em>]</tt>
+                    <em>车厢编号</em>]</tt>
             </td>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The state of the left doors of car
-                <em>carIndex</em>. Returns a value between 0 and 1, biasing doors that are in a more open state, or -1 if the
+                <em>车厢编号</em>. Returns a value between 0 and 1, biasing doors that are in a more open state, or -1 if the
                 car does not exist.</td>
         </tr>
         <tr>
@@ -1456,10 +1369,10 @@
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>rightDoors[
-                    <em>carIndex</em>]</tt>
+                    <em>车厢编号</em>]</tt>
             </td>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The state of the right doors of car
-                <em>carIndex</em>. Returns a value between 0 and 1, biasing doors that are in a more open state, or -1 if the
+                <em>车厢编号</em>. Returns a value between 0 and 1, biasing doors that are in a more open state, or -1 if the
                 car does not exist.</td>
         </tr>
         <tr>
@@ -1471,10 +1384,10 @@
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>leftDoorsTarget[
-                    <em>carIndex</em>]</tt>
+                    <em>车厢编号</em>]</tt>
             </td>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The anticipated target state of the left doors of car
-                <em>carIndex</em>. Returns either 0 (closed) or 1 (opened).</td>
+                <em>车厢编号</em>. Returns either 0 (closed) or 1 (opened).</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
@@ -1485,10 +1398,10 @@
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>rightDoorsTarget[
-                    <em>carIndex</em>]</tt>
+                    <em>车厢编号</em>]</tt>
             </td>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">The anticipated target state of the right doors of car
-                <em>carIndex</em>. Returns either 0 (closed) or 1 (opened).</td>
+                <em>车厢编号</em>. Returns either 0 (closed) or 1 (opened).</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
@@ -1678,26 +1591,26 @@
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>FrontAxleCurveRadius[
-                    <em>carIndex</em>]</tt>
+                    <em>车厢编号</em>]</tt>
             </td>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">Returns the curve radius at the front axle position of car
-                <em>carIndex</em>.</td>
+                <em>车厢编号</em>.</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>RearAxleCurveRadius[
-                    <em>carIndex</em>]</tt>
+                    <em>车厢编号</em>]</tt>
             </td>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">Returns the curve radius at the rear axle position of car
-                <em>carIndex</em>.</td>
+                <em>车厢编号</em>.</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>CurveCant[
-                    <em>carIndex</em>]</tt>
+                    <em>车厢编号</em>]</tt>
             </td>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">Returns the cant value for car
-                <em>carIndex</em>.</td>
+                <em>车厢编号</em>.</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
@@ -1708,10 +1621,10 @@
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
                 <tt>Odometer[
-                    <em>carIndex</em>]</tt>
+                    <em>车厢编号</em>]</tt>
             </td>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">Returns a signed number representing the distance in meters travelled by car
-                <em>carIndex</em>.</td>
+                <em>车厢编号</em>.</td>
         </tr>
         <tr>
             <td bgcolor="#FFFFFF" style=" border: 2px; border-style: ridge; padding: 4px;">
