@@ -32,6 +32,8 @@ window.alert = function (str) {
 }
 
 function reCalcForm(){
+    //I have never thought of converting excel formula to JS
+    //It turned out to be so easy!
     var C5 = document.getElementById("C5").value;
     var C6 = document.getElementById("C6").value;
     var C7 = document.getElementById("C7").value;
@@ -104,7 +106,8 @@ function copyTextToClipboard(text) {
 }
 
 function SUBSTITUTE(haystack, needle, replace){
-    return haystack.replace(needle, replace);
+    var re = new RegExp(needle, 'g')
+    return haystack.replace(re, replace);
 }
 function SIGN(num){return Math.sign(num);}
 function IF(cond, a, b){return cond?a:b;}
@@ -213,7 +216,7 @@ function ROUND(number, precision) {
  </tr>
  <tr class=xl85 height=20 style='height:15.0pt'>
   <td height=20 style='height:15.0pt'></td>
-  <td class=xl79><input type="button" value="复制" onclick="copyText('C13')" style="width:100%"/></td>
+  <td class=xl79><input type="button" value="复制" onclick="copyText('C14')" style="width:100%"/></td>
   <td class=xl77 style='border-top:none'>左-右</td>
   <td class=xl79 colspan=7><input type="text" name="C14" id="C14" readonly style="width:100%"/></td>
  </tr>
@@ -238,56 +241,6 @@ function ROUND(number, precision) {
   <td colspan=9 class=xl96>制作：zbx1425 (<a href="https://www.zbx1425.tk">https://www.zbx1425.tk</a>)
   (<a href="mailto:zbx1425@outlook.com">zbx1425@outlook.com</a>)</td>
  </tr>
- <tr height=0 style='display:none'>
-  <td height=0></td>
-  <td>x1=</td>
-  <td align=right>0.05</td>
-  <td>Lc=</td>
-  <td colspan=3 style='mso-ignore:colspan'>leftDoors*2.1429-0.1071</td>
-  <td colspan=7 style='mso-ignore:colspan'></td>
- </tr>
- <tr height=0 style='display:none'>
-  <td height=0></td>
-  <td>x2=</td>
-  <td align=right>0.33</td>
-  <td>Rc=</td>
-  <td colspan=3 style='mso-ignore:colspan'>rightDoors*2.1429-0.1071</td>
-  <td colspan=7 style='mso-ignore:colspan'></td>
- </tr>
- <tr height=0 style='display:none'>
-  <td height=0></td>
-  <td>xc=</td>
-  <td align=right>0.3019</td>
-  <td>Lo=</td>
-  <td colspan=5 style='mso-ignore:colspan'>If[leftDoors&lt;0.3019,value,value+delta*0.1935]</td>
-  <td colspan=5 style='mso-ignore:colspan'></td>
- </tr>
- <tr height=0 style='display:none'>
-  <td height=0></td>
-  <td>vc=</td>
-  <td align=right>0.1935</td>
-  <td>Ro=</td>
-  <td colspan=5 style='mso-ignore:colspan'>If[rightDoors&lt;0.3019,value,value+delta*0.1935]</td>
-  <td colspan=5 style='mso-ignore:colspan'></td>
- </tr>
- <tr height=0 style='display:none'>
-  <td height=0></td>
-  <td>k=</td>
-  <td align=right>2.1429</td>
-  <td>kmod=</td>
-  <td align=right>2.1429</td>
-  <td colspan=9 style='mso-ignore:colspan'></td>
- </tr>
- <tr height=0 style='display:none'>
-  <td height=0></td>
-  <td>b=</td>
-  <td align=right>-0.1071</td>
-  <td>bmod=</td>
-  <td align=right>-0.1071</td>
-  <td colspan=9 style='mso-ignore:colspan'></td>
- </tr>
- <![if supportMisalignedColumns]>
- <![endif]>
 </table>
 </form>
 </body>
