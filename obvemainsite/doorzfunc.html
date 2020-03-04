@@ -1,0 +1,295 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:x="urn:schemas-microsoft-com:office:excel"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<meta name=ProgId content=Excel.Sheet>
+<meta name=Generator content="Microsoft Excel 15">
+<link rel=Stylesheet href=stylesheet.css>
+<style>
+</style>
+<script>
+window.alert = function (str) {
+    // default css:
+    var css = 'cursor:default;z-index:2147483646;display:block;overflow:hidden;whitespace:normal;vertical-align:middle;font-weight:normal;font-size:14px;line-height:20px;font-family:sans-serif;max-width:none;max-height:none;min-width:10px;height:auto;min-height:10px;padding:0;margin:0;background:#f1f1f1;border:1px solid #333;border-color:#fff #333 #333 #fff;border-radius:1px;box-shadow:none;vertical-align:top;'
+    var wrapper = document.createElement('div')
+    var textLength=0
+    str.split('\n').forEach(function(line){
+        if (textLength<line.length)
+            textLength=line.length
+    })
+    var width = Math.floor(Math.min(innerWidth - 30, textLength*16, Math.max(innerWidth / 2, 200)))
+    var left = innerWidth / 2 - width / 2
+    wrapper.style.cssText = css + 'box-shadow:0 0 3px #000;padding:10px;top:50px;margin-left:10em;width:' + width + 'px;'
+    var x = '<div style="' + css + 'position:static;width:auto;float:right;clear:both;border:none;margin-top:-10px;margin-right:-5px;font-size:18px;">&times;</div>'
+    var hr = '<div style="' + css + 'width:100%;height:1px;border-top:#777;border-radius:0;margin:15px 0 5px;"></div>'
+    var ok = '<div style="' + css + 'position:static;float:right;clear:both;margin:5px;padding:4px 10px;">OK</div>'
+    wrapper.innerHTML = x + ('' + str).replace(/</g, '&lt;').replace(/\n/g, '<br>')
+    setTimeout ( function() { document.body.removeChild(wrapper); }, 1000)
+    document.body.appendChild(wrapper)
+}
+
+function reCalcForm(){
+    var C5 = document.getElementById("C5").value;
+    var C6 = document.getElementById("C6").value;
+    var C7 = document.getElementById("C7").value;
+    var F5 = document.getElementById("F5").value;
+    var F6 = document.getElementById("F6").value;
+    var F7 = document.getElementById("F7").value;
+    var I5 = document.getElementById("I5").value;
+    var I6 = document.getElementById("I6").value;
+    var I7 = document.getElementById("I7").value;
+    var C19 = 1-ROUND(I6/I7,C7);
+    var C20 = 1-ROUND(I5/I7,C7);
+    var C21 = ROUND(F5/F7,C7);
+    var C22 = ROUND((C6-C5)/(F6-F5),C7);
+    var C23 = ROUND((C6-C5)/(C20-C19),C7);
+    var C24 = ROUND(C5-C19*C23,C7);
+    var E23 = IF(SIGN(C23)<0,"("+C23+")",C23);
+    var E24 = IF(SIGN(C24)<0,C24,"+"+C24);
+    var E19 = "leftDoors*"+E23+E24;
+    var E20 = "rightDoors*"+E23+E24;
+    var E21 = IF(F5==0, "value+delta*"+C22, "If[leftDoors<"+C21+",value,value+delta*"+C22+"]");
+    var E22 = IF(F5==0, "value+delta*"+C22, "If[rightDoors<"+C21+",value,value+delta*"+C22+"]");
+    var C13 = "Min[Max[If[leftDoorsTarget==0,"+E19+","+E21+"],"+C5+"],"+C6+"]";
+    var C14 = "-"+SUBSTITUTE(C13,"value","-value");
+    var C16 = "Min[Max[If[rightDoorsTarget==0,"+E20+","+E22+"],"+C5+"],"+C6+"]";
+    var C15 = "-"+SUBSTITUTE(C16,"value","-value");
+    document.getElementById("C13").value = C13;
+    document.getElementById("C14").value = C14;
+    document.getElementById("C15").value = C15;
+    document.getElementById("C16").value = C16;
+}
+
+function copyText(id){
+    copyTextToClipboard(document.getElementById(id).value);
+    alert("成功!");
+}
+
+function fallbackCopyTextToClipboard(text) {
+  var textArea = document.createElement("textarea");
+  textArea.value = text;
+  
+  // Avoid scrolling to bottom
+  textArea.style.top = "0";
+  textArea.style.left = "0";
+  textArea.style.position = "fixed";
+
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+
+  try {
+    var successful = document.execCommand('copy');
+    var msg = successful ? 'successful' : 'unsuccessful';
+    console.log('Fallback: Copying text command was ' + msg);
+  } catch (err) {
+    console.error('Fallback: Oops, unable to copy', err);
+  }
+
+  document.body.removeChild(textArea);
+}
+function copyTextToClipboard(text) {
+  if (!navigator.clipboard) {
+    fallbackCopyTextToClipboard(text);
+    return;
+  }
+  navigator.clipboard.writeText(text).then(function() {
+    console.log('Async: Copying to clipboard was successful!');
+  }, function(err) {
+    console.error('Async: Could not copy text: ', err);
+  });
+}
+
+function SUBSTITUTE(haystack, needle, replace){
+    return haystack.replace(needle, replace);
+}
+function SIGN(num){return Math.sign(num);}
+function IF(cond, a, b){return cond?a:b;}
+function ROUND(number, precision) {
+    return Math.round(+number + 'e' + precision) / Math.pow(10, precision);
+    //return Number(Math.round(+number + 'e' + precision) + 'e-' + precision);
+}
+</script>
+</head>
+
+<body link="#0563C1" vlink="#954F72">
+<form>
+<table border=0 cellpadding=0 cellspacing=0 width=1008 style='border-collapse:
+ collapse;table-layout:fixed;width:756pt'>
+ <col width=72 span=14 style='width:54pt'>
+ <tr height=19 style='height:14.25pt'>
+  <td height=19 width=72 style='height:14.25pt;width:54pt'></td>
+ </tr>
+ <tr height=27 style='height:20.25pt'>
+  <td height=27 style='height:20.25pt'></td>
+  <td class=xl95><input type="reset" value="重置" style="width:100%"/></td>
+  <td colspan=8 class=xl95>车门数据</td>
+  
+ </tr>
+ <tr height=21 style='height:15.75pt'>
+  <td height=21 colspan=14 style='height:15.75pt;mso-ignore:colspan'></td>
+ </tr>
+ <tr height=40 style='mso-height-source:userset;height:30.0pt'>
+  <td height=40 style='height:30.0pt'></td>
+  <td colspan=3 class=xl97 style='border-right:.5pt solid black'>常规信息</td>
+  <td colspan=3 class=xl100 style='border-right:.5pt solid black;border-left:
+  none'>车门开启</td>
+  <td colspan=3 class=xl92 style='border-right:1.0pt solid black;border-left:
+  none'>车门关闭</td>
+ </tr>
+ <tr height=26 style='mso-height-source:userset;height:20.1pt'>
+  <td height=26 style='height:20.1pt'></td>
+  <td class=xl73>关时位置</td>
+  <td class=xl69 align=right>
+  <input id="C5" name="C5" type="number" value="0" style="width:100%" /></td>
+  <td class=xl65>m</td>
+  <td class=xl75 style='border-left:none'>移动开始</td>
+  <td class=xl69 align=right>
+  <input id="F5" name="F5" type="number" value="1.6" style="width:100%" /></td>
+  <td class=xl65>s</td>
+  <td class=xl75 style='border-left:none'>移动开始</td>
+  <td class=xl69 align=right>
+  <input id="I5" name="I5" type="number" value="6.7" style="width:100%" /></td>
+  <td class=xl66>s</td>
+ </tr>
+ <tr height=26 style='mso-height-source:userset;height:20.1pt'>
+  <td height=26 style='height:20.1pt'></td>
+  <td class=xl73>开时位置</td>
+  <td class=xl70 align=right style='border-top:none'>
+  <input id="C6" name="C6" type="number" value="0.6" style="width:100%" /></td>
+  <td class=xl65>m</td>
+  <td class=xl75 style='border-left:none'>移动结束</td>
+  <td class=xl70 align=right style='border-top:none'>
+  <input id="F6" name="F6" type="number" value="4.7" style="width:100%" /></td>
+  <td class=xl65>s</td>
+  <td class=xl75 style='border-left:none'>移动结束</td>
+  <td class=xl70 align=right style='border-top:none'>
+  <input id="I6" name="I6" type="number" value="9.5" style="width:100%" /></td>
+  <td class=xl66>s</td>
+ </tr>
+ <tr height=26 style='mso-height-source:userset;height:20.1pt'>
+  <td height=26 style='height:20.1pt'></td>
+  <td class=xl74>精度位数</td>
+  <td class=xl71 align=right style='border-top:none'>
+  <input id="C7" name="C7" type="number" value="4" style="width:100%" /></td>
+  <td class=xl67>(按需)</td>
+  <td class=xl76 style='border-left:none'>声音总长</td>
+  <td class=xl71 align=right style='border-top:none'>
+  <input id="F7" name="F7" type="number" value="5.3" style="width:100%" /></td>
+  <td class=xl67>s</td>
+  <td class=xl76 style='border-left:none'>声音总长</td>
+  <td class=xl71 align=right style='border-top:none'>
+  <input id="I7" name="I7" type="number" value="10" style="width:100%" /></td>
+  <td class=xl68>s</td>
+ </tr>
+ <tr height=19 style='height:14.25pt'>
+  <td height=19 style='height:14.25pt'></td>
+  <td colspan=9 class=xl96>关/开时位置是车门在这两状态下偏离原点的距离，一般在前者填入0，后者填入车门行程，必为正数。</td>
+ </tr>
+ <tr height=19 style='height:14.25pt'>
+  <td height=19 style='height:14.25pt'></td>
+  <td colspan=9 class=xl96>移动开始/结束均为时间点，而非长度。精度位数可按需填写，默认4位即可满足大部分需求。</td>
+ </tr>
+ <tr height=19 style='height:14.25pt'>
+  <td height=19 style='height:14.25pt;mso-ignore:colspan'></td>
+ </tr>
+ <tr height=27 style='height:20.25pt'>
+  <td height=27 style='height:20.25pt'></td>
+  <td class=xl95><input type="button" value="计算" onclick="reCalcForm()" style="width:100%"/></td>
+  <td colspan=8 class=xl95>.animated 中 TranslateZFunction</td>
+  
+ </tr>
+ <tr height=21 style='height:15.75pt'>
+  <td height=21 style='height:15.75pt;mso-ignore:colspan'></td>
+ </tr>
+ <tr class=xl82 height=20 style='height:15.0pt'>
+  <td height=20 style='height:15.0pt'></td>
+  <td class=xl72><input type="button" value="复制" onclick="copyText('C13')" style="width:100%"/></td>
+  <td class=xl72>左-左</td>
+  <td class=xl72 colspan=7><input type="text" name="C13" id="C13" readonly style="width:100%"/></td>
+ </tr>
+ <tr class=xl85 height=20 style='height:15.0pt'>
+  <td height=20 style='height:15.0pt'></td>
+  <td class=xl79><input type="button" value="复制" onclick="copyText('C13')" style="width:100%"/></td>
+  <td class=xl77 style='border-top:none'>左-右</td>
+  <td class=xl79 colspan=7><input type="text" name="C14" id="C14" readonly style="width:100%"/></td>
+ </tr>
+ <tr class=xl88 height=20 style='height:15.0pt'>
+  <td height=20 style='height:15.0pt'></td>
+  <td class=xl79><input type="button" value="复制" onclick="copyText('C15')" style="width:100%"/></td>
+  <td class=xl79 style="text-align: center;">右-左</td>
+  <td class=xl79 colspan=7><input type="text" name="C15" id="C15" readonly style="width:100%"/></td>
+ </tr>
+ <tr class=xl91 height=21 style='height:15.75pt'>
+  <td height=21 style='height:15.75pt'></td>
+  <td class=xl79><input type="button" value="复制" onclick="copyText('C16')" style="width:100%"/></td>
+  <td class=xl78>右-右</td>
+  <td class=xl79 colspan=7><input type="text" name="C16" id="C16" readonly style="width:100%"/></td>
+ </tr>
+ <tr height=19 style='height:14.25pt'>
+  <td height=19 style='height:14.25pt'></td>
+  <td colspan=9 class=xl96>以上名称采用了略称。如：左-左即指左侧车门的左侧扇门应使用的公式。</td>
+ </tr>
+ <tr height=19 style='height:14.25pt'>
+  <td height=19 style='height:14.25pt'></td>
+  <td colspan=9 class=xl96>制作：zbx1425 (<a href="https://www.zbx1425.tk">https://www.zbx1425.tk</a>)
+  (<a href="mailto:zbx1425@outlook.com">zbx1425@outlook.com</a>)</td>
+ </tr>
+ <tr height=0 style='display:none'>
+  <td height=0></td>
+  <td>x1=</td>
+  <td align=right>0.05</td>
+  <td>Lc=</td>
+  <td colspan=3 style='mso-ignore:colspan'>leftDoors*2.1429-0.1071</td>
+  <td colspan=7 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=0 style='display:none'>
+  <td height=0></td>
+  <td>x2=</td>
+  <td align=right>0.33</td>
+  <td>Rc=</td>
+  <td colspan=3 style='mso-ignore:colspan'>rightDoors*2.1429-0.1071</td>
+  <td colspan=7 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=0 style='display:none'>
+  <td height=0></td>
+  <td>xc=</td>
+  <td align=right>0.3019</td>
+  <td>Lo=</td>
+  <td colspan=5 style='mso-ignore:colspan'>If[leftDoors&lt;0.3019,value,value+delta*0.1935]</td>
+  <td colspan=5 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=0 style='display:none'>
+  <td height=0></td>
+  <td>vc=</td>
+  <td align=right>0.1935</td>
+  <td>Ro=</td>
+  <td colspan=5 style='mso-ignore:colspan'>If[rightDoors&lt;0.3019,value,value+delta*0.1935]</td>
+  <td colspan=5 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=0 style='display:none'>
+  <td height=0></td>
+  <td>k=</td>
+  <td align=right>2.1429</td>
+  <td>kmod=</td>
+  <td align=right>2.1429</td>
+  <td colspan=9 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=0 style='display:none'>
+  <td height=0></td>
+  <td>b=</td>
+  <td align=right>-0.1071</td>
+  <td>bmod=</td>
+  <td align=right>-0.1071</td>
+  <td colspan=9 style='mso-ignore:colspan'></td>
+ </tr>
+ <![if supportMisalignedColumns]>
+ <![endif]>
+</table>
+</form>
+</body>
+
+</html>
